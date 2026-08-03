@@ -1,0 +1,94 @@
+# SpecForge Gate
+
+Deterministic quality gate for software requirements and AI coding tasks.
+
+> Working name and pre-alpha implementation. The public repository name may change before release.
+
+## Why
+
+A detailed task can still omit the expected result, scope boundaries, testable acceptance criteria, failure behavior, or measurable thresholds. SpecForge Gate detects these gaps before a human or coding agent starts implementation.
+
+- no API key
+- no document upload
+- explainable rule IDs
+- CLI-first
+- JSON and Markdown output for automation
+
+## Current rules
+
+| ID | Check | Severity |
+|---|---|---|
+| SG001 | Goal section exists | error |
+| SG002 | Expected result exists | error |
+| SG003 | Acceptance criteria exist | error |
+| SG004 | Out-of-scope section exists | warning |
+| SG005 | Errors and edge cases exist | warning |
+| SG101 | Vague wording | warning |
+| SG102 | Untestable acceptance criterion | error |
+| SG103 | Compound requirement | info |
+
+## Quick start
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+specgate check examples/bad/export-task.md
+```
+
+Windows PowerShell:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+py -m pip install -e .
+specgate check .\examples\bad\export-task.md
+```
+
+Machine-readable output:
+
+```bash
+specgate check task.md --format json
+specgate check task.md --format markdown > report.md
+```
+
+By default the CLI exits with code `1` when at least one error exists. Use `--fail-on warning` for a stricter gate or `--fail-on none` for report-only mode.
+
+## Example
+
+Bad input:
+
+```text
+Make a convenient and fast export of the result.
+```
+
+Output:
+
+```text
+NEEDS WORK
+
+Errors: 3
+Warnings: 4
+Info: 0
+```
+
+See [`examples/bad`](examples/bad) and [`examples/improved`](examples/improved).
+
+## Development
+
+```bash
+python -m pip install -e ".[dev]"
+ruff check .
+mypy src/specforge_gate
+pytest
+```
+
+The CI workflow uses standard `ubuntu-latest` GitHub-hosted runners.
+
+## Roadmap
+
+See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+## License
+
+MIT
