@@ -14,6 +14,14 @@ The deterministic rule engine remains free of network and provider dependencies:
 
 Use `--config path/to/file.yml` to supply an explicit configuration file instead of discovery.
 
+## Checking more than one input
+
+`specgate check` accepts one or more files or directories. Directories are scanned recursively for `.md`, `.markdown`, and `.txt` files in deterministic path order.
+
+A single explicit file keeps the original output shape for text, JSON, and Markdown. Multiple explicit files or any directory input produce a deterministic aggregate report. Text and Markdown group results by source path. JSON returns a top-level `summary` and a `reports` array containing the existing per-file report schema.
+
+Exit code behavior is aggregated across analyzed files: invalid configuration or unreadable input returns `2`; otherwise `--fail-on error` returns `1` if any analyzed file has an error, `--fail-on warning` returns `1` if any analyzed file has an error or warning, and `--fail-on none` always returns `0`.
+
 ## Shape
 
 ```yaml
@@ -37,7 +45,7 @@ exclude:
 - `rules`: optional mapping keyed by stable rule ID (`SG001`, `SG002`, etc.).
   - `enabled`: optional boolean. Set to `false` to suppress that rule.
   - `severity`: optional override. Supported values are `error`, `warning`, and `info`.
-- `exclude`: optional list of path patterns for integrations that check discovered or batched files. A file explicitly passed to `specgate check path/to/task.md` is still analyzed even when it matches an exclude pattern.
+- `exclude`: optional list of path patterns applied only to files discovered while checking directories. A file explicitly passed to `specgate check path/to/task.md` is still analyzed even when it matches an exclude pattern.
 
 Unknown top-level fields, unknown rule IDs, unsupported versions, invalid severities, invalid booleans, and invalid YAML return exit code `2` with an error naming the invalid field where possible.
 

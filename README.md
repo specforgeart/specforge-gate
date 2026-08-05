@@ -49,6 +49,7 @@ Machine-readable output:
 
 ```bash
 specgate check task.md --format json
+specgate check docs/ specs/task.md --format json
 specgate check task.md --format markdown > report.md
 ```
 
@@ -69,7 +70,7 @@ exclude:
   - "**/generated/**"
 ```
 
-`specgate check` automatically discovers `.specgate.yml` from the current working directory upward. Use `--config path/to/.specgate.yml` to provide an explicit configuration path. Invalid configuration exits with code `2` and names the invalid field. See [`docs/configuration.md`](docs/configuration.md) and [`.specgate.example.yml`](.specgate.example.yml).
+`specgate check` automatically discovers `.specgate.yml` from the current working directory upward. Use `--config path/to/.specgate.yml` to provide an explicit configuration path. Explicit files are always analyzed; `exclude` patterns apply only to files discovered while checking directories. Invalid configuration exits with code `2` and names the invalid field. See [`docs/configuration.md`](docs/configuration.md) and [`.specgate.example.yml`](.specgate.example.yml).
 
 ## Example
 
