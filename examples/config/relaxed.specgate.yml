@@ -1,0 +1,12 @@
+version: 1
+language: auto
+rules:
+  SG004:
+    enabled: false
+  SG005:
+    severity: info
+  SG103:
+    enabled: false
+exclude:
+  - docs/archive/**
+  - "**/generated/**"

@@ -1,0 +1,16 @@
+# Example local SpecForge Gate configuration.
+# Copy this file to .specgate.yml in a project root and adjust as needed.
+version: 1
+language: auto
+rules:
+  SG001:
+    enabled: true
+    severity: error
+  SG004:
+    severity: warning
+  SG101:
+    enabled: true
+    severity: warning
+exclude:
+  - docs/archive/**
+  - "**/generated/**"

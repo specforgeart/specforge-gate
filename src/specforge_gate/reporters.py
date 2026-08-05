@@ -19,7 +19,10 @@ def render_text(report: AnalysisReport) -> str:
         lines.extend(["", "Findings"])
         for finding in report.findings:
             location = f" line {finding.line}" if finding.line else ""
-            lines.append(f"- [{finding.severity.value.upper()}] {finding.rule_id}{location}: {finding.message}")
+            lines.append(
+                f"- [{finding.severity.value.upper()}] "
+                f"{finding.rule_id}{location}: {finding.message}"
+            )
             lines.append(f"  Fix: {finding.suggestion}")
     return "\n".join(lines)
 

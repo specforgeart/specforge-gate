@@ -9,6 +9,7 @@ from specforge_gate.models import Finding
 
 
 class Rule(Protocol):
-    rule_id: str
+    @property
+    def rule_id(self) -> str: ...
 
     def check(self, document: Document) -> list[Finding]: ...

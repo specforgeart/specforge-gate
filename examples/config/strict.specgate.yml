@@ -1,0 +1,14 @@
+version: 1
+language: auto
+rules:
+  SG004:
+    severity: error
+  SG005:
+    severity: error
+  SG101:
+    severity: error
+  SG103:
+    severity: warning
+exclude:
+  - docs/archive/**
+  - "**/generated/**"

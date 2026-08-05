@@ -1,6 +1,5 @@
 from specforge_gate import Severity, Status, analyze_text
 
-
 GOOD_SPEC = """# Export audit report
 
 ## Goal
@@ -17,7 +16,7 @@ A UTF-8 Markdown file containing the summary and all findings.
 - Report history.
 
 ## Acceptance criteria
-- Given an analysis with 3 findings, when export is requested, then one `.md` file contains all 3 findings.
+- Given 3 findings, when export is requested, then one `.md` file contains all findings.
 - For a 1 MB report, export completes within 2 seconds.
 
 ## Errors and edge cases

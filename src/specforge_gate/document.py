@@ -23,7 +23,7 @@ class Document:
     sections: tuple[Section, ...]
 
     @classmethod
-    def parse(cls, text: str) -> "Document":
+    def parse(cls, text: str) -> Document:
         normalized = text.replace("\r\n", "\n").replace("\r", "\n")
         lines = tuple(normalized.splitlines())
         headings: list[tuple[int, str]] = []
@@ -34,7 +34,11 @@ class Document:
 
         sections: list[Section] = []
         for position, (line_number, title) in enumerate(headings):
-            next_line = headings[position + 1][0] if position + 1 < len(headings) else len(lines) + 1
+            next_line = (
+                headings[position + 1][0]
+                if position + 1 < len(headings)
+                else len(lines) + 1
+            )
             body = "\n".join(lines[line_number: next_line - 1]).strip()
             sections.append(Section(title=title, line=line_number, body=body))
 

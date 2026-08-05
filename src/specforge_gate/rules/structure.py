@@ -84,7 +84,10 @@ def structural_rules() -> tuple[RequiredSectionRule, ...]:
             _NEGATIVE,
             "Errors and edge cases",
             Severity.WARNING,
-            "Describe invalid input, unavailable dependencies, permission failures, and boundaries.",
+            (
+                "Describe invalid input, unavailable dependencies, "
+                "permission failures, and boundaries."
+            ),
         ),
     )
 

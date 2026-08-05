@@ -59,7 +59,10 @@ class VagueWordingRule:
                             rule_id=self.rule_id,
                             severity=Severity.WARNING,
                             message=f"Vague wording: ‘{term}’.",
-                            suggestion="Replace it with an observable threshold, condition, or example.",
+                            suggestion=(
+                                "Replace it with an observable threshold, condition, "
+                                "or example."
+                            ),
                             line=number,
                             excerpt=line.strip(),
                         )
@@ -88,7 +91,10 @@ class UntestableAcceptanceRule:
                         rule_id=self.rule_id,
                         severity=Severity.ERROR,
                         message="Acceptance criterion is not objectively testable.",
-                        suggestion="Define inputs, expected output, threshold, or Given/When/Then behavior.",
+                        suggestion=(
+                            "Define inputs, expected output, threshold, "
+                            "or Given/When/Then behavior."
+                        ),
                         line=line,
                         excerpt=item,
                     )
@@ -109,7 +115,10 @@ class CompoundRequirementRule:
                         rule_id=self.rule_id,
                         severity=Severity.INFO,
                         message="The item appears to contain multiple independent requirements.",
-                        suggestion="Split it into atomic requirements that can be accepted separately.",
+                        suggestion=(
+                            "Split it into atomic requirements that can be "
+                            "accepted separately."
+                        ),
                         line=line,
                         excerpt=item,
                     )
