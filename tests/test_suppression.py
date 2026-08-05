@@ -78,6 +78,27 @@ def test_ignore_next_line_skips_directive_lines() -> None:
     assert not [finding for finding in report.findings if finding.rule_id == "SG101"]
 
 
+def test_ignore_file_preamble_allows_standalone_ordinary_html_comments() -> None:
+    report = analyze_text(
+        "<!-- ordinary project comment -->\n"
+        "<!-- specgate-ignore-file SG004 -->\n"
+        "# Task\n"
+    )
+    assert "SG004" not in {finding.rule_id for finding in report.findings}
+
+
+def test_ignore_next_line_is_consumed_by_fenced_code_opener() -> None:
+    report = analyze_text(
+        VALID_SPEC
+        + "\n<!-- specgate-ignore-next-line SG101 -->\n"
+        + "```\n"
+        + "code\n"
+        + "```\n"
+        + "Make it fast.\n"
+    )
+    assert [finding for finding in report.findings if finding.rule_id == "SG101"]
+
+
 def test_directives_inside_backtick_fences_are_ignored() -> None:
     report = analyze_text("```\n<!-- specgate-ignore-file SG004 -->\n```\n# Task\n")
     assert "SG004" in {finding.rule_id for finding in report.findings}
@@ -98,12 +119,15 @@ def test_directive_lines_are_blanked_before_parsing() -> None:
 
 
 def test_directive_does_not_count_as_section_body() -> None:
-    report = analyze_text(
+    sanitized, _ = parse_suppressions(
         "<!-- specgate-ignore-file SG004 -->\n"
         "## Goal\n"
         "<!-- specgate-ignore-next-line SG101 -->\n"
+        "Make it fast.\n",
+        known_rule_ids={"SG004", "SG101"},
     )
-    assert "SG001" in {finding.rule_id for finding in report.findings}
+    document = Document.parse(sanitized)
+    assert document.find_section(("goal",)).body == "Make it fast."
 
 
 def test_unknown_id_raises_suppression_error() -> None:
@@ -172,6 +196,25 @@ def test_malformed_rule_id_raises_suppression_error() -> None:
         analyze_text("<!-- specgate-ignore-file SG-004 -->\n# Task\n")
 
 
-def test_ignore_next_line_without_target_is_valid_noop() -> None:
-    report = analyze_text(VALID_SPEC + "\n<!-- specgate-ignore-next-line SG101 -->\n")
+def test_ignore_next_line_without_target_raises_suppression_error() -> None:
+    with pytest.raises(SuppressionError) as error:
+        analyze_text(VALID_SPEC + "\n<!-- specgate-ignore-next-line SG101 -->\n")
+    assert error.value.line == 18
+
+
+def test_suppressed_findings_are_absent_from_all_reporters() -> None:
+    from specforge_gate.reporters import render_json, render_markdown, render_text
+
+    report = analyze_text(
+        "<!-- specgate-ignore-file SG001 SG002 SG003 SG004 SG005 SG101 -->\n"
+        "# Task\n\nMake it fast.\n"
+    )
+
     assert report.findings == []
+    assert "PASS" in render_text(report)
+    assert "SG101" not in render_text(report)
+    assert '"status": "PASS"' in render_json(report)
+    assert '"total": 0' in render_json(report)
+    assert "SG101" not in render_json(report)
+    assert "SpecForge Gate: PASS" in render_markdown(report)
+    assert "SG101" not in render_markdown(report)

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
+from types import MappingProxyType
 
 _DIRECTIVE_RE = re.compile(
     r"^\s*<!--\s*(specgate-ignore-file|specgate-ignore-next-line)\b(.*?)-->\s*$",
@@ -25,7 +27,7 @@ class SuppressionError(ValueError):
 @dataclass(frozen=True, slots=True)
 class SuppressionData:
     file_rule_ids: frozenset[str]
-    next_line_rule_ids: dict[int, frozenset[str]]
+    next_line_rule_ids: Mapping[int, frozenset[str]]
 
     def suppresses(self, rule_id: str, line: int | None) -> bool:
         normalized = rule_id.upper()
@@ -51,6 +53,10 @@ def parse_suppressions(text: str, *, known_rule_ids: set[str]) -> tuple[str, Sup
 
     for index, line in enumerate(lines, start=1):
         if _FENCE_RE.match(line):
+            if pending_next:
+                for _, ids in pending_next:
+                    next_ids.setdefault(index, set()).update(ids)
+                pending_next.clear()
             in_fence = not in_fence
             seen_content = True
             continue
@@ -78,15 +84,26 @@ def parse_suppressions(text: str, *, known_rule_ids: set[str]) -> tuple[str, Sup
         if not line.strip():
             continue
 
+        if _is_standalone_html_comment(line):
+            continue
+
         if pending_next:
             for _, ids in pending_next:
                 next_ids.setdefault(index, set()).update(ids)
             pending_next.clear()
         seen_content = True
 
+    if pending_next:
+        directive_line, _ = pending_next[0]
+        raise SuppressionError(
+            "ignore-next-line must target a following content line", line=directive_line
+        )
+
     return "\n".join(sanitized), SuppressionData(
         file_rule_ids=frozenset(file_ids),
-        next_line_rule_ids={line: frozenset(ids) for line, ids in next_ids.items()},
+        next_line_rule_ids=MappingProxyType(
+            {line: frozenset(ids) for line, ids in next_ids.items()}
+        ),
     )
 
 
@@ -102,3 +119,7 @@ def _parse_ids(raw: str, *, line: int, known_rule_ids: set[str]) -> frozenset[st
     if unknown:
         raise SuppressionError(f"unknown suppression rule ID: {', '.join(unknown)}", line=line)
     return ids
+
+
+def _is_standalone_html_comment(line: str) -> bool:
+    return bool(re.match(r"^\s*<!--.*-->\s*$", line))
