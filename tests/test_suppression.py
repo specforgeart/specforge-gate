@@ -99,6 +99,49 @@ def test_ignore_next_line_is_consumed_by_fenced_code_opener() -> None:
     assert [finding for finding in report.findings if finding.rule_id == "SG101"]
 
 
+def test_ordinary_html_comment_consumes_pending_next_line_suppression() -> None:
+    report = analyze_text(
+        VALID_SPEC
+        + "\n<!-- specgate-ignore-next-line SG101 -->\n"
+        + "<!-- ordinary comment -->\n"
+        + "Make it fast.\n"
+    )
+    assert [finding for finding in report.findings if finding.rule_id == "SG101"]
+
+
+def test_tilde_marker_inside_backtick_fence_does_not_close_it() -> None:
+    report = analyze_text(
+        "```\n"
+        "~~~\n"
+        "<!-- specgate-ignore-file SG004 -->\n"
+        "```\n"
+        "# Task\n"
+    )
+    assert "SG004" in {finding.rule_id for finding in report.findings}
+
+
+def test_backtick_marker_inside_tilde_fence_does_not_close_it() -> None:
+    report = analyze_text(
+        "~~~\n"
+        "```\n"
+        "<!-- specgate-ignore-file SG004 -->\n"
+        "~~~\n"
+        "# Task\n"
+    )
+    assert "SG004" in {finding.rule_id for finding in report.findings}
+
+
+def test_shorter_backtick_marker_inside_longer_fence_does_not_close_it() -> None:
+    report = analyze_text(
+        "````\n"
+        "```\n"
+        "<!-- specgate-ignore-file SG004 -->\n"
+        "````\n"
+        "# Task\n"
+    )
+    assert "SG004" in {finding.rule_id for finding in report.findings}
+
+
 def test_directives_inside_backtick_fences_are_ignored() -> None:
     report = analyze_text("```\n<!-- specgate-ignore-file SG004 -->\n```\n# Task\n")
     assert "SG004" in {finding.rule_id for finding in report.findings}

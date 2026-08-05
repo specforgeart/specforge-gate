@@ -12,7 +12,7 @@ _DIRECTIVE_RE = re.compile(
     re.IGNORECASE,
 )
 _ANY_SPEC_GATE_RE = re.compile(r"^\s*<!--\s*specgate-", re.IGNORECASE)
-_FENCE_RE = re.compile(r"^\s*(```|~~~)")
+_FENCE_RE = re.compile(r"^\s*(`{3,}|~{3,})")
 _ID_RE = re.compile(r"^[A-Z]+\d+$", re.IGNORECASE)
 
 
@@ -48,19 +48,26 @@ def parse_suppressions(text: str, *, known_rule_ids: set[str]) -> tuple[str, Sup
     file_ids: set[str] = set()
     next_ids: dict[int, set[str]] = {}
     pending_next: list[tuple[int, frozenset[str]]] = []
-    in_fence = False
+    active_fence: tuple[str, int] | None = None
     seen_content = False
 
     for index, line in enumerate(lines, start=1):
-        if _FENCE_RE.match(line):
+        fence = _FENCE_RE.match(line)
+        if active_fence is not None:
+            if fence:
+                marker = fence.group(1)
+                opener_marker, opener_length = active_fence
+                if marker[0] == opener_marker and len(marker) >= opener_length:
+                    active_fence = None
+            continue
+        if fence:
             if pending_next:
                 for _, ids in pending_next:
                     next_ids.setdefault(index, set()).update(ids)
                 pending_next.clear()
-            in_fence = not in_fence
+            marker = fence.group(1)
+            active_fence = (marker[0], len(marker))
             seen_content = True
-            continue
-        if in_fence:
             continue
 
         match = _DIRECTIVE_RE.match(line)
@@ -85,6 +92,10 @@ def parse_suppressions(text: str, *, known_rule_ids: set[str]) -> tuple[str, Sup
             continue
 
         if _is_standalone_html_comment(line):
+            if pending_next:
+                for _, ids in pending_next:
+                    next_ids.setdefault(index, set()).update(ids)
+                pending_next.clear()
             continue
 
         if pending_next:
