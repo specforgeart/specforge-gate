@@ -37,7 +37,7 @@ exclude:
 - `rules`: optional mapping keyed by stable rule ID (`SG001`, `SG002`, etc.).
   - `enabled`: optional boolean. Set to `false` to suppress that rule.
   - `severity`: optional override. Supported values are `error`, `warning`, and `info`.
-- `exclude`: optional list of path patterns. Matching files are skipped and return a passing empty report.
+- `exclude`: optional list of path patterns for integrations that check discovered or batched files. A file explicitly passed to `specgate check path/to/task.md` is still analyzed even when it matches an exclude pattern.
 
 Unknown top-level fields, unknown rule IDs, unsupported versions, invalid severities, invalid booleans, and invalid YAML return exit code `2` with an error naming the invalid field where possible.
 

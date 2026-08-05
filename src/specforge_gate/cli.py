@@ -53,11 +53,6 @@ def main(argv: list[str] | None = None) -> int:
         print(f"specgate: {exc}", file=sys.stderr)
         return 2
 
-    if config.excludes(args.path):
-        report = analyze_text("", source=str(args.path), rules=(), config=config)
-        print(_RENDERERS[args.format](report))
-        return 0
-
     try:
         text = args.path.read_text(encoding="utf-8")
     except (OSError, UnicodeError) as exc:

@@ -71,7 +71,7 @@ def test_invalid_config_returns_exit_code_two(
     config.write_text("version: 1\nlanguage: de\n", encoding="utf-8")
     task = tmp_path / "task.md"
     task.write_text("# Task\n", encoding="utf-8")
-    assert main(["check", str(task)]) == 2
+    assert main(["check", str(task), "--config", str(config)]) == 2
     assert "config.language" in capsys.readouterr().err
 
 
@@ -81,7 +81,7 @@ def test_valid_language_is_accepted(tmp_path: Path) -> None:
     assert load_project_config(config).language == "ru"
 
 
-def test_excluded_path_is_skipped(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_project_config_matches_excluded_path(tmp_path: Path) -> None:
     (tmp_path / ".specgate.yml").write_text(
         'version: 1\nexclude:\n  - "docs/archive/**"\n', encoding="utf-8"
     )
@@ -89,19 +89,19 @@ def test_excluded_path_is_skipped(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
     archive.mkdir(parents=True)
     task = archive / "task.md"
     task.write_text("# Task\n", encoding="utf-8")
-    monkeypatch.chdir(tmp_path)
-    assert main(["check", str(task)]) == 0
+    config = load_project_config(tmp_path / ".specgate.yml")
+    assert config.excludes(task)
 
 
-def test_non_excluded_path_is_analyzed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_project_config_does_not_match_non_excluded_path(tmp_path: Path) -> None:
     (tmp_path / ".specgate.yml").write_text(
         'version: 1\nexclude:\n  - "docs/archive/**"\n', encoding="utf-8"
     )
     task = tmp_path / "docs" / "task.md"
     task.parent.mkdir()
     task.write_text("# Task\n", encoding="utf-8")
-    monkeypatch.chdir(tmp_path)
-    assert main(["check", str(task)]) == 1
+    config = load_project_config(tmp_path / ".specgate.yml")
+    assert not config.excludes(task)
 
 
 def test_invalid_severity_names_field(tmp_path: Path) -> None:
@@ -130,7 +130,7 @@ def test_invalid_yaml_returns_exit_code_two(
     config.write_text("version: 1\nrules:\n  SG001: [\n", encoding="utf-8")
     task = tmp_path / "task.md"
     task.write_text("# Task\n", encoding="utf-8")
-    assert main(["check", str(task)]) == 2
+    assert main(["check", str(task), "--config", str(config)]) == 2
     assert "invalid YAML" in capsys.readouterr().err
 
 
@@ -141,7 +141,7 @@ def test_unknown_top_level_field_returns_exit_code_two(
     config.write_text("version: 1\nprofiles: {}\n", encoding="utf-8")
     task = tmp_path / "task.md"
     task.write_text("# Task\n", encoding="utf-8")
-    assert main(["check", str(task)]) == 2
+    assert main(["check", str(task), "--config", str(config)]) == 2
     assert "config.profiles" in capsys.readouterr().err
 
 
@@ -152,16 +152,16 @@ def test_unknown_rule_id_returns_exit_code_two(
     config.write_text("version: 1\nrules:\n  missing-goal:\n    enabled: false\n", encoding="utf-8")
     task = tmp_path / "task.md"
     task.write_text("# Task\n", encoding="utf-8")
-    assert main(["check", str(task)]) == 2
+    assert main(["check", str(task), "--config", str(config)]) == 2
     assert "config.rules.missing-goal" in capsys.readouterr().err
 
 
-def test_explicit_config_excludes_supplied_file(tmp_path: Path) -> None:
+def test_explicit_file_matching_exclude_is_still_analyzed(tmp_path: Path) -> None:
     config = tmp_path / "custom.yml"
     config.write_text('version: 1\nexclude:\n  - "task.md"\n', encoding="utf-8")
     task = tmp_path / "task.md"
     task.write_text("# Task\n", encoding="utf-8")
-    assert main(["check", str(task), "--config", str(config)]) == 0
+    assert main(["check", str(task), "--config", str(config)]) == 1
 
 
 def test_backward_compatibility_without_configuration(tmp_path: Path) -> None:
