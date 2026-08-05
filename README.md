@@ -55,6 +55,15 @@ specgate check task.md --format markdown > report.md
 
 By default the CLI exits with code `1` when at least one error exists. Use `--fail-on warning` for a stricter gate or `--fail-on none` for report-only mode.
 
+Inline suppression directives:
+
+```markdown
+<!-- specgate-ignore-file SG004 SG005 -->
+<!-- specgate-ignore-next-line SG101 -->
+```
+
+Suppression directives must be standalone full-line HTML comments. `specgate-ignore-file` is allowed only in the document preamble, while `specgate-ignore-next-line` targets the next non-empty, non-directive physical line. Directive names and rule IDs are case-insensitive; IDs may be separated by spaces, commas, or both. Unknown IDs and malformed directives are validation errors: the CLI prints the source path and directive line, exits with code `2` even with `--fail-on none`, and emits no traceback. See [`docs/suppression.md`](docs/suppression.md).
+
 Project configuration:
 
 ```yaml

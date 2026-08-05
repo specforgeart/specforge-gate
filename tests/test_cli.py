@@ -67,3 +67,15 @@ def test_cli_directory_check_analyzes_non_excluded_files(
     output = capsys.readouterr().out
     assert str(task) in output
     assert '"errors": 3' in output
+
+
+def test_cli_suppression_error_returns_two_even_with_fail_on_none(
+    tmp_path: Path, capsys: object
+) -> None:
+    path = tmp_path / "task.md"
+    path.write_text("<!-- specgate-ignore-file SG999 -->\n# Task\n", encoding="utf-8")
+    assert main(["check", str(path), "--fail-on", "none"]) == 2
+    captured = capsys.readouterr()
+    assert str(path) in captured.err
+    assert ":1:" in captured.err
+    assert "Traceback" not in captured.err

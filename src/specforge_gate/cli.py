@@ -10,6 +10,7 @@ from specforge_gate.config import ConfigError, load_project_config
 from specforge_gate.engine import analyze_text
 from specforge_gate.models import AnalysisReport, Severity, Status
 from specforge_gate.reporters import render_json, render_markdown, render_text
+from specforge_gate.suppression import SuppressionError
 
 _RENDERERS = {"text": render_text, "json": render_json, "markdown": render_markdown}
 
@@ -134,7 +135,11 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         if discovered and config.excludes(path):
             continue
-        reports.append(analyze_text(text, source=str(path), config=config))
+        try:
+            reports.append(analyze_text(text, source=str(path), config=config))
+        except SuppressionError as exc:
+            print(f"specgate: {path}:{exc.line}: {exc}", file=sys.stderr)
+            return 2
 
     print(_render_output(args.format, reports, force_multi=force_multi))
     errors = sum(report.count(Severity.ERROR) for report in reports)
