@@ -1,0 +1,53 @@
+name: PR Policy
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  pr-policy:
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Validate PR title and description
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          import sys
+
+          title = os.environ.get("PR_TITLE", "").strip()
+          body = os.environ.get("PR_BODY", "")
+
+          errors = []
+
+          if not re.match(r"^(feat|fix|docs|test|refactor|chore)(\([a-z0-9._-]+\))?:\s+\S", title):
+              errors.append(
+                  "PR title must use Conventional Commits: "
+                  "feat:, fix:, docs:, test:, refactor:, or chore:."
+              )
+
+          if not re.search(r"(?im)^\s*(closes|fixes|resolves)\s+#\d+\s*$", body):
+              errors.append("PR description must contain a line such as: Closes #123")
+
+          if not re.search(r"(?im)^#{2,3}\s+Description\s*$", body):
+              errors.append("PR description must contain a Description section.")
+
+          if not re.search(r"(?im)^#{2,3}\s+Testing\s*$", body):
+              errors.append("PR description must contain a Testing section.")
+
+          if errors:
+              for error in errors:
+                  print(f"::error::{error}")
+              sys.exit(1)
+
+          print("PR policy passed.")
+          PY

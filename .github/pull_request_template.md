@@ -1,14 +1,29 @@
-## What changed
+## Linked issue
 
-## Why
+Closes #
 
-## How to verify
+### Motivation
 
-## Evidence
+Explain why this change is needed.
 
-## Known limitations
+### Description
 
-## Acceptance criteria
-- [ ] Tests added or updated
-- [ ] Documentation updated
-- [ ] No unrelated changes
+Describe the implementation and user-visible behavior.
+
+### Testing
+
+List the exact commands and results.
+
+### Risks and limitations
+
+State remaining limitations, compatibility concerns, and follow-up work.
+
+### Checklist
+
+- [ ] No direct push to `main`
+- [ ] Ruff passes
+- [ ] MyPy passes
+- [ ] Pytest passes
+- [ ] Coverage is at least 85%
+- [ ] Package build passes
+- [ ] Documentation is updated
