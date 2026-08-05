@@ -8,6 +8,9 @@ version = "0.1.0a1"
 description = "Deterministic quality gate for software requirements and AI coding tasks"
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+  "PyYAML>=6.0.2",
+]
 license = {text = "MIT"}
 authors = [{name = "SpecForge"}]
 keywords = ["requirements", "linter", "acceptance-criteria", "github-actions", "ai-coding"]
@@ -31,6 +34,7 @@ dev = [
   "ruff>=0.6",
   "mypy>=1.11",
   "build>=1.2",
+  "types-PyYAML>=6.0.12",
 ]
 
 [tool.setuptools.packages.find]
@@ -51,3 +55,7 @@ select = ["E", "F", "I", "B", "UP", "SIM"]
 python_version = "3.11"
 strict = true
 packages = ["specforge_gate"]
+
+[[tool.mypy.overrides]]
+module = ["yaml"]
+ignore_missing_imports = true

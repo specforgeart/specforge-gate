@@ -54,6 +54,23 @@ specgate check task.md --format markdown > report.md
 
 By default the CLI exits with code `1` when at least one error exists. Use `--fail-on warning` for a stricter gate or `--fail-on none` for report-only mode.
 
+Project configuration:
+
+```yaml
+version: 1
+language: ru
+rules:
+  SG101:
+    enabled: false
+  SG004:
+    severity: error
+exclude:
+  - docs/archive/**
+  - "**/generated/**"
+```
+
+`specgate check` automatically discovers `.specgate.yml` from the current working directory upward. Use `--config path/to/.specgate.yml` to provide an explicit configuration path. Invalid configuration exits with code `2` and names the invalid field. See [`docs/configuration.md`](docs/configuration.md) and [`.specgate.example.yml`](.specgate.example.yml).
+
 ## Example
 
 Bad input:

@@ -6,6 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from specforge_gate.config import ConfigError, load_project_config
 from specforge_gate.engine import analyze_text
 from specforge_gate.models import Severity
 from specforge_gate.reporters import render_json, render_markdown, render_text
@@ -19,6 +20,11 @@ def build_parser() -> argparse.ArgumentParser:
     check = subparsers.add_parser("check", help="Analyze a Markdown or text file.")
     check.add_argument("path", type=Path)
     check.add_argument("--format", choices=tuple(_RENDERERS), default="text")
+    check.add_argument(
+        "--config",
+        type=Path,
+        help="Path to a .specgate.yml project configuration file.",
+    )
     check.add_argument(
         "--fail-on",
         choices=("none", "warning", "error"),
@@ -42,12 +48,23 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
+        config = load_project_config(args.config)
+    except ConfigError as exc:
+        print(f"specgate: {exc}", file=sys.stderr)
+        return 2
+
+    if config.excludes(args.path):
+        report = analyze_text("", source=str(args.path), rules=(), config=config)
+        print(_RENDERERS[args.format](report))
+        return 0
+
+    try:
         text = args.path.read_text(encoding="utf-8")
     except (OSError, UnicodeError) as exc:
         print(f"specgate: cannot read {args.path}: {exc}", file=sys.stderr)
         return 2
 
-    report = analyze_text(text, source=str(args.path))
+    report = analyze_text(text, source=str(args.path), config=config)
     print(_RENDERERS[args.format](report))
     return int(
         _should_fail(
