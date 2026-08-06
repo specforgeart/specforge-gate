@@ -133,4 +133,8 @@ def _parse_ids(raw: str, *, line: int, known_rule_ids: set[str]) -> frozenset[st
 
 
 def _is_standalone_html_comment(line: str) -> bool:
-    return bool(re.match(r"^\s*<!--.*-->\s*$", line))
+    # This is not an HTML parser or sanitizer. The caller has already split
+    # the document into physical lines, and this recognizes only a complete
+    # standalone comment on one such line.
+    stripped = line.strip()
+    return stripped.startswith("<!--") and stripped.endswith("-->")

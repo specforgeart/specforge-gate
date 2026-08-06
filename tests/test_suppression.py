@@ -261,3 +261,23 @@ def test_suppressed_findings_are_absent_from_all_reporters() -> None:
     assert "SG101" not in render_json(report)
     assert "SpecForge Gate: PASS" in render_markdown(report)
     assert "SG101" not in render_markdown(report)
+
+def test_incomplete_html_comment_does_not_preserve_ignore_file_preamble() -> None:
+    with pytest.raises(SuppressionError) as error:
+        analyze_text(
+            "<!-- unfinished\n"
+            "<!-- specgate-ignore-file SG004 -->\n"
+            "# Task\n"
+        )
+    assert error.value.line == 2
+
+
+def test_multiline_html_comment_does_not_preserve_ignore_file_preamble() -> None:
+    with pytest.raises(SuppressionError) as error:
+        analyze_text(
+            "<!-- ordinary comment starts\n"
+            "and ends here -->\n"
+            "<!-- specgate-ignore-file SG004 -->\n"
+            "# Task\n"
+        )
+    assert error.value.line == 3
