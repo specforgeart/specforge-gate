@@ -12,15 +12,17 @@
 - [x] Pre-commit hooks
 - [x] Project configuration file
 - [x] Rule suppression
+- [x] Public README, demo, product vision, architecture, contributing, security, and support entry points
 - [ ] 40-example regression corpus
-- [ ] Planned REST API
-- [ ] Planned minimal web UI
-- [ ] Planned Docker Compose
-- [ ] Planned reusable GitHub Action
 - [x] Windows installation smoke test
 - [x] Release archive
 
-- [x] Public demo narrative
+## Planned interface expansion
+
+- [ ] Planned reusable GitHub Action
+- [ ] Planned REST API
+- [ ] Planned minimal web UI
+- [ ] Planned Docker Compose
 
 ## v0.2.0 — Optional AI analysis
 

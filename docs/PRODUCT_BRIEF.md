@@ -37,9 +37,9 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - mandatory LLM calls
 - Jira and Bitrix integrations
 
-## Public demo narrative
+## Public vision and demo
 
-The public demo narrative is CLI-first for v0.1.0: run local checks on the bad and improved example tasks, show deterministic findings with stable rule IDs, and avoid implying that planned API, UI, Docker, GitHub Action, or AI-provider features already exist. See [`public-demo.md`](public-demo.md).
+The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current CLI-first behavior and explicitly mark planned API, UI, Docker, GitHub Action, and AI-provider features as planned.
 
 ## Status semantics
 
