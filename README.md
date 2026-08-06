@@ -81,6 +81,10 @@ exclude:
 
 `specgate check` automatically discovers `.specgate.yml` from the current working directory upward. Use `--config path/to/.specgate.yml` to provide an explicit configuration path. Explicit files are always analyzed; `exclude` patterns apply only to files discovered while checking directories. Invalid configuration exits with code `2` and names the invalid field. See [`docs/configuration.md`](docs/configuration.md) and [`.specgate.example.yml`](.specgate.example.yml).
 
+## Public demo
+
+The v0.1.0 public demo is CLI-first: run SpecForge Gate on a weak task, review explainable rule IDs, compare it with an improved task, and optionally show JSON or Markdown output for automation. REST API, minimal web UI, Docker Compose, reusable GitHub Action, and optional AI provider analysis are planned, not current behavior. See [`docs/public-demo.md`](docs/public-demo.md).
+
 ## Example
 
 Bad input:

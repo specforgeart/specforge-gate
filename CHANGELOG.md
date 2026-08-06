@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- public demo narrative that documents the current CLI-first story and planned-feature boundaries
 - initial parser and deterministic rule engine
 - eight built-in rules
 - CLI with text, JSON, and Markdown reports

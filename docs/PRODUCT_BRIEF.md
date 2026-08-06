@@ -23,9 +23,9 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - CLI
 - text, JSON, and Markdown reports
 - Russian and English wording rules
-- GitHub Actions integration
-- minimal web UI and API
-- Docker Compose
+- planned GitHub Actions integration
+- planned minimal web UI and API
+- planned Docker Compose
 
 ## Out of scope
 
@@ -36,6 +36,10 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - RAG
 - mandatory LLM calls
 - Jira and Bitrix integrations
+
+## Public demo narrative
+
+The public demo narrative is CLI-first for v0.1.0: run local checks on the bad and improved example tasks, show deterministic findings with stable rule IDs, and avoid implying that planned API, UI, Docker, GitHub Action, or AI-provider features already exist. See [`public-demo.md`](public-demo.md).
 
 ## Status semantics
 

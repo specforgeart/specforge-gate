@@ -13,17 +13,19 @@
 - [x] Project configuration file
 - [x] Rule suppression
 - [ ] 40-example regression corpus
-- [ ] REST API
-- [ ] Minimal web UI
-- [ ] Docker Compose
-- [ ] Reusable GitHub Action
+- [ ] Planned REST API
+- [ ] Planned minimal web UI
+- [ ] Planned Docker Compose
+- [ ] Planned reusable GitHub Action
 - [x] Windows installation smoke test
 - [x] Release archive
 
+- [x] Public demo narrative
+
 ## v0.2.0 — Optional AI analysis
 
-- [ ] Provider interface
-- [ ] Ollama
-- [ ] OpenAI-compatible endpoint
-- [ ] contradiction analysis
-- [ ] improved-spec draft
+- [ ] Planned provider interface
+- [ ] Planned Ollama integration
+- [ ] Planned OpenAI-compatible endpoint
+- [ ] Planned contradiction analysis
+- [ ] Planned improved-spec draft
