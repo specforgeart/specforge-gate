@@ -1,0 +1,17 @@
+# Text input discovery
+
+## Goal
+Analyze a plain-text specification found during directory traversal.
+
+## Expected result
+The directory check includes this text file in its reports.
+
+## Out of scope
+- Binary files.
+- Files outside the selected directory.
+
+## Acceptance criteria
+- Given 1 text fixture, when the corpus directory is checked, then the JSON summary includes 1 report for this path.
+
+## Errors and edge cases
+- An unreadable file returns exit code 2.

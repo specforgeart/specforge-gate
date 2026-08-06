@@ -1,0 +1,588 @@
+version: 1
+cases:
+- id: bad-en-001-export-report-missing-core
+  path: bad/en/001-export-report-missing-core.md
+  language: en
+  category: bad
+  domain: reporting
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG101
+      severity: warning
+    - rule_id: SG001
+      severity: error
+    - rule_id: SG002
+      severity: error
+    - rule_id: SG003
+      severity: error
+    - rule_id: SG004
+      severity: warning
+    - rule_id: SG005
+      severity: warning
+- id: bad-en-002-password-reset-vague
+  path: bad/en/002-password-reset-vague.md
+  language: en
+  category: bad
+  domain: authentication
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG101
+      severity: warning
+      line: 13
+    - rule_id: SG102
+      severity: error
+      line: 13
+- id: bad-en-003-invoice-missing-edge-cases
+  path: bad/en/003-invoice-missing-edge-cases.md
+  language: en
+  category: bad
+  domain: billing
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG005
+      severity: warning
+- id: bad-en-004-search-compound
+  path: bad/en/004-search-compound.md
+  language: en
+  category: bad
+  domain: search
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings:
+    - rule_id: SG103
+      severity: info
+      line: 10
+- id: bad-en-005-notification-missing-result
+  path: bad/en/005-notification-missing-result.md
+  language: en
+  category: bad
+  domain: notifications
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG002
+      severity: error
+- id: bad-en-006-csv-import-untestable
+  path: bad/en/006-csv-import-untestable.md
+  language: en
+  category: bad
+  domain: data-import
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG101
+      severity: warning
+    - rule_id: SG102
+      severity: error
+- id: bad-en-007-audit-empty-out-of-scope
+  path: bad/en/007-audit-empty-out-of-scope.md
+  language: en
+  category: bad
+  domain: audit-security
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG004
+      severity: warning
+- id: bad-en-008-avatar-missing-acceptance
+  path: bad/en/008-avatar-missing-acceptance.md
+  language: en
+  category: bad
+  domain: user-profile
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG003
+      severity: error
+- id: bad-en-009-rate-limit-missing-goal
+  path: bad/en/009-rate-limit-missing-goal.md
+  language: en
+  category: bad
+  domain: api-platform
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG001
+      severity: error
+- id: bad-en-010-file-upload-vague
+  path: bad/en/010-file-upload-vague.md
+  language: en
+  category: bad
+  domain: file-upload
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG101
+      severity: warning
+      line: 4
+    - rule_id: SG101
+      severity: warning
+      line: 7
+    - rule_id: SG101
+      severity: warning
+      line: 14
+    - rule_id: SG102
+      severity: error
+      line: 14
+- id: bad-ru-011-export-bez-razdelov
+  path: bad/ru/011-export-bez-razdelov.md
+  language: ru
+  category: bad
+  domain: reporting
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG101
+      severity: warning
+    - rule_id: SG001
+      severity: error
+    - rule_id: SG002
+      severity: error
+    - rule_id: SG003
+      severity: error
+    - rule_id: SG004
+      severity: warning
+    - rule_id: SG005
+      severity: warning
+- id: bad-ru-012-vosstanovlenie-parolya
+  path: bad/ru/012-vosstanovlenie-parolya.md
+  language: ru
+  category: bad
+  domain: authentication
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG101
+      severity: warning
+      line: 13
+    - rule_id: SG102
+      severity: error
+      line: 13
+- id: bad-ru-013-import-bez-oshibok
+  path: bad/ru/013-import-bez-oshibok.md
+  language: ru
+  category: bad
+  domain: data-import
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG005
+      severity: warning
+- id: bad-ru-014-poisk-sostavnoe-trebovanie
+  path: bad/ru/014-poisk-sostavnoe-trebovanie.md
+  language: ru
+  category: bad
+  domain: search
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings:
+    - rule_id: SG103
+      severity: info
+      line: 10
+- id: bad-ru-015-uvedomleniya-bez-rezultata
+  path: bad/ru/015-uvedomleniya-bez-rezultata.md
+  language: ru
+  category: bad
+  domain: notifications
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG002
+      severity: error
+- id: bad-ru-016-billing-bez-scope
+  path: bad/ru/016-billing-bez-scope.md
+  language: ru
+  category: bad
+  domain: billing
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG004
+      severity: warning
+- id: boundary-en-033-alternative-section-aliases
+  path: boundary/en/033-alternative-section-aliases.md
+  language: en
+  category: boundary
+  domain: parser-aliases
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: boundary-en-034-empty-goal-section
+  path: boundary/en/034-empty-goal-section.md
+  language: en
+  category: boundary
+  domain: structure
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG001
+      severity: error
+- id: boundary-en-035-measurable-without-gwt
+  path: boundary/en/035-measurable-without-gwt.md
+  language: en
+  category: boundary
+  domain: acceptance-criteria
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: boundary-en-036-directory-text-input
+  path: boundary/en/036-directory-text-input.txt
+  language: en
+  category: boundary
+  domain: cli-discovery
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: boundary-ru-037-russian-section-aliases
+  path: boundary/ru/037-russian-section-aliases.md
+  language: ru
+  category: boundary
+  domain: parser-aliases
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: boundary-ru-038-empty-result-section
+  path: boundary/ru/038-empty-result-section.md
+  language: ru
+  category: boundary
+  domain: structure
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 1
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG002
+      severity: error
+- id: boundary-ru-039-measurable-russian-units
+  path: boundary/ru/039-measurable-russian-units.md
+  language: ru
+  category: boundary
+  domain: acceptance-criteria
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: boundary-ru-040-vague-word-location
+  path: boundary/ru/040-vague-word-location.md
+  language: ru
+  category: boundary
+  domain: finding-location
+  expected:
+    status: NEEDS WORK
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 1
+    findings:
+    - rule_id: SG101
+      severity: warning
+      line: 7
+- id: improved-en-017-export-report
+  path: improved/en/017-export-report.md
+  language: en
+  category: improved
+  domain: reporting
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-018-password-reset
+  path: improved/en/018-password-reset.md
+  language: en
+  category: improved
+  domain: authentication
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-019-invoice-download
+  path: improved/en/019-invoice-download.md
+  language: en
+  category: improved
+  domain: billing
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-020-search-filters
+  path: improved/en/020-search-filters.md
+  language: en
+  category: improved
+  domain: search
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-021-notification-settings
+  path: improved/en/021-notification-settings.md
+  language: en
+  category: improved
+  domain: notifications
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-022-csv-import
+  path: improved/en/022-csv-import.md
+  language: en
+  category: improved
+  domain: data-import
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-023-audit-log
+  path: improved/en/023-audit-log.md
+  language: en
+  category: improved
+  domain: audit-security
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-024-profile-avatar
+  path: improved/en/024-profile-avatar.md
+  language: en
+  category: improved
+  domain: user-profile
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-025-rate-limit
+  path: improved/en/025-rate-limit.md
+  language: en
+  category: improved
+  domain: api-platform
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-en-026-file-upload
+  path: improved/en/026-file-upload.md
+  language: en
+  category: improved
+  domain: file-upload
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-ru-027-export-otcheta
+  path: improved/ru/027-export-otcheta.md
+  language: ru
+  category: improved
+  domain: reporting
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-ru-028-vosstanovlenie-parolya
+  path: improved/ru/028-vosstanovlenie-parolya.md
+  language: ru
+  category: improved
+  domain: authentication
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-ru-029-import-csv
+  path: improved/ru/029-import-csv.md
+  language: ru
+  category: improved
+  domain: data-import
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-ru-030-poisk
+  path: improved/ru/030-poisk.md
+  language: ru
+  category: improved
+  domain: search
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-ru-031-uvedomleniya
+  path: improved/ru/031-uvedomleniya.md
+  language: ru
+  category: improved
+  domain: notifications
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+- id: improved-ru-032-billing
+  path: improved/ru/032-billing.md
+  language: ru
+  category: improved
+  domain: billing
+  expected:
+    status: PASS
+    exit_codes:
+      default: 0
+      fail_on_none: 0
+      fail_on_warning: 0
+    findings: []
+rule_coverage:
+  SG001:
+    positive: bad-en-001-export-report-missing-core
+    negative: improved-en-017-export-report
+  SG002:
+    positive: bad-en-005-notification-missing-result
+    negative: improved-en-021-notification-settings
+  SG003:
+    positive: bad-en-008-avatar-missing-acceptance
+    negative: improved-en-024-profile-avatar
+  SG004:
+    positive: bad-en-007-audit-empty-out-of-scope
+    negative: improved-en-023-audit-log
+  SG005:
+    positive: bad-en-003-invoice-missing-edge-cases
+    negative: improved-en-019-invoice-download
+  SG101:
+    positive: bad-en-010-file-upload-vague
+    negative: improved-en-026-file-upload
+  SG102:
+    positive: bad-en-002-password-reset-vague
+    negative: improved-en-018-password-reset
+  SG103:
+    positive: bad-en-004-search-compound
+    negative: improved-en-020-search-filters

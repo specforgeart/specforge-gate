@@ -15,6 +15,16 @@ The demo is for developers, analysts, product managers, team leads, and maintain
 5. Re-run the check on the improved example to demonstrate the pass path.
 6. Optionally show `--format json` or `--format markdown` for automation-friendly output.
 
+## Regression corpus
+
+The two public demo files remain intentionally simple. Broader behavior is protected by the 40-case manifest-driven corpus under [`examples/corpus`](../examples/corpus), which covers English and Russian bad, improved, and boundary specifications. The corpus is regression evidence, not a replacement for the short before/after demo.
+
+Developers can run it with:
+
+```bash
+python -m pytest tests/test_example_corpus.py
+```
+
 ## Demo commands
 
 Linux and macOS:
