@@ -13,7 +13,7 @@
 - [x] Project configuration file
 - [x] Rule suppression
 - [x] Public README, demo, product vision, architecture, contributing, security, and support entry points
-- [ ] 40-example regression corpus
+- [x] 40-example regression corpus
 - [x] Windows installation smoke test
 - [x] Release archive
 

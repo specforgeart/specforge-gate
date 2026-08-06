@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- 40-example English and Russian regression corpus with manifest-driven contract tests
 - public README, demo, product vision, architecture, contributing, security, and support documentation entry points
 - initial parser and deterministic rule engine
 - eight built-in rules

@@ -130,6 +130,18 @@ A future optional AI layer may add contradiction analysis or improved-spec draft
 | SG102 | Untestable acceptance criterion | error |
 | SG103 | Compound requirement | info |
 
+## Regression corpus
+
+`examples/corpus/` contains 40 manifest-driven English and Russian specifications: bad, improved, and boundary cases across ten product domains. The corpus fixes the expected status, rule IDs, severity, selected finding locations, and CLI exit behavior without snapshotting complete messages or reports.
+
+Run the focused corpus suite after installing development dependencies:
+
+```bash
+python -m pytest tests/test_example_corpus.py
+```
+
+The canonical `scripts/check.ps1` and `scripts/check.sh` commands include the same tests.
+
 ## Quick start: Linux and macOS
 
 ```bash
