@@ -57,3 +57,4 @@ if ($BadExampleExitCode -ne 1) {
 }
 
 Write-Host "All checks passed." -ForegroundColor Green
+exit 0
