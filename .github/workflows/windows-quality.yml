@@ -1,0 +1,34 @@
+name: Windows Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-quality:
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Bootstrap
+        shell: pwsh
+        run: .\scripts\bootstrap.ps1 -SkipHooks
+
+      - name: Run canonical checks
+        shell: pwsh
+        run: .\scripts\check.ps1
