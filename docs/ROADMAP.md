@@ -12,18 +12,22 @@
 - [x] Pre-commit hooks
 - [x] Project configuration file
 - [x] Rule suppression
+- [x] Public README, demo, product vision, architecture, contributing, security, and support entry points
 - [ ] 40-example regression corpus
-- [ ] REST API
-- [ ] Minimal web UI
-- [ ] Docker Compose
-- [ ] Reusable GitHub Action
 - [x] Windows installation smoke test
 - [x] Release archive
 
+## Planned interface expansion
+
+- [ ] Planned reusable GitHub Action
+- [ ] Planned REST API
+- [ ] Planned minimal web UI
+- [ ] Planned Docker Compose
+
 ## v0.2.0 — Optional AI analysis
 
-- [ ] Provider interface
-- [ ] Ollama
-- [ ] OpenAI-compatible endpoint
-- [ ] contradiction analysis
-- [ ] improved-spec draft
+- [ ] Planned provider interface
+- [ ] Planned Ollama integration
+- [ ] Planned OpenAI-compatible endpoint
+- [ ] Planned contradiction analysis
+- [ ] Planned improved-spec draft

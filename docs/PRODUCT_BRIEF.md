@@ -23,9 +23,9 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - CLI
 - text, JSON, and Markdown reports
 - Russian and English wording rules
-- GitHub Actions integration
-- minimal web UI and API
-- Docker Compose
+- planned GitHub Actions integration
+- planned minimal web UI and API
+- planned Docker Compose
 
 ## Out of scope
 
@@ -36,6 +36,10 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - RAG
 - mandatory LLM calls
 - Jira and Bitrix integrations
+
+## Public vision and demo
+
+The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current CLI-first behavior and explicitly mark planned API, UI, Docker, GitHub Action, and AI-provider features as planned.
 
 ## Status semantics
 
