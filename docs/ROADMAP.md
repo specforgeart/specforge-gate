@@ -8,8 +8,8 @@
 - [x] First eight deterministic rules
 - [x] CLI with text, JSON, and Markdown output
 - [x] Linux CI on standard GitHub-hosted runners
-- [ ] Project configuration file
-- [ ] Rule suppression
+- [x] Project configuration file
+- [x] Rule suppression
 - [ ] 40-example regression corpus
 - [ ] REST API
 - [ ] Minimal web UI
