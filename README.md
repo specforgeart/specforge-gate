@@ -103,14 +103,32 @@ See [`examples/bad`](examples/bad) and [`examples/improved`](examples/improved).
 
 ## Development
 
-```bash
-python -m pip install -e ".[dev]"
-ruff check .
-mypy src/specforge_gate
-pytest
+Canonical Windows PowerShell workflow:
+
+```powershell
+.\scripts\bootstrap.ps1
+.\scripts\check.ps1
 ```
 
-The CI workflow uses standard `ubuntu-latest` GitHub-hosted runners.
+Canonical Linux and macOS workflow:
+
+```bash
+bash scripts/bootstrap.sh
+bash scripts/check.sh
+```
+
+The bootstrap scripts create `.venv`, install the project with development dependencies, and install the local pre-commit hook. The check scripts run Ruff, strict MyPy, tests with at least 85% coverage, package build, Twine validation, and a clean installed-wheel CLI smoke test.
+
+Pull requests are verified on GitHub-hosted Linux and Windows runners.
+
+## Releases
+
+1. Update `project.version` in `pyproject.toml`.
+2. Merge the release-ready change into `main`.
+3. Create and push the matching tag, for example `v0.1.0a1`.
+4. The release workflow validates the tag, runs the canonical checks, builds wheel and source distributions, and creates the GitHub Release.
+
+Automatic PyPI publication is intentionally deferred.
 
 ## Roadmap
 

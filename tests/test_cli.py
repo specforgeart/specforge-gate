@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from specforge_gate.cli import main
@@ -23,10 +24,10 @@ def test_cli_accepts_multiple_explicit_files(tmp_path: Path, capsys: object) -> 
 
     assert main(["check", str(second), str(first), "--format", "json", "--fail-on", "none"]) == 0
 
-    output = capsys.readouterr().out
-    assert '"files": 2' in output
-    assert str(first) in output
-    assert str(second) in output
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["summary"]["files"] == 2
+    sources = {report["source"] for report in payload["reports"]}
+    assert sources == {str(first), str(second)}
 
 
 def test_cli_directory_check_applies_exclude_to_discovered_files(
@@ -45,10 +46,11 @@ def test_cli_directory_check_applies_exclude_to_discovered_files(
 
     assert main(["check", str(docs), "--format", "json", "--fail-on", "none"]) == 0
 
-    output = capsys.readouterr().out
-    assert str(checked) in output
-    assert str(excluded) not in output
-    assert '"files": 1' in output
+    payload = json.loads(capsys.readouterr().out)
+    sources = {report["source"] for report in payload["reports"]}
+    assert str(checked) in sources
+    assert str(excluded) not in sources
+    assert payload["summary"]["files"] == 1
 
 
 def test_cli_directory_check_analyzes_non_excluded_files(
@@ -64,9 +66,9 @@ def test_cli_directory_check_analyzes_non_excluded_files(
 
     assert main(["check", str(docs), "--format", "json"]) == 1
 
-    output = capsys.readouterr().out
-    assert str(task) in output
-    assert '"errors": 3' in output
+    payload = json.loads(capsys.readouterr().out)
+    assert [report["source"] for report in payload["reports"]] == [str(task)]
+    assert payload["summary"]["errors"] == 3
 
 
 def test_cli_suppression_error_returns_two_even_with_fail_on_none(

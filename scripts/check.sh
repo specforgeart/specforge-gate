@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+if [[ ! -x .venv/bin/python ]]; then
+  echo 'Missing .venv. Run: bash scripts/bootstrap.sh' >&2
+  exit 2
+fi
+
+PYTHON=.venv/bin/python
+
+"$PYTHON" -m ruff check .
+"$PYTHON" -m mypy src/specforge_gate
+"$PYTHON" -m pytest --cov=specforge_gate --cov-report=term-missing --cov-fail-under=85
+
+rm -rf dist build .venv-smoke
+"$PYTHON" -m build
+"$PYTHON" -m twine check dist/*
+
+"$PYTHON" -m venv .venv-smoke
+wheel="$(find dist -maxdepth 1 -name '*.whl' -print -quit)"
+if [[ -z "$wheel" ]]; then
+  echo 'Built wheel not found.' >&2
+  exit 2
+fi
+
+.venv-smoke/bin/python -m pip install "$wheel"
+.venv-smoke/bin/specgate --help
+
+set +e
+.venv-smoke/bin/specgate check examples/bad/export-task.md --format json >/dev/null 2>&1
+status=$?
+set -e
+
+if [[ "$status" -ne 1 ]]; then
+  echo "Expected exit code 1 for bad example, got $status." >&2
+  exit 2
+fi
+
+echo 'All checks passed.'
