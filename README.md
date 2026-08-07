@@ -226,6 +226,7 @@ exclude:
 - [Architecture](docs/architecture.md) — public architecture overview and interface boundaries.
 - [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
+- [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.
 - [Inline rule suppression](docs/suppression.md) — suppression directive syntax and validation behavior.
 - [Roadmap](docs/ROADMAP.md) — deterministic-first roadmap and planned work.

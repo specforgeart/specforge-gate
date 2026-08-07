@@ -31,6 +31,7 @@ specgate = "specforge_gate.cli:main"
 dev = [
   "pytest>=8.2",
   "pytest-cov>=5.0",
+  "hypothesis>=6.165.2,<7",
   "ruff>=0.6",
   "mypy>=1.11",
   "build>=1.2",
@@ -61,3 +62,20 @@ packages = ["specforge_gate"]
 [[tool.mypy.overrides]]
 module = ["yaml"]
 ignore_missing_imports = true
+
+[tool.mutmut]
+source_paths = ["src/specforge_gate/"]
+do_not_mutate = [
+  "src/specforge_gate/__init__.py",
+  "src/specforge_gate/cli.py",
+  "src/specforge_gate/github_action.py",
+]
+pytest_add_cli_args_test_selection = [
+  "tests/test_engine.py",
+  "tests/test_config.py",
+  "tests/test_suppression.py",
+  "tests/test_properties.py",
+]
+pytest_add_cli_args = ["-q"]
+mutate_only_covered_lines = true
+max_stack_depth = 12

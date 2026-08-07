@@ -30,6 +30,12 @@ Windows Quality continues to execute the canonical Windows bootstrap and check s
 
 Canonical pytest verification collects line and branch coverage and enforces a total floor of 85%. Branch coverage is enabled with `--cov-branch` so untested decision paths are visible even when their containing lines execute.
 
+## Deep deterministic quality layer
+
+The required merge gate stays fast. Hypothesis property-based tests run inside the normal pytest matrix, while mutmut mutation testing runs separately on GitHub-hosted Ubuntu. Mutation testing is scheduled/manual and is intentionally not a required branch-protection context.
+
+The deep layer checks deterministic invariants across Unicode/newline inputs, rule configuration, suppression, source locations, and reporter contracts, then measures whether the test suite detects deliberate logic mutations. See [`mutation-testing.md`](mutation-testing.md) and [`mutation-baseline.md`](mutation-baseline.md).
+
 ## Supply-chain controls
 
 Third-party Actions used by repository workflows and the public composite action are pinned to reviewed full commit SHAs. Human-readable release comments remain beside each SHA, and Dependabot continues to propose updates.
