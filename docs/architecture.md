@@ -1,6 +1,6 @@
 # Architecture
 
-SpecForge Gate is deterministic-first. The implemented core reads local input, parses it, runs deterministic rules, and emits structured reports through the current CLI outputs. The available GitHub Action and planned interfaces call the same core without adding network or provider dependencies to it.
+SpecForge Gate is deterministic-first. The implemented core reads local input, parses it, runs deterministic rules, and emits structured reports through the current CLI outputs. The available GitHub Action, REST API, and web UI preserve the same core boundary without adding network or provider dependencies to it.
 
 ```mermaid
 flowchart TD
@@ -19,7 +19,7 @@ flowchart TD
     I --> O["PR file selection — local git diff"]
     I --> P["GitHub job summary"]
     D --> J["REST API — available"]
-    D -. planned .-> K["Web UI — planned"]
+    D --> K["Web UI — available"]
 
     subgraph AI["Optional AI layer — planned and separate"]
         L["Provider interface — planned"]
@@ -49,7 +49,9 @@ The reusable composite action is an available interface layer. It provisions Pyt
 
 The optional REST API is an available stateless interface layer. It accepts inline text at `POST /v1/check`, maps validated inline rule configuration into the existing `ProjectConfig`, calls the same `analyze_text()` core, and returns the existing structured report contract. It never accepts request-selected filesystem paths or URLs. FastAPI/Uvicorn remain optional interface dependencies and are not dependencies of the deterministic core.
 
-The web UI remains planned and must not be described as available.
+## Web UI interface
+
+The minimal web UI is an available same-origin interface served by the optional FastAPI process at `/`. It is a self-contained HTML/CSS/JavaScript page with no frontend build toolchain or external runtime assets. The browser sends pasted text only to the existing `/v1/check` endpoint, renders returned fields through DOM text nodes, supports severity filtering, and can copy the current deterministic report as Markdown. It adds no dependency or behavior to the deterministic core.
 
 ## Optional AI boundary
 

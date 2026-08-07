@@ -20,17 +20,17 @@ Find high-risk requirement gaps locally, offline, and without an API key. Every 
 - Stable rule IDs are public API.
 - Text, JSON, and Markdown outputs are automation interfaces.
 - Planned AI features must be optional and separate from deterministic checks.
-- Available and planned interfaces must be labeled accurately; API, UI, Docker, and AI work remain planned.
+- Available and planned interfaces must be labeled accurately; implemented API/UI surfaces must not be confused with planned Docker or AI work.
 
 ## Current capability
 
-SpecForge Gate currently provides a local CLI and a reusable GitHub Action. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary.
+SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an optional stateless REST API, and a minimal same-origin web UI. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary. The browser UI provides a zero-install paste-and-check flow over the same REST endpoint.
 
 The current deterministic rule set checks for required sections, vague wording, untestable acceptance criteria, and compound requirements. See the rule table in the [README](../README.md#current-rules).
 
 ## Planned capability
 
-The REST API is now available as an optional stateless interface over the deterministic core. The roadmap continues with a planned web UI, planned Docker Compose, and planned optional AI analysis.
+The REST API and minimal web UI are available as optional interfaces over the deterministic core. The roadmap continues with planned Docker Compose and planned optional AI analysis.
 
 ## Relationship to the product brief
 
