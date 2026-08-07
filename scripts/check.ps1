@@ -46,9 +46,13 @@ if (-not $Wheel) {
     throw "Built wheel was not found."
 }
 
-Invoke-Step "Install built wheel" { & $SmokePython -m pip install $Wheel.FullName }
+$WheelWithApi = "$($Wheel.FullName)[api]"
+Invoke-Step "Install built wheel with API extra" { & $SmokePython -m pip install $WheelWithApi }
 $Specgate = (Resolve-Path ".venv-smoke\Scripts\specgate.exe").Path
 Invoke-Step "Smoke-test CLI help" { & $Specgate --help }
+Invoke-Step "Smoke-test REST API import" {
+    & $SmokePython -c "from specforge_gate.api import app; assert app.title == 'SpecForge Gate API'"
+}
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
 $BadExampleExitCode = $LASTEXITCODE

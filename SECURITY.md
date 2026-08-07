@@ -24,4 +24,4 @@ If GitHub private vulnerability reporting is available for this repository, use 
 
 ## Scope boundaries
 
-The current deterministic CLI runs locally and does not require an API key or upload documents. Planned REST API, web UI, Docker, GitHub Action, and optional AI-provider integrations are not implemented yet and should not be reported as available attack surfaces in the current codebase.
+The deterministic CLI and GitHub Action do not require an API key or upload documents. The optional REST API is stateless, accepts inline text, and does not persist request bodies or make provider calls. Web UI, Docker, and optional AI-provider integrations remain planned and should not be reported as available attack surfaces yet.

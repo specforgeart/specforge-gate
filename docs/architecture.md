@@ -18,7 +18,7 @@ flowchart TD
     D --> I["GitHub Action — available"]
     I --> O["PR file selection — local git diff"]
     I --> P["GitHub job summary"]
-    D -. planned .-> J["REST API — planned"]
+    D --> J["REST API — available"]
     D -. planned .-> K["Web UI — planned"]
 
     subgraph AI["Optional AI layer — planned and separate"]
@@ -45,7 +45,11 @@ flowchart TD
 
 The reusable composite action is an available interface layer. It provisions Python, installs the package from the action checkout, selects pull-request Markdown changes with a local three-dot `git diff`, applies project configuration, runs the deterministic engine, and writes a Markdown job summary. It requires no API-write token and does not send specification content outside the runner.
 
-The REST API and web UI remain planned interface layers and must not be described as available.
+## REST API interface
+
+The optional REST API is an available stateless interface layer. It accepts inline text at `POST /v1/check`, maps validated inline rule configuration into the existing `ProjectConfig`, calls the same `analyze_text()` core, and returns the existing structured report contract. It never accepts request-selected filesystem paths or URLs. FastAPI/Uvicorn remain optional interface dependencies and are not dependencies of the deterministic core.
+
+The web UI remains planned and must not be described as available.
 
 ## Optional AI boundary
 

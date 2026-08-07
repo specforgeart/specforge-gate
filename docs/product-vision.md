@@ -30,7 +30,7 @@ The current deterministic rule set checks for required sections, vague wording, 
 
 ## Planned capability
 
-The roadmap now continues with a planned REST API, planned web UI, planned Docker Compose, and planned optional AI analysis. These capabilities are not available in the current implementation.
+The REST API is now available as an optional stateless interface over the deterministic core. The roadmap continues with a planned web UI, planned Docker Compose, and planned optional AI analysis.
 
 ## Relationship to the product brief
 

@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- optional stateless REST API over the deterministic analysis core
 - deep deterministic quality layer with Hypothesis invariants and scheduled mutmut mutation testing
 - measured mutation baseline with 98.18% kill rate and an exact reviewed survivor allowlist
 - hardened merge gates with stable CI and Action Smoke contexts, branch coverage, SHA-pinned Actions, moderate dependency review, and scheduled dependency auditing

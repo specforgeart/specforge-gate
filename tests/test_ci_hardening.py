@@ -30,7 +30,7 @@ def _third_party_uses(path: Path) -> list[str]:
     return uses
 
 
-def test_linux_ci_separates_one_time_quality_from_python_matrix() -> None:
+def test_linux_ci_runs_canonical_quality_and_python_matrix() -> None:
     workflow = _yaml(".github/workflows/ci.yml")
     jobs = workflow["jobs"]
 
@@ -39,12 +39,12 @@ def test_linux_ci_separates_one_time_quality_from_python_matrix() -> None:
     assert jobs["ci-gate"]["needs"] == ["static-package", "tests"]
 
     static_steps = jobs["static-package"]["steps"]
-    static_runs = "\n".join(step.get("run", "") for step in static_steps)
-    assert "ruff check ." in static_runs
-    assert "mypy src/specforge_gate" in static_runs
-    assert "python -m build" in static_runs
-    assert "python -m twine check dist/*" in static_runs
-    assert "pytest" not in static_runs
+    canonical = next(step for step in static_steps if step.get("name") == "Canonical Linux quality")
+    assert canonical["env"] == {"SKIP_HOOKS": "1", "PYTHON": "python"}
+    assert canonical["run"].splitlines() == [
+        "bash scripts/bootstrap.sh",
+        "bash scripts/check.sh",
+    ]
 
     test_runs = "\n".join(step.get("run", "") for step in jobs["tests"]["steps"])
     assert "pytest" in test_runs
