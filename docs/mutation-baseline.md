@@ -1,6 +1,6 @@
 # Mutation testing baseline
 
-> **Status: REMEDIATION IN PROGRESS. DO NOT MERGE ISSUE #19 YET.**
+> **Status: FINAL.**
 
 The first GitHub-hosted Ubuntu mutation run completed successfully for PR #20. It established a clean tooling baseline and exposed meaningful survivor clusters that are being converted into explicit regression contracts before the final Issue #19 merge.
 
@@ -75,67 +75,37 @@ only.
 
 Mutation testing remains deliberately **outside** required `main` branch protection.
 
-## Diagnostic measurement 3
+## Final remediation measurement 4
 
-The diagnostic GitHub-hosted Ubuntu run completed successfully without changing the
-mutation score, as expected, because it added observability rather than behavioral tests:
+The final targeted regression pass completed successfully on GitHub-hosted Ubuntu:
 
-- workflow run: `Mutation Testing` run `31180007212`;
-- implementation head: `e39a6f953a19e2e0db40b2eb4c9a5ce8e2ee071d`;
+- workflow run: `Mutation Testing` run `31181702170`;
+- implementation head: `abcbc261b0e19f238632146ae58c1116173213fc`;
 - Ubuntu runner: `ubuntu-24.04`;
 - Python: `3.11.15`;
 - mutmut: `3.7.0`;
-- focused clean tests: **86 passed**;
+- focused clean tests: **94 passed**;
 - total mutants: **495**;
-- killed: **471**;
-- survived: **24**;
-- kill rate: **95.15%**;
-- no-test, timeout, suspicious, skipped, and incomplete/error states: **0**.
+- killed: **486**;
+- survived: **9**;
+- no tests: **0**;
+- timeout: **0**;
+- suspicious: **0**;
+- skipped: **0**;
+- incomplete/error states: **0**;
+- kill rate `killed / (killed + survived)`: **98.18%**.
 
-The diagnostic step successfully applied every survivor one at a time, emitted its exact
-`git diff`, restored `src/specforge_gate`, and finished with a clean product source tree.
+All **15 behavior-changing survivors** identified by the diagnostic pass were killed.
+The only remaining mutants are the nine accepted survivors classified above as semantic
+or mutation-environment equivalents. No meaningful survivor remains untriaged.
 
-### Meaningful survivors targeted by the final remediation pass
+The permanent workflow records those nine exact IDs in
+`.github/mutation-allowed-survivors.txt`. `scripts/mutation_summary.py` compares every
+future scheduled/manual mutation result against that allowlist. Resolved accepted
+survivors are allowed, but any new survivor causes the mutation workflow to fail and
+requires explicit triage.
 
-The exact diffs show **15 behavior-changing survivors** that should be killed by explicit
-regression contracts:
-
-- engine: default `source` mutation variants, `continue` -> `break` after a suppressed
-  finding, and loss of numeric line ordering;
-- suppression: lone-CR replacement corruption, equal-length fence-closing behavior,
-  control-flow breaks inside/opening fenced blocks, pending-next suppression targeting
-  a fence opener, preamble state after fenced content, malformed-directive message/line,
-  and canonical multi-ID error formatting.
-
-The remediation tests added after this diagnostic run directly exercise those behaviors.
-
-### Survivors accepted as equivalent or mutation-environment-equivalent
-
-Nine survivors are not useful targets for extra behavioral tests:
-
-- `reporters.x_render_json__mutmut_2`: `ensure_ascii=False` -> `None`; both are falsey
-  and produce the same `json.dumps` behavior.
-- `engine.x_analyze_text__mutmut_44`: `item.line or 0` -> `item.line or 1`; valid finding
-  lines are positive integers or `None`, and the preceding `item.line is None` key keeps
-  `None` findings in a separate ordering bucket.
-- `config.x_load_project_config__mutmut_8`: explicit UTF-8 -> platform default encoding.
-  This is intentionally retained for cross-platform correctness, but Ubuntu's default
-  encoding is UTF-8, so the mutation is behaviorally indistinguishable on the mutation
-  runner. White-box assertions on the exact `Path.read_text` argument are deliberately
-  avoided.
-- `config.x_load_project_config__mutmut_10`: `utf-8` -> `UTF-8`; Python treats these as
-  the same codec alias.
-- `config.x__validate_config__mutmut_111`: omission of `version=version`; validation
-  accepts only version `1`, which is also `ProjectConfig`'s default.
-- `suppression.x_parse_suppressions__mutmut_12`: removing explicit lone-CR replacement;
-  `str.splitlines()` already recognizes lone CR boundaries before sanitized text is
-  rejoined with LF.
-- `suppression.x_parse_suppressions__mutmut_23`: `seen_content=False` -> `None`; before
-  assignment to `True`, the value is used only as a falsey preamble-state flag.
-- `suppression.x_parse_suppressions__mutmut_38` and `__mutmut_52`: fence marker
-  `marker[0]` -> `marker[1]`; `_FENCE_RE` permits only homogeneous runs of backticks or
-  tildes, so those characters are necessarily identical.
-
-These survivors are documented rather than hidden with implementation-coupled tests.
-After the remediation measurement confirms the meaningful mutations are killed, the
-temporary PR trigger and diagnostic diff step will be removed in the final cleanup commit.
+The temporary `pull_request` bootstrap trigger and diagnostic `mutmut apply` step are
+removed after this measurement. Permanent mutation testing now runs only on the weekly
+schedule or by manual `workflow_dispatch`, remains read-only, and stays outside required
+`main` branch protection.

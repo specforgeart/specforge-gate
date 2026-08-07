@@ -57,14 +57,13 @@ def test_mutmut_scope_targets_deterministic_product_logic() -> None:
 def test_mutation_workflow_is_separate_read_only_and_pinned() -> None:
     workflow = _yaml(".github/workflows/mutation-testing.yml")
     triggers = workflow["on"]
-    assert "schedule" in triggers
-    assert "workflow_dispatch" in triggers
-    assert "pull_request" in triggers  # temporary bootstrap trigger; removed after baseline capture
+    assert set(triggers) == {"schedule", "workflow_dispatch"}
     assert workflow["permissions"] == {"contents": "read"}
 
     job = workflow["jobs"]["mutation-testing"]
     assert job["runs-on"] == "ubuntu-latest"
     assert int(job["timeout-minutes"]) <= 45
+    assert "if" not in job
 
     text = (ROOT / ".github/workflows/mutation-testing.yml").read_text(encoding="utf-8")
     assert f"actions/checkout@{CHECKOUT_SHA} # v4.3.1" in text
@@ -72,11 +71,11 @@ def test_mutation_workflow_is_separate_read_only_and_pinned() -> None:
     assert f'mutmut=={MUTMUT_VERSION}' in text
     assert "mutmut run --max-children 4" in text
     assert "scripts/mutation_summary.py" in text
+    assert "--allowed-survivors .github/mutation-allowed-survivors.txt" in text
     assert '"$GITHUB_STEP_SUMMARY"' in text
-    assert "Capture surviving mutant diffs" in text
-    assert 'mutmut apply "$mutant"' in text
-    assert "git diff --no-ext-diff --unified=3 -- src/specforge_gate" in text
-    assert "git restore --source=HEAD --worktree --staged -- src/specforge_gate" in text
+    assert "Capture surviving mutant diffs" not in text
+    assert "mutmut apply" not in text
+    assert "pull_request:" not in text
 
 
 def test_mutation_testing_is_not_a_required_main_context() -> None:
@@ -94,21 +93,35 @@ def test_mutation_testing_is_not_a_required_main_context() -> None:
     }
 
 
-def test_bootstrap_baseline_records_measurement_and_remediation_state() -> None:
+def test_final_mutation_baseline_and_allowlist_are_recorded() -> None:
     baseline = (ROOT / "docs/mutation-baseline.md").read_text(encoding="utf-8")
-    assert "Status: REMEDIATION IN PROGRESS" in baseline
-    assert "DO NOT MERGE" in baseline
-    assert "total mutants: **478**" in baseline
-    assert "killed: **348**" in baseline
-    assert "survived: **130**" in baseline
-    assert "**72.80%**" in baseline
+    assert "Status: FINAL" in baseline
+    assert "DO NOT MERGE" not in baseline
+    assert "run `31181702170`" in baseline
+    assert "implementation head: `abcbc261b0e19f238632146ae58c1116173213fc`" in baseline
     assert "total mutants: **495**" in baseline
-    assert "killed: **471**" in baseline
-    assert "survived: **24**" in baseline
-    assert "**95.15%**" in baseline
-    assert "130 to 24" in baseline
-    assert "exact source diff" in baseline
-    assert "remove the temporary `pull_request` trigger" in baseline
+    assert "killed: **486**" in baseline
+    assert "survived: **9**" in baseline
+    assert "**98.18%**" in baseline
+    assert "15 behavior-changing survivors" in baseline
+    assert "nine accepted survivors" in baseline
+
+    allowed = set(
+        (ROOT / ".github/mutation-allowed-survivors.txt")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    )
+    assert allowed == {
+        "specforge_gate.reporters.x_render_json__mutmut_2",
+        "specforge_gate.engine.x_analyze_text__mutmut_44",
+        "specforge_gate.config.x_load_project_config__mutmut_8",
+        "specforge_gate.config.x_load_project_config__mutmut_10",
+        "specforge_gate.config.x__validate_config__mutmut_111",
+        "specforge_gate.suppression.x_parse_suppressions__mutmut_12",
+        "specforge_gate.suppression.x_parse_suppressions__mutmut_23",
+        "specforge_gate.suppression.x_parse_suppressions__mutmut_38",
+        "specforge_gate.suppression.x_parse_suppressions__mutmut_52",
+    }
 
 
 def test_gitignore_excludes_property_and_mutation_caches() -> None:

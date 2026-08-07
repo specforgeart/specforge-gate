@@ -35,6 +35,8 @@ The workflow has `contents: read` permissions only.
 
 `pyproject.toml` limits mutation to meaningful deterministic product logic and excludes package metadata, CLI argument plumbing, and GitHub Action integration plumbing. `scripts/mutation_summary.py` reads mutmut 3.x `.meta` files and writes a non-interactive summary to the job summary and logs.
 
+The measured baseline has nine reviewed equivalent/platform-equivalent survivors. Their exact IDs live in `.github/mutation-allowed-survivors.txt`. The summary script fails a scheduled/manual mutation run if any survivor appears outside that allowlist; accepted survivors that become killed do not fail the run.
+
 See [`mutation-baseline.md`](mutation-baseline.md) for the measured baseline and survivor triage.
 
 ## Native Windows

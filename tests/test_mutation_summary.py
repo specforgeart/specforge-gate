@@ -92,3 +92,83 @@ def test_mutation_summary_rejects_missing_metadata(tmp_path: Path) -> None:
     )
 
     assert completed.returncode == 1
+
+def test_mutation_summary_accepts_only_allowlisted_survivors(tmp_path: Path) -> None:
+    mutants = tmp_path / "mutants"
+    _write_meta(mutants, {"survivor": 0, "killed": 1})
+    results = tmp_path / "results.txt"
+    results.write_text(
+        "    specforge_gate.engine.x_demo__mutmut_1: survived\n",
+        encoding="utf-8",
+    )
+    allowed = tmp_path / "allowed.txt"
+    allowed.write_text(
+        "specforge_gate.engine.x_demo__mutmut_1\n"
+        "specforge_gate.engine.x_resolved__mutmut_2\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "summary.json"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--mutants",
+            str(mutants),
+            "--results",
+            str(results),
+            "--allowed-survivors",
+            str(allowed),
+            "--output",
+            str(output),
+            "--require-complete",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0
+    summary = json.loads(output.read_text(encoding="utf-8"))
+    assert summary["accepted_survivors"] == [
+        "specforge_gate.engine.x_demo__mutmut_1"
+    ]
+    assert summary["unexpected_survivors"] == []
+    assert summary["resolved_allowed_survivors"] == [
+        "specforge_gate.engine.x_resolved__mutmut_2"
+    ]
+
+
+def test_mutation_summary_rejects_unexpected_survivor(tmp_path: Path) -> None:
+    mutants = tmp_path / "mutants"
+    _write_meta(mutants, {"survivor": 0})
+    results = tmp_path / "results.txt"
+    results.write_text(
+        "    specforge_gate.engine.x_new__mutmut_9: survived\n",
+        encoding="utf-8",
+    )
+    allowed = tmp_path / "allowed.txt"
+    allowed.write_text(
+        "specforge_gate.engine.x_known__mutmut_1\n",
+        encoding="utf-8",
+    )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--mutants",
+            str(mutants),
+            "--results",
+            str(results),
+            "--allowed-survivors",
+            str(allowed),
+            "--output",
+            str(tmp_path / "summary.json"),
+            "--require-complete",
+        ],
+        check=False,
+    )
+
+    assert completed.returncode == 1
+
