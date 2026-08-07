@@ -154,7 +154,7 @@ jobs:
   requirements:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
 
@@ -225,6 +225,7 @@ exclude:
 - [Demo narrative](docs/demo.md) — CLI-first public demo script and demo guardrails.
 - [Architecture](docs/architecture.md) — public architecture overview and interface boundaries.
 - [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
+- [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.
 - [Inline rule suppression](docs/suppression.md) — suppression directive syntax and validation behavior.
 - [Roadmap](docs/ROADMAP.md) — deterministic-first roadmap and planned work.
@@ -248,9 +249,9 @@ bash scripts/bootstrap.sh
 bash scripts/check.sh
 ```
 
-The bootstrap scripts create `.venv`, install the project with development dependencies, and install the local pre-commit hook. The check scripts run Ruff, strict MyPy, tests with at least 85% coverage, package build, Twine validation, and a clean installed-wheel CLI smoke test.
+The bootstrap scripts create `.venv`, install the project with development dependencies, and install the local pre-commit hook. The check scripts run Ruff, strict MyPy, tests with line and branch coverage at an enforced 85% floor, package build, Twine validation, and a clean installed-wheel CLI smoke test.
 
-Pull requests are verified on GitHub-hosted Linux and Windows runners.
+Pull requests are verified on GitHub-hosted Linux and Windows runners. The Linux workflow runs static/package verification once, tests Python 3.11–3.13 separately, and exposes a stable `ci-gate`; the reusable Action exposes a stable `action-smoke` integration gate. See [`docs/quality-gates.md`](docs/quality-gates.md).
 
 ## Releases
 

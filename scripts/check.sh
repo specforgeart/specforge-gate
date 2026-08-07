@@ -13,7 +13,7 @@ PYTHON=.venv/bin/python
 
 "$PYTHON" -m ruff check .
 "$PYTHON" -m mypy src/specforge_gate
-"$PYTHON" -m pytest --cov=specforge_gate --cov-report=term-missing --cov-fail-under=85
+"$PYTHON" -m pytest --cov=specforge_gate --cov-branch --cov-report=term-missing --cov-fail-under=85
 
 rm -rf dist build .venv-smoke
 "$PYTHON" -m build

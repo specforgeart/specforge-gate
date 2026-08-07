@@ -25,7 +25,7 @@ $Python = (Resolve-Path $PythonPath).Path
 Invoke-Step "Ruff" { & $Python -m ruff check . }
 Invoke-Step "MyPy" { & $Python -m mypy src/specforge_gate }
 Invoke-Step "Pytest with coverage" {
-    & $Python -m pytest --cov=specforge_gate --cov-report=term-missing --cov-fail-under=85
+    & $Python -m pytest --cov=specforge_gate --cov-branch --cov-report=term-missing --cov-fail-under=85
 }
 
 Remove-Item dist, build -Recurse -Force -ErrorAction SilentlyContinue

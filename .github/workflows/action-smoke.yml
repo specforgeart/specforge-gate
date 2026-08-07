@@ -8,16 +8,18 @@ permissions:
   contents: read
 
 jobs:
-  explicit-pass:
+  action-smoke:
+    name: action-smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
 
       - name: Run local action on a passing specification
-        id: gate
+        id: pass
         uses: ./
         with:
           paths: examples/improved/export-task.md
@@ -26,20 +28,12 @@ jobs:
       - name: Verify pass outputs
         shell: bash
         run: |
-          test "${{ steps.gate.outputs.status }}" = "PASS"
-          test "${{ steps.gate.outputs.files }}" = "1"
-          test "${{ steps.gate.outputs.total }}" = "0"
+          test "${{ steps.pass.outputs.status }}" = "PASS"
+          test "${{ steps.pass.outputs.files }}" = "1"
+          test "${{ steps.pass.outputs.total }}" = "0"
 
-  explicit-report-only:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Run local action on a failing specification
-        id: gate
+      - name: Run local action in report-only mode
+        id: report-only
         uses: ./
         with:
           paths: examples/bad/export-task.md
@@ -48,20 +42,12 @@ jobs:
       - name: Verify report-only outputs
         shell: bash
         run: |
-          test "${{ steps.gate.outputs.status }}" = "NEEDS WORK"
-          test "${{ steps.gate.outputs.files }}" = "1"
-          test "${{ steps.gate.outputs.errors }}" -gt "0"
-
-  pull-request-selection:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+          test "${{ steps.report-only.outputs.status }}" = "NEEDS WORK"
+          test "${{ steps.report-only.outputs.files }}" = "1"
+          test "${{ steps.report-only.outputs.errors }}" -gt "0"
 
       - name: Run local action on changed Markdown files
+        if: github.event_name == 'pull_request'
         uses: ./
         with:
           fail-on: none
