@@ -22,7 +22,7 @@
 - [x] Reusable GitHub Action
 - [x] REST API
 - [x] Minimal web UI
-- [ ] Planned Docker Compose
+- [x] Docker image and Compose
 
 ## v0.2.0 — Optional AI analysis
 

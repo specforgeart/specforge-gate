@@ -57,10 +57,39 @@ jobs:
       - name: Test with branch coverage
         run: pytest --cov=specforge_gate --cov-branch --cov-report=term-missing --cov-fail-under=85
 
+  container-smoke:
+    name: container-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Validate Compose model
+        run: docker compose config --quiet
+
+      - name: Build and start container
+        run: docker compose up --build -d --wait --wait-timeout 60
+
+      - name: Verify container contract
+        run: |
+          test "$(docker compose exec -T specforge-gate id -u)" = "10001"
+          curl --fail --silent --show-error http://127.0.0.1:8000/healthz | grep '"status":"ok"'
+          curl --fail --silent --show-error http://127.0.0.1:8000/ | grep -F 'SpecForge Gate'
+          response="$(curl --fail --silent --show-error \
+            --header 'Content-Type: application/json' \
+            --data '{"text":"Need it fast."}' \
+            http://127.0.0.1:8000/v1/check)"
+          printf '%s' "$response" | grep -F '"status":"NEEDS WORK"'
+
+      - name: Tear down container
+        if: always()
+        run: docker compose down --remove-orphans
+
   ci-gate:
     name: ci-gate
     if: always()
-    needs: [static-package, tests]
+    needs: [static-package, tests, container-smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 2
 
@@ -69,6 +98,8 @@ jobs:
         env:
           STATIC_PACKAGE_RESULT: ${{ needs.static-package.result }}
           TESTS_RESULT: ${{ needs.tests.result }}
+          CONTAINER_SMOKE_RESULT: ${{ needs.container-smoke.result }}
         run: |
           test "$STATIC_PACKAGE_RESULT" = "success"
           test "$TESTS_RESULT" = "success"
+          test "$CONTAINER_SMOKE_RESULT" = "success"

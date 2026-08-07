@@ -34,9 +34,9 @@ def test_linux_ci_runs_canonical_quality_and_python_matrix() -> None:
     workflow = _yaml(".github/workflows/ci.yml")
     jobs = workflow["jobs"]
 
-    assert set(jobs) == {"static-package", "tests", "ci-gate"}
+    assert set(jobs) == {"static-package", "tests", "container-smoke", "ci-gate"}
     assert jobs["tests"]["strategy"]["matrix"]["python-version"] == ["3.11", "3.12", "3.13"]
-    assert jobs["ci-gate"]["needs"] == ["static-package", "tests"]
+    assert jobs["ci-gate"]["needs"] == ["static-package", "tests", "container-smoke"]
 
     static_steps = jobs["static-package"]["steps"]
     canonical = next(step for step in static_steps if step.get("name") == "Canonical Linux quality")
@@ -51,6 +51,18 @@ def test_linux_ci_runs_canonical_quality_and_python_matrix() -> None:
     assert "--cov-branch" in test_runs
     assert "--cov-fail-under=85" in test_runs
     assert "python -m build" not in test_runs
+
+    container_steps = jobs["container-smoke"]["steps"]
+    container_runs = "\n".join(step.get("run", "") for step in container_steps)
+    assert "docker compose config --quiet" in container_runs
+    assert "docker compose up --build -d --wait --wait-timeout 60" in container_runs
+    assert "docker compose exec -T specforge-gate id -u" in container_runs
+    assert "/healthz" in container_runs
+    assert "/v1/check" in container_runs
+    assert "docker compose down --remove-orphans" in container_runs
+
+    gate_runs = "\n".join(step.get("run", "") for step in jobs["ci-gate"]["steps"] )
+    assert 'test "$CONTAINER_SMOKE_RESULT" = "success"' in gate_runs
 
 
 def test_action_smoke_exposes_one_stable_job_and_three_scenarios() -> None:

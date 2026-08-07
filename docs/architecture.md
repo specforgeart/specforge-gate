@@ -1,6 +1,6 @@
 # Architecture
 
-SpecForge Gate is deterministic-first. The implemented core reads local input, parses it, runs deterministic rules, and emits structured reports through the current CLI outputs. The available GitHub Action, REST API, and web UI preserve the same core boundary without adding network or provider dependencies to it.
+SpecForge Gate is deterministic-first. The implemented core reads local input, parses it, runs deterministic rules, and emits structured reports through the current CLI outputs. The available GitHub Action, REST API, web UI, and container deployment preserve the same core boundary without adding network or provider dependencies to it.
 
 ```mermaid
 flowchart TD
@@ -20,6 +20,7 @@ flowchart TD
     I --> P["GitHub job summary"]
     D --> J["REST API — available"]
     D --> K["Web UI — available"]
+    J --> Q["Docker / Compose — available"]
 
     subgraph AI["Optional AI layer — planned and separate"]
         L["Provider interface — planned"]
@@ -52,6 +53,10 @@ The optional REST API is an available stateless interface layer. It accepts inli
 ## Web UI interface
 
 The minimal web UI is an available same-origin interface served by the optional FastAPI process at `/`. It is a self-contained HTML/CSS/JavaScript page with no frontend build toolchain or external runtime assets. The browser sends pasted text only to the existing `/v1/check` endpoint, renders returned fields through DOM text nodes, supports severity filtering, and can copy the current deterministic report as Markdown. It adds no dependency or behavior to the deterministic core.
+
+## Container interface
+
+The Docker image and one-service Compose deployment package the existing FastAPI process rather than creating a new product service. The container serves the same REST API and web UI, runs as a non-root user, and relies on the existing `/healthz` endpoint. Compose binds to loopback by default and adds a read-only root filesystem, ephemeral `/tmp`, dropped capabilities, and `no-new-privileges`. The container layer adds no persistence, database, reverse proxy, authentication, or provider dependency.
 
 ## Optional AI boundary
 

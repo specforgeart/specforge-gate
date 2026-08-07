@@ -108,8 +108,9 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
 | REST API | available | Optional stateless `POST /v1/check` interface over the deterministic core. |
 | Web UI | available | Same-origin paste-and-check UI served by the optional API at `/`. |
+| Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
 
-Docker Compose and optional AI-provider analysis remain planned work.
+Optional AI-provider analysis remains planned work.
 
 ## Deterministic core vs optional AI
 
@@ -180,6 +181,16 @@ Analyze inline text with `POST /v1/check`. Valid documents return HTTP `200` whe
 
 The same optional API process now serves a zero-install browser demo at `http://127.0.0.1:8000/`. Paste Markdown or plain text, run the deterministic gate, filter findings by severity, and copy the report as Markdown. The page is self-contained, loads no CDN assets, and sends analysis requests only to the same-origin `/v1/check` endpoint. See [Web UI](docs/web-ui.md).
 
+## Docker Compose
+
+Run the same REST API and web UI in one hardened local container:
+
+```bash
+docker compose up --build -d --wait
+```
+
+The default mapping is `127.0.0.1:8000:8000`; set `SPECFORGE_PORT` to choose another local port. The service runs non-root with a read-only root filesystem, ephemeral `/tmp`, dropped Linux capabilities, and `no-new-privileges`. No database, volume, reverse proxy, authentication, or AI provider is added. See [Docker image and Compose](docs/container.md).
+
 ## Quick start: Linux and macOS
 
 ```bash
@@ -242,6 +253,7 @@ exclude:
 - [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
 - [REST API](docs/rest-api.md) — stateless endpoint contract, optional installation, configuration, and security boundary.
 - [Web UI](docs/web-ui.md) — zero-install paste-and-check demo, filtering, Markdown copy, and browser security boundary.
+- [Docker image and Compose](docs/container.md) — hardened local container deployment and security boundary.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.
