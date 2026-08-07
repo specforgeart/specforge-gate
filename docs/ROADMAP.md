@@ -19,7 +19,7 @@
 
 ## Planned interface expansion
 
-- [ ] Planned reusable GitHub Action
+- [x] Reusable GitHub Action
 - [ ] Planned REST API
 - [ ] Planned minimal web UI
 - [ ] Planned Docker Compose

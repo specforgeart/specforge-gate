@@ -1,0 +1,67 @@
+name: Action Smoke
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  explicit-pass:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run local action on a passing specification
+        id: gate
+        uses: ./
+        with:
+          paths: examples/improved/export-task.md
+          fail-on: error
+
+      - name: Verify pass outputs
+        shell: bash
+        run: |
+          test "${{ steps.gate.outputs.status }}" = "PASS"
+          test "${{ steps.gate.outputs.files }}" = "1"
+          test "${{ steps.gate.outputs.total }}" = "0"
+
+  explicit-report-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run local action on a failing specification
+        id: gate
+        uses: ./
+        with:
+          paths: examples/bad/export-task.md
+          fail-on: none
+
+      - name: Verify report-only outputs
+        shell: bash
+        run: |
+          test "${{ steps.gate.outputs.status }}" = "NEEDS WORK"
+          test "${{ steps.gate.outputs.files }}" = "1"
+          test "${{ steps.gate.outputs.errors }}" -gt "0"
+
+  pull-request-selection:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run local action on changed Markdown files
+        uses: ./
+        with:
+          fail-on: none

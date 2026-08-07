@@ -105,11 +105,11 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | CLI | available | `specgate check` analyzes local Markdown/text files and directories. |
 | JSON output | available | Use `--format json` for machine-readable automation. |
 | Markdown output | available | Use `--format markdown` for reports and job summaries. |
-| GitHub Action | planned | Planned reusable workflow integration; not implemented in this repository yet. |
+| GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
 | REST API | planned | Planned stateless interface; not implemented in this repository yet. |
 | Web UI | planned | Planned paste-and-check demo; not implemented in this repository yet. |
 
-Docker Compose and optional AI-provider analysis are also planned work, not current functionality.
+REST API, web UI, Docker Compose, and optional AI-provider analysis remain planned work.
 
 ## Deterministic core vs optional AI
 
@@ -141,6 +141,29 @@ python -m pytest tests/test_example_corpus.py
 ```
 
 The canonical `scripts/check.ps1` and `scripts/check.sh` commands include the same tests.
+
+## GitHub Action
+
+The repository-root composite action checks changed Markdown files in pull requests without posting comments or sending specification content to an external service. It requires only `contents: read`.
+
+```yaml
+permissions:
+  contents: read
+
+jobs:
+  requirements:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: specforgeart/specforge-gate@main
+        with:
+          fail-on: error
+```
+
+The pre-release example uses `@main`; pin a reviewed commit SHA or an action-containing release tag for stable automation. Empty `paths` selects added, modified, and renamed `.md` or `.markdown` files from the pull-request diff. Explicit paths, `fail-on`, and an explicit configuration path are also supported. See [GitHub Action](docs/github-action.md) and the [complete workflow example](.github/examples/specforge-gate.yml).
 
 ## Quick start: Linux and macOS
 
@@ -200,7 +223,8 @@ exclude:
 
 - [Product vision](docs/product-vision.md) — public product concept, audience, principles, and boundaries.
 - [Demo narrative](docs/demo.md) — CLI-first public demo script and demo guardrails.
-- [Architecture](docs/architecture.md) — public architecture overview and planned-interface boundaries.
+- [Architecture](docs/architecture.md) — public architecture overview and interface boundaries.
+- [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.
 - [Inline rule suppression](docs/suppression.md) — suppression directive syntax and validation behavior.
 - [Roadmap](docs/ROADMAP.md) — deterministic-first roadmap and planned work.
