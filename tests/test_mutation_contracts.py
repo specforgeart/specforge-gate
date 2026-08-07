@@ -376,3 +376,84 @@ def test_suppression_exact_errors(
         parse_suppressions(text, known_rule_ids=known)
     assert str(error.value) == message
     assert error.value.line == line
+
+
+def test_engine_default_source_is_stable_public_contract() -> None:
+    report = analyze_text(
+        "content\n",
+        rules=(StaticRule("ZZ001", ()),),
+    )
+    assert report.source == "<text>"
+
+
+def test_engine_continues_after_a_suppressed_finding() -> None:
+    rule = StaticRule(
+        "ZZ001",
+        (
+            Finding("ZZ001", Severity.WARNING, "suppressed", "fix", line=2),
+            Finding("ZZ001", Severity.WARNING, "kept", "fix", line=3),
+        ),
+    )
+    report = analyze_text(
+        "<!-- specgate-ignore-next-line ZZ001 -->\nfirst\nsecond\n",
+        rules=(rule,),
+    )
+    assert [(finding.message, finding.line) for finding in report.findings] == [("kept", 3)]
+
+
+def test_engine_sorts_distinct_lines_before_rule_id() -> None:
+    rules = (
+        StaticRule("AA001", (Finding("AA001", Severity.WARNING, "line two", "fix", line=2),)),
+        StaticRule("ZZ001", (Finding("ZZ001", Severity.WARNING, "line one", "fix", line=1),)),
+    )
+    report = analyze_text("first\nsecond\n", rules=rules)
+    assert [(finding.rule_id, finding.line) for finding in report.findings] == [
+        ("ZZ001", 1),
+        ("AA001", 2),
+    ]
+
+
+def test_suppression_normalizes_lone_cr_boundaries() -> None:
+    sanitized, suppressions = parse_suppressions(
+        "<!-- specgate-ignore-next-line SG001 -->\rfirst\rsecond",
+        known_rule_ids={"SG001"},
+    )
+    assert sanitized == "\nfirst\nsecond"
+    assert dict(suppressions.next_line_rule_ids) == {2: frozenset({"SG001"})}
+
+
+def test_suppression_equal_length_fence_closes_and_marks_content() -> None:
+    text = "```\ninside\n```\n<!-- specgate-ignore-file SG001 -->\nafter\n"
+    with pytest.raises(SuppressionError) as error:
+        parse_suppressions(text, known_rule_ids={"SG001"})
+    assert str(error.value) == "ignore-file must appear in the document preamble"
+    assert error.value.line == 4
+
+
+def test_suppression_next_line_targets_fence_opener() -> None:
+    sanitized, suppressions = parse_suppressions(
+        "<!-- specgate-ignore-next-line SG001 -->\n```\ninside\n```\n",
+        known_rule_ids={"SG001"},
+    )
+    assert sanitized == "\n```\ninside\n```"
+    assert dict(suppressions.next_line_rule_ids) == {2: frozenset({"SG001"})}
+
+
+def test_malformed_suppression_preserves_message_and_line() -> None:
+    with pytest.raises(SuppressionError) as error:
+        parse_suppressions(
+            "<!-- specgate-ignore-file SG001 --> trailing\n",
+            known_rule_ids={"SG001"},
+        )
+    assert str(error.value) == "malformed suppression directive"
+    assert error.value.line == 1
+
+
+def test_multiple_unknown_suppression_ids_use_canonical_delimiter() -> None:
+    with pytest.raises(SuppressionError) as error:
+        parse_suppressions(
+            "<!-- specgate-ignore-file SG999 SG998 -->\n",
+            known_rule_ids={"SG001"},
+        )
+    assert str(error.value) == "unknown suppression rule ID: SG998, SG999"
+    assert error.value.line == 1
