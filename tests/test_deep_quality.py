@@ -50,6 +50,7 @@ def test_mutmut_scope_targets_deterministic_product_logic() -> None:
         "tests/test_config.py",
         "tests/test_suppression.py",
         "tests/test_properties.py",
+        "tests/test_mutation_contracts.py",
     } <= selection
 
 
@@ -89,12 +90,16 @@ def test_mutation_testing_is_not_a_required_main_context() -> None:
     }
 
 
-def test_bootstrap_baseline_is_explicitly_pending_before_pr_measurement() -> None:
+def test_bootstrap_baseline_records_measurement_and_remediation_state() -> None:
     baseline = (ROOT / "docs/mutation-baseline.md").read_text(encoding="utf-8")
-    assert "Status: PENDING BOOTSTRAP MEASUREMENT" in baseline
+    assert "Status: REMEDIATION IN PROGRESS" in baseline
     assert "DO NOT MERGE" in baseline
-    assert "GitHub-hosted Ubuntu" in baseline
-    assert "Remove the temporary `pull_request` bootstrap trigger" in baseline
+    assert "total mutants: **478**" in baseline
+    assert "killed: **348**" in baseline
+    assert "survived: **130**" in baseline
+    assert "**72.80%**" in baseline
+    assert "second GitHub-hosted Ubuntu mutation run" in baseline
+    assert "remove the temporary PR trigger" in baseline
 
 
 def test_gitignore_excludes_property_and_mutation_caches() -> None:

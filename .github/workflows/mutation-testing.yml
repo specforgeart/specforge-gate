@@ -44,7 +44,8 @@ jobs:
             tests/test_engine.py \
             tests/test_config.py \
             tests/test_suppression.py \
-            tests/test_properties.py
+            tests/test_properties.py \
+            tests/test_mutation_contracts.py
 
       - name: Run mutation testing
         id: mutmut

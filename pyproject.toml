@@ -75,6 +75,7 @@ pytest_add_cli_args_test_selection = [
   "tests/test_config.py",
   "tests/test_suppression.py",
   "tests/test_properties.py",
+  "tests/test_mutation_contracts.py",
 ]
 pytest_add_cli_args = ["-q"]
 mutate_only_covered_lines = true

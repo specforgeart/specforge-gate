@@ -1,34 +1,41 @@
 # Mutation testing baseline
 
-> **Status: PENDING BOOTSTRAP MEASUREMENT. DO NOT MERGE THIS ISSUE UNTIL THIS FILE IS UPDATED WITH THE MEASURED GITHUB-HOSTED UBUNTU RESULT.**
+> **Status: REMEDIATION IN PROGRESS. DO NOT MERGE ISSUE #19 YET.**
 
-Issue #19 introduces mutation testing as a separate deep-quality layer. The first measurement must come from the temporary pull-request bootstrap trigger in `.github/workflows/mutation-testing.yml` because mutmut 3.x requires POSIX `fork` support and cannot execute natively on Windows.
+The first GitHub-hosted Ubuntu mutation run completed successfully for PR #20. It established a clean tooling baseline and exposed meaningful survivor clusters that are being converted into explicit regression contracts before the final Issue #19 merge.
 
-## Scope
+## Bootstrap measurement 1
 
-The configured mutation source is `src/specforge_gate/`, excluding package metadata, CLI plumbing, and GitHub Action integration plumbing. The focused test selection covers the deterministic engine, configuration, suppression, rules, document parsing, reporters, and property-based invariants.
+- workflow run: `Mutation Testing` run `31174423523`;
+- implementation head: `689c8883abffb6840549f23dc9ecd383b551ab6f`;
+- Ubuntu runner: `ubuntu-24.04`;
+- Python: `3.11.15`;
+- mutmut: `3.7.0`;
+- mutated files: `10`;
+- total mutants: **478**;
+- killed: **348**;
+- survived: **130**;
+- no tests: **0**;
+- timeout: **0**;
+- suspicious: **0**;
+- skipped: **0**;
+- incomplete/error states: **0**;
+- kill rate `killed / (killed + survived)`: **72.80%**.
 
-The run records these categories from mutmut metadata:
+The run itself completed successfully. The absence of no-test, timeout, suspicious, interrupted, invalid-metadata, and other incomplete states means the 130 survivors are test-strength evidence rather than an incomplete mutation run.
 
-- killed;
-- survived;
-- no tests;
-- timeout;
-- suspicious;
-- skipped;
-- incomplete/error states.
+## Survivor remediation
 
-The primary kill-rate metric is `killed / (killed + survived)`. `no tests`, timeout, and suspicious mutations are reported separately because they require different triage.
+The first-pass survivors cluster around user-visible reporter formatting, analysis-engine copying/sorting/configuration behavior, configuration validation, suppression parsing, and structural-rule metadata/diagnostics.
 
-## Baseline procedure
+The follow-up test pass therefore adds exact behavioral contracts for:
 
-1. Open the Issue #19 implementation pull request.
-2. Wait for the non-required `Mutation Testing / mutation-testing` job to finish on GitHub-hosted Ubuntu.
-3. Read the JSON summary from the job log and the surviving-mutant list emitted by `mutmut results`.
-4. Classify every meaningful survivor/no-test/timeout/suspicious mutation.
-5. Add or strengthen tests for real gaps; document only genuinely equivalent or tooling-artifact survivors.
-6. Replace this pending section with the measured counts, kill rate, run URL, commit SHA, and survivor rationale.
-7. Remove the temporary `pull_request` bootstrap trigger so permanent mutation testing is schedule/manual only.
-8. Re-run the normal required pull-request gates before merge.
+- text, JSON, and Markdown reporter output, including empty reports and non-ASCII JSON;
+- engine suppression, severity override, copied findings, source preservation, and deterministic ordering;
+- the structural rule registry, aliases, severities, suggestions, and missing-section diagnostics;
+- suppression normalization, exact target-line mappings, case normalization, and validation errors;
+- configuration validation errors and a full valid configuration mapping.
 
-Mutation testing is deliberately **not** a required `main` branch-protection context. Its purpose is to measure test strength without making every pull request wait for the deep test layer.
+The temporary `pull_request` trigger remains enabled only while this remediation is measured. A second GitHub-hosted Ubuntu mutation run must complete after these tests are added. The final Issue #19 commit will then record the measured post-remediation result, classify any remaining meaningful survivors, remove the temporary PR trigger, and leave mutation testing schedule/manual only.
+
+Mutation testing remains deliberately **outside** required `main` branch protection.
