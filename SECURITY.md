@@ -24,4 +24,4 @@ If GitHub private vulnerability reporting is available for this repository, use 
 
 ## Scope boundaries
 
-The deterministic CLI and GitHub Action do not require an API key or upload documents. The optional REST API is stateless, accepts inline text, and does not persist request bodies or make provider calls. Web UI, Docker, and optional AI-provider integrations remain planned and should not be reported as available attack surfaces yet.
+The deterministic CLI and GitHub Action do not require an API key or upload documents. The optional REST API is stateless, accepts inline text, and does not persist request bodies or make provider calls. The minimal web UI is served from the same API process, loads no external runtime assets, and sends pasted text only to same-origin `/v1/check`; browser input/result rendering does not use HTML injection. Docker and optional AI-provider integrations remain planned and should not be reported as available attack surfaces yet.

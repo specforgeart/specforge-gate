@@ -47,11 +47,22 @@
 
 ### 4. Minimal web UI
 
+**Status:** completed.
+
 **Problem:** non-CLI users need a zero-install demonstration.
 
 **Scope:** paste text, run analysis, filter findings, copy Markdown report.
 
 **Out of scope:** accounts, saved history, rich editor, and collaboration.
+
+**Acceptance criteria:**
+- `GET /` serves the browser UI from the optional API process without a frontend build step.
+- Users can paste Markdown/plain text and run the existing `POST /v1/check` analysis.
+- Findings can be filtered by error, warning, info, or all severities.
+- The current deterministic report can be copied as Markdown.
+- The page loads no external runtime assets and uses same-origin API requests only.
+- Untrusted finding/report text is rendered through text nodes rather than HTML injection.
+- The UI route stays outside the REST OpenAPI product contract.
 
 ### 5. Reusable GitHub Action
 

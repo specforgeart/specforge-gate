@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from specforge_gate import __version__
@@ -13,6 +14,7 @@ from specforge_gate.engine import analyze_text
 from specforge_gate.models import Severity, Status
 from specforge_gate.rules import builtin_rules
 from specforge_gate.suppression import SuppressionError
+from specforge_gate.web_ui import WEB_UI_HEADERS, WEB_UI_HTML
 
 DEFAULT_MAX_TEXT_CHARS = 1_000_000
 MAX_SOURCE_CHARS = 1_024
@@ -104,6 +106,14 @@ def create_app(*, max_text_chars: int = DEFAULT_MAX_TEXT_CHARS) -> FastAPI:
         version=__version__,
         description="Stateless REST interface for the deterministic SpecForge Gate core.",
     )
+
+    @app.get(
+        "/",
+        response_class=HTMLResponse,
+        include_in_schema=False,
+    )
+    def web_ui() -> HTMLResponse:
+        return HTMLResponse(content=WEB_UI_HTML, headers=WEB_UI_HEADERS)
 
     @app.get(
         "/healthz",

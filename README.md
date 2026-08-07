@@ -107,9 +107,9 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | Markdown output | available | Use `--format markdown` for reports and job summaries. |
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
 | REST API | available | Optional stateless `POST /v1/check` interface over the deterministic core. |
-| Web UI | planned | Planned paste-and-check demo; not implemented in this repository yet. |
+| Web UI | available | Same-origin paste-and-check UI served by the optional API at `/`. |
 
-Web UI, Docker Compose, and optional AI-provider analysis remain planned work.
+Docker Compose and optional AI-provider analysis remain planned work.
 
 ## Deterministic core vs optional AI
 
@@ -176,6 +176,10 @@ python -m uvicorn specforge_gate.api:app --host 127.0.0.1 --port 8000
 
 Analyze inline text with `POST /v1/check`. Valid documents return HTTP `200` whether the deterministic report is `PASS` or `NEEDS WORK`; invalid request/configuration or suppression syntax returns HTTP `422`, and text above the configured limit returns HTTP `413`. The API accepts no request-selected file path or URL and performs no outbound provider call. See [REST API](docs/rest-api.md).
 
+## Web UI
+
+The same optional API process now serves a zero-install browser demo at `http://127.0.0.1:8000/`. Paste Markdown or plain text, run the deterministic gate, filter findings by severity, and copy the report as Markdown. The page is self-contained, loads no CDN assets, and sends analysis requests only to the same-origin `/v1/check` endpoint. See [Web UI](docs/web-ui.md).
+
 ## Quick start: Linux and macOS
 
 ```bash
@@ -237,6 +241,7 @@ exclude:
 - [Architecture](docs/architecture.md) — public architecture overview and interface boundaries.
 - [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
 - [REST API](docs/rest-api.md) — stateless endpoint contract, optional installation, configuration, and security boundary.
+- [Web UI](docs/web-ui.md) — zero-install paste-and-check demo, filtering, Markdown copy, and browser security boundary.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.
@@ -262,7 +267,7 @@ bash scripts/bootstrap.sh
 bash scripts/check.sh
 ```
 
-The bootstrap scripts create `.venv`, install the project with development dependencies, and install the local pre-commit hook. The check scripts run Ruff, strict MyPy, tests with line and branch coverage at an enforced 85% floor, package build, Twine validation, and clean installed-wheel CLI and REST API import smoke tests.
+The bootstrap scripts create `.venv`, install the project with development dependencies, and install the local pre-commit hook. The check scripts run Ruff, strict MyPy, tests with line and branch coverage at an enforced 85% floor, package build, Twine validation, and clean installed-wheel CLI, REST API, and web-UI route smoke tests.
 
 Pull requests are verified on GitHub-hosted Linux and Windows runners. The Linux workflow runs static/package verification once, tests Python 3.11–3.13 separately, and exposes a stable `ci-gate`; the reusable Action exposes a stable `action-smoke` integration gate. See [`docs/quality-gates.md`](docs/quality-gates.md).
 

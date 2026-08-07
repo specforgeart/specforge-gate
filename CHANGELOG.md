@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- minimal same-origin web UI for paste-and-check analysis, severity filtering, and Markdown report copy
 - optional stateless REST API over the deterministic analysis core
 - deep deterministic quality layer with Hypothesis invariants and scheduled mutmut mutation testing
 - measured mutation baseline with 98.18% kill rate and an exact reviewed survivor allowlist

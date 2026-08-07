@@ -51,7 +51,7 @@ Invoke-Step "Install built wheel with API extra" { & $SmokePython -m pip install
 $Specgate = (Resolve-Path ".venv-smoke\Scripts\specgate.exe").Path
 Invoke-Step "Smoke-test CLI help" { & $Specgate --help }
 Invoke-Step "Smoke-test REST API import" {
-    & $SmokePython -c "from specforge_gate.api import app; assert app.title == 'SpecForge Gate API'"
+    & $SmokePython -c "from specforge_gate.api import app; assert app.title == 'SpecForge Gate API'; assert any(route.path == '/' for route in app.routes)"
 }
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null

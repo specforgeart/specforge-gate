@@ -11,6 +11,8 @@ python -m uvicorn specforge_gate.api:app --host 127.0.0.1 --port 8000
 
 Use `0.0.0.0` only when you intentionally want the process reachable from other hosts. Authentication, TLS termination, rate limiting, and reverse-proxy policy are deployment concerns and are not implemented by the pre-release API server.
 
+The same process serves the minimal browser UI at `GET /`. That page is intentionally excluded from OpenAPI because `/healthz` and `/v1/check` remain the REST product contract.
+
 ## Endpoints
 
 ### `GET /healthz`
@@ -79,5 +81,7 @@ The API layer:
 - reads no request-selected local files;
 - has no persistence, upload, authentication, CORS policy, or provider integration;
 - calls the same deterministic `analyze_text()` core as the CLI.
+
+The browser UI adds no external asset requests and posts analysis only to same-origin `/v1/check`. Its response sets no-store, no-referrer, nosniff, and a restrictive Content Security Policy; returned finding data is inserted through DOM text nodes rather than `innerHTML`.
 
 Production deployment should place authentication, TLS, request-rate controls, and external exposure policy in an appropriate reverse proxy or hosting layer.
