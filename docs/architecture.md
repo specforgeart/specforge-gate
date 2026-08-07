@@ -1,6 +1,6 @@
 # Architecture
 
-SpecForge Gate is deterministic-first. The implemented core reads local input, parses it, runs deterministic rules, and emits structured reports through the current CLI outputs. Planned interfaces must call the same core without adding network or provider dependencies to it.
+SpecForge Gate is deterministic-first. The implemented core reads local input, parses it, runs deterministic rules, and emits structured reports through the current CLI outputs. The available GitHub Action and planned interfaces call the same core without adding network or provider dependencies to it.
 
 ```mermaid
 flowchart TD
@@ -15,7 +15,9 @@ flowchart TD
     E --> G["JSON output — available"]
     E --> H["Markdown output — available"]
 
-    D -. planned .-> I["GitHub Action — planned"]
+    D --> I["GitHub Action — available"]
+    I --> O["PR file selection — local git diff"]
+    I --> P["GitHub job summary"]
     D -. planned .-> J["REST API — planned"]
     D -. planned .-> K["Web UI — planned"]
 
@@ -39,9 +41,11 @@ flowchart TD
 5. The report model renders text, JSON, or Markdown output.
 6. Exit codes are controlled by `--fail-on` and remain compatibility-sensitive.
 
-## Planned interfaces
+## GitHub Action interface
 
-The planned GitHub Action, REST API, and web UI are interface layers only. They are not implemented in the current repository state and must not be described as available in public materials.
+The reusable composite action is an available interface layer. It provisions Python, installs the package from the action checkout, selects pull-request Markdown changes with a local three-dot `git diff`, applies project configuration, runs the deterministic engine, and writes a Markdown job summary. It requires no API-write token and does not send specification content outside the runner.
+
+The REST API and web UI remain planned interface layers and must not be described as available.
 
 ## Optional AI boundary
 

@@ -53,6 +53,8 @@
 
 ### 5. Reusable GitHub Action
 
+**Status:** completed through Issue #15.
+
 **Problem:** repositories need to stop low-quality specifications before merge.
 
 **Scope:** check changed Markdown files and write a job summary.

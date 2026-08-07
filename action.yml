@@ -1,0 +1,71 @@
+name: SpecForge Gate
+description: Deterministic quality gate for Markdown requirements and AI coding tasks.
+author: SpecForge
+
+inputs:
+  paths:
+    description: >-
+      Optional newline-delimited files, directories, or glob patterns. When empty on a
+      pull_request event, the action checks added, modified, and renamed Markdown files.
+    required: false
+    default: ""
+  fail-on:
+    description: >-
+      Finding threshold that fails the step: none, warning, or error.
+    required: false
+    default: error
+  config:
+    description: Optional path to a .specgate.yml file relative to the repository workspace.
+    required: false
+    default: ""
+  python-version:
+    description: Python version used to run SpecForge Gate.
+    required: false
+    default: "3.11"
+
+outputs:
+  status:
+    description: PASS, NEEDS WORK, or ERROR.
+    value: ${{ steps.gate.outputs.status }}
+  files:
+    description: Number of checked files.
+    value: ${{ steps.gate.outputs.files }}
+  errors:
+    description: Number of error findings.
+    value: ${{ steps.gate.outputs.errors }}
+  warnings:
+    description: Number of warning findings.
+    value: ${{ steps.gate.outputs.warnings }}
+  info:
+    description: Number of informational findings.
+    value: ${{ steps.gate.outputs.info }}
+  total:
+    description: Total number of findings.
+    value: ${{ steps.gate.outputs.total }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: ${{ inputs['python-version'] }}
+
+    - name: Install SpecForge Gate
+      shell: bash
+      run: python -m pip install --disable-pip-version-check --no-input "${{ github.action_path }}"
+
+    - name: Check specifications
+      id: gate
+      shell: bash
+      env:
+        INPUT_PATHS: ${{ inputs.paths }}
+        INPUT_FAIL_ON: ${{ inputs['fail-on'] }}
+        INPUT_CONFIG: ${{ inputs.config }}
+        SPECFORGE_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        SPECFORGE_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      run: python -m specforge_gate.github_action
+
+branding:
+  icon: check-circle
+  color: orange
