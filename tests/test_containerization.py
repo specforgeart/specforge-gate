@@ -6,6 +6,10 @@ from typing import Any
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+PYTHON_IMAGE = (
+    "python:3.12-slim-bookworm@"
+    "sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2"
+)
 
 
 def _yaml(path: str) -> dict[str, Any]:
@@ -15,7 +19,9 @@ def _yaml(path: str) -> dict[str, Any]:
 def test_dockerfile_is_multi_stage_non_root_and_health_checked() -> None:
     text = (ROOT / "Dockerfile").read_text(encoding="utf-8")
 
-    assert text.count("FROM python:3.12-slim-bookworm") == 2
+    assert text.count(f"FROM {PYTHON_IMAGE}") == 2
+    assert "# syntax=" not in text
+    assert "FROM python:3.12-slim-bookworm AS" not in text
     assert " AS builder" in text
     assert " AS runtime" in text
     assert "python -m build --wheel --outdir /dist" in text

@@ -29,7 +29,7 @@ docker compose up --build -d --wait
 
 ## Image design
 
-The `Dockerfile` uses a multi-stage build. The builder creates the project wheel; the runtime stage installs that wheel with the existing `api` extra and contains no source checkout or development dependency set. The service:
+The `Dockerfile` uses a multi-stage build. The builder creates the project wheel; the runtime stage installs that wheel with the existing `api` extra and contains no source checkout or development dependency set. Both stages pin the Python base image by immutable digest while keeping the readable `3.12-slim-bookworm` tag; weekly Docker Dependabot updates make base-image changes explicit and reviewable. The service:
 
 - runs as a non-root UID/GID `10001`;
 - disables Python bytecode writes;
