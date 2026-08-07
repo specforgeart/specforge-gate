@@ -36,6 +36,41 @@ The follow-up test pass therefore adds exact behavioral contracts for:
 - suppression normalization, exact target-line mappings, case normalization, and validation errors;
 - configuration validation errors and a full valid configuration mapping.
 
-The temporary `pull_request` trigger remains enabled only while this remediation is measured. A second GitHub-hosted Ubuntu mutation run must complete after these tests are added. The final Issue #19 commit will then record the measured post-remediation result, classify any remaining meaningful survivors, remove the temporary PR trigger, and leave mutation testing schedule/manual only.
+## Bootstrap measurement 2
+
+The survivor-contract pass was measured on the second GitHub-hosted Ubuntu run:
+
+- workflow run: `Mutation Testing` run `31177397007`;
+- implementation head: `d54b98d836bc8152a6bf6026a909f4c4d733a643`;
+- Ubuntu runner: `ubuntu-24.04`;
+- Python: `3.11.15`;
+- mutmut: `3.7.0`;
+- mutated files: `10`;
+- focused clean tests: **86 passed**;
+- total mutants: **495**;
+- killed: **471**;
+- survived: **24**;
+- no tests: **0**;
+- timeout: **0**;
+- suspicious: **0**;
+- skipped: **0**;
+- incomplete/error states: **0**;
+- kill rate `killed / (killed + survived)`: **95.15%**.
+
+This reduced survivors from **130 to 24** while keeping the mutation run complete. The
+remaining survivors are distributed across reporters (1), engine (5), configuration
+(3), and suppression parsing (15). A numeric score alone is not used to waive them.
+
+## Remaining survivor classification
+
+The result list identifies mutant IDs but does not by itself show whether a survivor is
+meaningful or behaviorally equivalent. The temporary PR trigger therefore remains for
+one diagnostic pass that records the exact source diff of every surviving mutant using
+`mutmut apply` followed by `git diff`, restoring the source after each inspection.
+
+The final Issue #19 commit will use those exact diffs to kill meaningful survivors with
+regression tests or document equivalent/non-actionable survivors with rationale. It will
+then remove the temporary `pull_request` trigger and leave mutation testing schedule/manual
+only.
 
 Mutation testing remains deliberately **outside** required `main` branch protection.

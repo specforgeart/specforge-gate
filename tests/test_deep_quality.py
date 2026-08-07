@@ -73,6 +73,10 @@ def test_mutation_workflow_is_separate_read_only_and_pinned() -> None:
     assert "mutmut run --max-children 4" in text
     assert "scripts/mutation_summary.py" in text
     assert '"$GITHUB_STEP_SUMMARY"' in text
+    assert "Capture surviving mutant diffs" in text
+    assert 'mutmut apply "$mutant"' in text
+    assert "git diff --no-ext-diff --unified=3 -- src/specforge_gate" in text
+    assert "git restore --source=HEAD --worktree --staged -- src/specforge_gate" in text
 
 
 def test_mutation_testing_is_not_a_required_main_context() -> None:
@@ -98,8 +102,13 @@ def test_bootstrap_baseline_records_measurement_and_remediation_state() -> None:
     assert "killed: **348**" in baseline
     assert "survived: **130**" in baseline
     assert "**72.80%**" in baseline
-    assert "second GitHub-hosted Ubuntu mutation run" in baseline
-    assert "remove the temporary PR trigger" in baseline
+    assert "total mutants: **495**" in baseline
+    assert "killed: **471**" in baseline
+    assert "survived: **24**" in baseline
+    assert "**95.15%**" in baseline
+    assert "130 to 24" in baseline
+    assert "exact source diff" in baseline
+    assert "remove the temporary `pull_request` trigger" in baseline
 
 
 def test_gitignore_excludes_property_and_mutation_caches() -> None:

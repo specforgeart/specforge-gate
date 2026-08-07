@@ -58,6 +58,37 @@ jobs:
         if: always()
         run: mutmut results | tee mutation-results.txt || true
 
+      - name: Capture surviving mutant diffs
+        if: always()
+        shell: bash
+        run: |
+          : > mutation-survivor-diffs.txt
+          awk '/: survived$/ {
+            line=$0
+            sub(/^[[:space:]]+/, "", line)
+            sub(/: survived$/, "", line)
+            print line
+          }' mutation-results.txt > mutation-survivors.txt
+
+          apply_failures=0
+          while IFS= read -r mutant; do
+            [ -n "$mutant" ] || continue
+            echo "===== $mutant =====" >> mutation-survivor-diffs.txt
+            if mutmut apply "$mutant"; then
+              git diff --no-ext-diff --unified=3 -- src/specforge_gate \
+                >> mutation-survivor-diffs.txt
+            else
+              echo "ERROR: mutmut apply failed for $mutant" >> mutation-survivor-diffs.txt
+              apply_failures=$((apply_failures + 1))
+            fi
+            echo >> mutation-survivor-diffs.txt
+            git restore --source=HEAD --worktree --staged -- src/specforge_gate
+          done < mutation-survivors.txt
+
+          git diff --exit-code -- src/specforge_gate
+          cat mutation-survivor-diffs.txt
+          test "$apply_failures" -eq 0
+
       - name: Summarize and verify completed mutation run
         if: always()
         run: |
