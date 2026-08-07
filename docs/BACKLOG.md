@@ -64,7 +64,27 @@
 - Untrusted finding/report text is rendered through text nodes rather than HTML injection.
 - The UI route stays outside the REST OpenAPI product contract.
 
-### 5. Reusable GitHub Action
+### 5. Docker image and Compose
+
+**Status:** completed.
+
+**Problem:** users need a reproducible zero-setup way to run the REST API and web UI without managing a Python environment.
+
+**Scope:** one hardened application image plus one-service Compose deployment for the existing API/UI process.
+
+**Out of scope:** database, reverse proxy, TLS, authentication, orchestration, registry publishing, persistence, and AI/provider services.
+
+**Acceptance criteria:**
+- `docker compose up --build -d --wait` starts the existing API and web UI.
+- `GET /healthz`, `GET /`, and `POST /v1/check` work from the running container.
+- Default host publishing is loopback-only and can use a configurable local port.
+- The application process runs as non-root.
+- Compose uses a read-only root filesystem, ephemeral `/tmp`, dropped capabilities, and `no-new-privileges`.
+- No host directory or persistent volume is mounted.
+- Container smoke runs on GitHub-hosted Linux and is aggregated into the existing `ci-gate`.
+- Existing deterministic core, REST schema, rule IDs, CLI behavior, and base runtime dependencies remain unchanged.
+
+### 6. Reusable GitHub Action
 
 **Status:** completed through Issue #15.
 
@@ -76,7 +96,6 @@
 
 ## Later
 
-- Docker image and Compose
 - Windows smoke workflow
 - SARIF output
 - GitHub PR comment

@@ -85,3 +85,7 @@ The API layer:
 The browser UI adds no external asset requests and posts analysis only to same-origin `/v1/check`. Its response sets no-store, no-referrer, nosniff, and a restrictive Content Security Policy; returned finding data is inserted through DOM text nodes rather than `innerHTML`.
 
 Production deployment should place authentication, TLS, request-rate controls, and external exposure policy in an appropriate reverse proxy or hosting layer.
+
+## Container deployment
+
+The same API/UI process can be run with the repository Docker image and `compose.yaml`. See [Docker image and Compose](container.md). Containerization does not change endpoint schemas or add persistence/authentication.

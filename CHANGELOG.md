@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Docker image and hardened one-service Compose deployment for the existing REST API and web UI
 - minimal same-origin web UI for paste-and-check analysis, severity filtering, and Markdown report copy
 - optional stateless REST API over the deterministic analysis core
 - deep deterministic quality layer with Hypothesis invariants and scheduled mutmut mutation testing

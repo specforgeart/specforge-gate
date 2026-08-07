@@ -47,3 +47,7 @@ The pre-release server still does not implement authentication, TLS termination,
 ## Out of scope
 
 Accounts, saved history, a rich editor, collaboration, uploads, browser-side configuration editing, and AI-assisted rewriting are intentionally not part of this minimal UI.
+
+## Container deployment
+
+The same browser UI is available from the one-service Docker/Compose deployment. See [Docker image and Compose](container.md).
