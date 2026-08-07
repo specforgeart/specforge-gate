@@ -1,0 +1,111 @@
+# Mutation testing baseline
+
+> **Status: FINAL.**
+
+The first GitHub-hosted Ubuntu mutation run completed successfully for PR #20. It established a clean tooling baseline and exposed meaningful survivor clusters that are being converted into explicit regression contracts before the final Issue #19 merge.
+
+## Bootstrap measurement 1
+
+- workflow run: `Mutation Testing` run `31174423523`;
+- implementation head: `689c8883abffb6840549f23dc9ecd383b551ab6f`;
+- Ubuntu runner: `ubuntu-24.04`;
+- Python: `3.11.15`;
+- mutmut: `3.7.0`;
+- mutated files: `10`;
+- total mutants: **478**;
+- killed: **348**;
+- survived: **130**;
+- no tests: **0**;
+- timeout: **0**;
+- suspicious: **0**;
+- skipped: **0**;
+- incomplete/error states: **0**;
+- kill rate `killed / (killed + survived)`: **72.80%**.
+
+The run itself completed successfully. The absence of no-test, timeout, suspicious, interrupted, invalid-metadata, and other incomplete states means the 130 survivors are test-strength evidence rather than an incomplete mutation run.
+
+## Survivor remediation
+
+The first-pass survivors cluster around user-visible reporter formatting, analysis-engine copying/sorting/configuration behavior, configuration validation, suppression parsing, and structural-rule metadata/diagnostics.
+
+The follow-up test pass therefore adds exact behavioral contracts for:
+
+- text, JSON, and Markdown reporter output, including empty reports and non-ASCII JSON;
+- engine suppression, severity override, copied findings, source preservation, and deterministic ordering;
+- the structural rule registry, aliases, severities, suggestions, and missing-section diagnostics;
+- suppression normalization, exact target-line mappings, case normalization, and validation errors;
+- configuration validation errors and a full valid configuration mapping.
+
+## Bootstrap measurement 2
+
+The survivor-contract pass was measured on the second GitHub-hosted Ubuntu run:
+
+- workflow run: `Mutation Testing` run `31177397007`;
+- implementation head: `d54b98d836bc8152a6bf6026a909f4c4d733a643`;
+- Ubuntu runner: `ubuntu-24.04`;
+- Python: `3.11.15`;
+- mutmut: `3.7.0`;
+- mutated files: `10`;
+- focused clean tests: **86 passed**;
+- total mutants: **495**;
+- killed: **471**;
+- survived: **24**;
+- no tests: **0**;
+- timeout: **0**;
+- suspicious: **0**;
+- skipped: **0**;
+- incomplete/error states: **0**;
+- kill rate `killed / (killed + survived)`: **95.15%**.
+
+This reduced survivors from **130 to 24** while keeping the mutation run complete. The
+remaining survivors are distributed across reporters (1), engine (5), configuration
+(3), and suppression parsing (15). A numeric score alone is not used to waive them.
+
+## Remaining survivor classification
+
+The result list identifies mutant IDs but does not by itself show whether a survivor is
+meaningful or behaviorally equivalent. The temporary PR trigger therefore remains for
+one diagnostic pass that records the exact source diff of every surviving mutant using
+`mutmut apply` followed by `git diff`, restoring the source after each inspection.
+
+The final Issue #19 commit will use those exact diffs to kill meaningful survivors with
+regression tests or document equivalent/non-actionable survivors with rationale. It will
+then remove the temporary `pull_request` trigger and leave mutation testing schedule/manual
+only.
+
+Mutation testing remains deliberately **outside** required `main` branch protection.
+
+## Final remediation measurement 4
+
+The final targeted regression pass completed successfully on GitHub-hosted Ubuntu:
+
+- workflow run: `Mutation Testing` run `31181702170`;
+- implementation head: `abcbc261b0e19f238632146ae58c1116173213fc`;
+- Ubuntu runner: `ubuntu-24.04`;
+- Python: `3.11.15`;
+- mutmut: `3.7.0`;
+- focused clean tests: **94 passed**;
+- total mutants: **495**;
+- killed: **486**;
+- survived: **9**;
+- no tests: **0**;
+- timeout: **0**;
+- suspicious: **0**;
+- skipped: **0**;
+- incomplete/error states: **0**;
+- kill rate `killed / (killed + survived)`: **98.18%**.
+
+All **15 behavior-changing survivors** identified by the diagnostic pass were killed.
+The only remaining mutants are the nine accepted survivors classified above as semantic
+or mutation-environment equivalents. No meaningful survivor remains untriaged.
+
+The permanent workflow records those nine exact IDs in
+`.github/mutation-allowed-survivors.txt`. `scripts/mutation_summary.py` compares every
+future scheduled/manual mutation result against that allowlist. Resolved accepted
+survivors are allowed, but any new survivor causes the mutation workflow to fail and
+requires explicit triage.
+
+The temporary `pull_request` bootstrap trigger and diagnostic `mutmut apply` step are
+removed after this measurement. Permanent mutation testing now runs only on the weekly
+schedule or by manual `workflow_dispatch`, remains read-only, and stays outside required
+`main` branch protection.

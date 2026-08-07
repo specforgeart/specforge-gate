@@ -60,6 +60,12 @@ Pull requests must pass the stable merge gates documented in [`docs/quality-gate
 
 Do not weaken, rename, or remove a required status context without first introducing and observing its replacement on a real pull request. Third-party Actions in protected workflows must use reviewed full commit SHAs rather than movable tags.
 
+## Deep quality checks
+
+Hypothesis property tests are part of the normal pytest suite and therefore run in the required Python compatibility matrix. Mutation testing is deliberately separate because it is slower and requires POSIX `fork` support.
+
+Use the GitHub-hosted `Mutation Testing` workflow (or WSL on Windows) for mutmut. Do not add mutation testing to required branch protection without a separate Issue and measured runtime/reliability evidence. See [`docs/mutation-testing.md`](docs/mutation-testing.md).
+
 ## Compatibility-sensitive areas
 
 Treat the following as public automation contracts:

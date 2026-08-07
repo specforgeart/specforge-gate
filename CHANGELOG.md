@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- deep deterministic quality layer with Hypothesis invariants and scheduled mutmut mutation testing
+- measured mutation baseline with 98.18% kill rate and an exact reviewed survivor allowlist
 - hardened merge gates with stable CI and Action Smoke contexts, branch coverage, SHA-pinned Actions, moderate dependency review, and scheduled dependency auditing
 - reusable composite GitHub Action with pull-request file selection and job summaries
 - 40-example English and Russian regression corpus with manifest-driven contract tests

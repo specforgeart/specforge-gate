@@ -1,0 +1,58 @@
+name: Mutation Testing
+
+on:
+  schedule:
+    - cron: "43 5 * * 2"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mutation-testing:
+    name: mutation-testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install project and mutation tooling
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pip install "mutmut==3.7.0"
+
+      - name: Verify focused clean test selection
+        run: |
+          python -m pytest \
+            tests/test_engine.py \
+            tests/test_config.py \
+            tests/test_suppression.py \
+            tests/test_properties.py \
+            tests/test_mutation_contracts.py
+
+      - name: Run mutation testing
+        continue-on-error: true
+        run: |
+          rm -rf mutants mutation-results.txt mutation-summary.json
+          mutmut run --max-children 4
+
+      - name: Capture mutmut results
+        if: always()
+        run: mutmut results | tee mutation-results.txt || true
+
+      - name: Summarize and enforce survivor baseline
+        if: always()
+        run: |
+          python scripts/mutation_summary.py \
+            --mutants mutants \
+            --results mutation-results.txt \
+            --allowed-survivors .github/mutation-allowed-survivors.txt \
+            --github-summary "$GITHUB_STEP_SUMMARY" \
+            --output mutation-summary.json \
+            --require-complete
