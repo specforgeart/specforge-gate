@@ -43,6 +43,7 @@ def test_mutmut_scope_targets_deterministic_product_logic() -> None:
         "src/specforge_gate/__init__.py",
         "src/specforge_gate/cli.py",
         "src/specforge_gate/github_action.py",
+        "src/specforge_gate/api.py",
     }
     selection = set(config["pytest_add_cli_args_test_selection"])
     assert {

@@ -26,8 +26,9 @@ if [[ -z "$wheel" ]]; then
   exit 2
 fi
 
-.venv-smoke/bin/python -m pip install "$wheel"
+.venv-smoke/bin/python -m pip install "${wheel}[api]"
 .venv-smoke/bin/specgate --help
+.venv-smoke/bin/python -c "from specforge_gate.api import app; assert app.title == 'SpecForge Gate API'"
 
 set +e
 .venv-smoke/bin/specgate check examples/bad/export-task.md --format json >/dev/null 2>&1

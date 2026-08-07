@@ -31,6 +31,8 @@
 
 ### 3. REST API
 
+**Status:** completed.
+
 **Problem:** web and integration clients need the same engine through HTTP.
 
 **Scope:** stateless FastAPI endpoint accepting text and returning the existing report schema.

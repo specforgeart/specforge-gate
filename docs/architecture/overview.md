@@ -1,7 +1,7 @@
 # Architecture overview
 
 ```text
-Input → Document parser → Rule engine → Report model → CLI / GitHub Action / planned API
+Input → Document parser → Rule engine → Report model → CLI / GitHub Action / REST API
 ```
 
 The core has no network dependency. The CLI and GitHub Action call the same `analyze_text()` function; planned interfaces must preserve that boundary. Rules return structured findings with stable IDs, severity, location, explanation, and suggested correction.

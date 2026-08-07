@@ -93,7 +93,7 @@ The user receives a UTF-8 CSV file containing only orders that match the active 
 
 ## What the demo must not imply
 
-The public CLI demo must not imply that planned interfaces already exist. The GitHub Action is available as a separate CI interface; REST API, web UI, Docker Compose, and optional AI provider analysis remain planned roadmap items.
+The public CLI demo must distinguish implemented interfaces from planned ones. The GitHub Action and stateless REST API are available as separate interfaces; web UI, Docker Compose, and optional AI provider analysis remain planned roadmap items.
 
 The demo must also avoid fake badges, screenshots, GIFs, hosted endpoints, synthetic testimonials, or claims about integrations that are not implemented in this repository.
 

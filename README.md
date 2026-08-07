@@ -106,10 +106,10 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | JSON output | available | Use `--format json` for machine-readable automation. |
 | Markdown output | available | Use `--format markdown` for reports and job summaries. |
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
-| REST API | planned | Planned stateless interface; not implemented in this repository yet. |
+| REST API | available | Optional stateless `POST /v1/check` interface over the deterministic core. |
 | Web UI | planned | Planned paste-and-check demo; not implemented in this repository yet. |
 
-REST API, web UI, Docker Compose, and optional AI-provider analysis remain planned work.
+Web UI, Docker Compose, and optional AI-provider analysis remain planned work.
 
 ## Deterministic core vs optional AI
 
@@ -164,6 +164,17 @@ jobs:
 ```
 
 The pre-release example uses `@main`; pin a reviewed commit SHA or an action-containing release tag for stable automation. Empty `paths` selects added, modified, and renamed `.md` or `.markdown` files from the pull-request diff. Explicit paths, `fail-on`, and an explicit configuration path are also supported. See [GitHub Action](docs/github-action.md) and the [complete workflow example](.github/examples/specforge-gate.yml).
+
+## REST API
+
+Install the optional API dependencies and run the stateless service:
+
+```bash
+python -m pip install -e ".[api]"
+python -m uvicorn specforge_gate.api:app --host 127.0.0.1 --port 8000
+```
+
+Analyze inline text with `POST /v1/check`. Valid documents return HTTP `200` whether the deterministic report is `PASS` or `NEEDS WORK`; invalid request/configuration or suppression syntax returns HTTP `422`, and text above the configured limit returns HTTP `413`. The API accepts no request-selected file path or URL and performs no outbound provider call. See [REST API](docs/rest-api.md).
 
 ## Quick start: Linux and macOS
 
@@ -225,6 +236,7 @@ exclude:
 - [Demo narrative](docs/demo.md) — CLI-first public demo script and demo guardrails.
 - [Architecture](docs/architecture.md) — public architecture overview and interface boundaries.
 - [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
+- [REST API](docs/rest-api.md) — stateless endpoint contract, optional installation, configuration, and security boundary.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.
@@ -250,7 +262,7 @@ bash scripts/bootstrap.sh
 bash scripts/check.sh
 ```
 
-The bootstrap scripts create `.venv`, install the project with development dependencies, and install the local pre-commit hook. The check scripts run Ruff, strict MyPy, tests with line and branch coverage at an enforced 85% floor, package build, Twine validation, and a clean installed-wheel CLI smoke test.
+The bootstrap scripts create `.venv`, install the project with development dependencies, and install the local pre-commit hook. The check scripts run Ruff, strict MyPy, tests with line and branch coverage at an enforced 85% floor, package build, Twine validation, and clean installed-wheel CLI and REST API import smoke tests.
 
 Pull requests are verified on GitHub-hosted Linux and Windows runners. The Linux workflow runs static/package verification once, tests Python 3.11–3.13 separately, and exposes a stable `ci-gate`; the reusable Action exposes a stable `action-smoke` integration gate. See [`docs/quality-gates.md`](docs/quality-gates.md).
 
