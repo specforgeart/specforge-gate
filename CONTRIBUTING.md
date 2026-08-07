@@ -54,6 +54,12 @@ Pull requests should:
 - avoid new dependencies unless the reason is documented and dependency review is expected;
 - avoid `Co-authored-by` trailers for people who did not contribute to the change.
 
+## Pull-request quality gates
+
+Pull requests must pass the stable merge gates documented in [`docs/quality-gates.md`](docs/quality-gates.md). Linux static/package work runs once, runtime tests cover Python 3.11–3.13, Windows runs the canonical scripts, the reusable Action has an integration smoke gate, dependency changes are reviewed, and CodeQL remains part of merge protection.
+
+Do not weaken, rename, or remove a required status context without first introducing and observing its replacement on a real pull request. Third-party Actions in protected workflows must use reviewed full commit SHAs rather than movable tags.
+
 ## Compatibility-sensitive areas
 
 Treat the following as public automation contracts:

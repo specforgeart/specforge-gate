@@ -368,7 +368,7 @@ def test_action_metadata_exposes_read_only_composite_contract() -> None:
         "total",
     }
     steps = metadata["runs"]["steps"]
-    assert steps[0]["uses"] == "actions/setup-python@v7"
+    assert steps[0]["uses"] == "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
     assert steps[-1]["shell"] == "bash"
 
     raw = (REPOSITORY_ROOT / "action.yml").read_text(encoding="utf-8")

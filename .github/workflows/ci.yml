@@ -13,20 +13,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality:
+  static-package:
+    name: static-package
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.11"
           cache: pip
 
       - name: Install
@@ -37,9 +34,6 @@ jobs:
 
       - name: Type check
         run: mypy src/specforge_gate
-
-      - name: Test
-        run: pytest --cov=specforge_gate --cov-report=term-missing --cov-fail-under=85
 
       - name: Package
         run: python -m build
@@ -53,3 +47,42 @@ jobs:
           python -m venv .venv-smoke
           .venv-smoke/bin/python -m pip install dist/*.whl
           .venv-smoke/bin/specgate --help
+
+  tests:
+    name: tests (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+
+      - name: Test with branch coverage
+        run: pytest --cov=specforge_gate --cov-branch --cov-report=term-missing --cov-fail-under=85
+
+  ci-gate:
+    name: ci-gate
+    if: always()
+    needs: [static-package, tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Verify required CI jobs
+        env:
+          STATIC_PACKAGE_RESULT: ${{ needs.static-package.result }}
+          TESTS_RESULT: ${{ needs.tests.result }}
+        run: |
+          test "$STATIC_PACKAGE_RESULT" = "success"
+          test "$TESTS_RESULT" = "success"
