@@ -191,6 +191,11 @@ def test_api_dependencies_are_optional_and_mutation_excludes_http_plumbing() -> 
         project = tomllib.load(handle)
 
     assert project["project"]["dependencies"] == ["PyYAML>=6.0.2"]
-    assert "fastapi>=0.115,<1" in project["project"]["optional-dependencies"]["api"]
-    assert "uvicorn>=0.30,<1" in project["project"]["optional-dependencies"]["api"]
+    api_dependencies = project["project"]["optional-dependencies"]["api"]
+    dev_dependencies = project["project"]["optional-dependencies"]["dev"]
+
+    assert "fastapi>=0.115,<1" in api_dependencies
+    assert "uvicorn>=0.30,<1" in api_dependencies
+    assert "httpx2>=2,<3" in dev_dependencies
+    assert "httpx>=0.27,<1" not in dev_dependencies
     assert "src/specforge_gate/api.py" in project["tool"]["mutmut"]["do_not_mutate"]
