@@ -29,6 +29,7 @@ fi
 .venv-smoke/bin/python -m pip install "${wheel}[api]"
 .venv-smoke/bin/specgate --help
 .venv-smoke/bin/python -c "from specforge_gate.api import app; assert app.title == 'SpecForge Gate API'; assert any(route.path == '/' for route in app.routes)"
+.venv-smoke/bin/python -c "from specforge_gate.ai import AIRequest, AIResponseFormat; request = AIRequest('system', 'user'); assert request.response_format is AIResponseFormat.TEXT"
 
 set +e
 .venv-smoke/bin/specgate check examples/bad/export-task.md --format json >/dev/null 2>&1

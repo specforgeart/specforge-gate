@@ -109,14 +109,15 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | REST API | available | Optional stateless `POST /v1/check` interface over the deterministic core. |
 | Web UI | available | Same-origin paste-and-check UI served by the optional API at `/`. |
 | Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
+| AI provider contract | available | Standard-library-only adapter protocol; no provider calls or AI product feature yet. |
 
-Optional AI-provider analysis remains planned work.
+Ollama/OpenAI-compatible adapters and AI-powered analysis remain planned work.
 
 ## Deterministic core vs optional AI
 
 The current product is the deterministic core: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
 
-A future optional AI layer may add contradiction analysis or improved-spec drafting, but planned AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats.
+The optional AI layer now has a provider-neutral adapter contract, but no provider implementation is active. Future Ollama/OpenAI-compatible adapters may support contradiction analysis or improved-spec drafting, but AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md).
 
 ## Current rules
 
@@ -254,6 +255,7 @@ exclude:
 - [REST API](docs/rest-api.md) — stateless endpoint contract, optional installation, configuration, and security boundary.
 - [Web UI](docs/web-ui.md) — zero-install paste-and-check demo, filtering, Markdown copy, and browser security boundary.
 - [Docker image and Compose](docs/container.md) — hardened local container deployment and security boundary.
+- [AI provider interface](docs/ai-provider-interface.md) — provider-neutral optional-AI contracts and boundaries.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.

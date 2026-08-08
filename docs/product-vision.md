@@ -24,13 +24,13 @@ Find high-risk requirement gaps locally, offline, and without an API key. Every 
 
 ## Current capability
 
-SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an optional stateless REST API, a minimal same-origin web UI, and a Docker/Compose deployment for that same API/UI process. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary. The browser UI provides a zero-install paste-and-check flow over the same REST endpoint.
+SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an optional stateless REST API, a minimal same-origin web UI, a Docker/Compose deployment for that same API/UI process, and a provider-neutral contract for future optional AI adapters. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary. The browser UI provides a zero-install paste-and-check flow over the same REST endpoint.
 
 The current deterministic rule set checks for required sections, vague wording, untestable acceptance criteria, and compound requirements. See the rule table in the [README](../README.md#current-rules).
 
 ## Planned capability
 
-The REST API, minimal web UI, and Docker/Compose deployment are available around the deterministic core. The roadmap continues with planned optional AI analysis.
+The REST API, minimal web UI, Docker/Compose deployment, and provider-neutral AI contract are available around the deterministic core. Ollama/OpenAI-compatible adapters and AI-powered contradiction/drafting features remain planned.
 
 ## Relationship to the product brief
 

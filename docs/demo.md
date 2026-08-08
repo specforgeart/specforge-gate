@@ -93,7 +93,7 @@ The user receives a UTF-8 CSV file containing only orders that match the active 
 
 ## What the demo must not imply
 
-The public demo must distinguish implemented interfaces from planned ones. The GitHub Action, stateless REST API, minimal web UI, and Docker/Compose deployment are available; optional AI provider analysis remains planned roadmap work.
+The public demo must distinguish implemented interfaces from planned ones. The GitHub Action, stateless REST API, minimal web UI, Docker/Compose deployment, and provider-neutral AI adapter contract are available; provider integrations and AI-powered analysis remain planned roadmap work.
 
 The demo must also avoid fake badges, screenshots, GIFs, hosted endpoints, synthetic testimonials, or claims about integrations that are not implemented in this repository.
 

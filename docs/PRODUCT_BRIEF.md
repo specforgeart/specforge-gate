@@ -24,8 +24,9 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - text, JSON, and Markdown reports
 - Russian and English wording rules
 - reusable GitHub Action for pull-request checks
-- planned minimal web UI and API
-- planned Docker Compose
+- stateless REST API and minimal web UI
+- Docker Compose deployment
+- provider-neutral contract for future optional AI adapters
 
 ## Out of scope
 
@@ -39,7 +40,7 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 
 ## Public vision and demo
 
-The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current deterministic behavior and distinguish the available CLI and GitHub Action from planned API, UI, Docker, and AI-provider features.
+The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current deterministic behavior and distinguish the available CLI, GitHub Action, API, UI, Docker deployment, and AI provider contract from provider adapters and AI-powered features that remain planned.
 
 ## Status semantics
 

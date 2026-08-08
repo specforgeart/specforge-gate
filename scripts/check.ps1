@@ -53,6 +53,9 @@ Invoke-Step "Smoke-test CLI help" { & $Specgate --help }
 Invoke-Step "Smoke-test REST API import" {
     & $SmokePython -c "from specforge_gate.api import app; assert app.title == 'SpecForge Gate API'; assert any(route.path == '/' for route in app.routes)"
 }
+Invoke-Step "Smoke-test AI provider contract import" {
+    & $SmokePython -c "from specforge_gate.ai import AIRequest, AIResponseFormat; request = AIRequest('system', 'user'); assert request.response_format is AIResponseFormat.TEXT"
+}
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
 $BadExampleExitCode = $LASTEXITCODE

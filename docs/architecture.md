@@ -23,7 +23,7 @@ flowchart TD
     J --> Q["Docker / Compose — available"]
 
     subgraph AI["Optional AI layer — planned and separate"]
-        L["Provider interface — planned"]
+        L["Provider interface — available"]
         M["Contradiction analysis — planned"]
         N["Improved-spec draft — planned"]
     end
@@ -60,7 +60,7 @@ The Docker image and one-service Compose deployment package the existing FastAPI
 
 ## Optional AI boundary
 
-Optional AI analysis is planned for later releases. It must remain visually and architecturally separate from the deterministic core, and it must not change stable rule IDs, current output contracts, or exit-code semantics.
+The provider-neutral AI contract is available under `specforge_gate.ai`, but provider adapters and AI-powered analysis remain planned. The contract uses only the Python standard library and is not imported by the deterministic core. Future adapters must remain visually and architecturally separate from deterministic checks and must not change stable rule IDs, current output contracts, or exit-code semantics. See [`ai-provider-interface.md`](ai-provider-interface.md).
 
 ## Related details
 
