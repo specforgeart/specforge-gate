@@ -1,5 +1,6 @@
 """Public contracts for SpecForge Gate's optional AI layer."""
 
+from .ollama import OllamaProvider
 from .provider import (
     AIProvider,
     AIProviderError,
@@ -16,4 +17,5 @@ __all__ = [
     "AIRequest",
     "AIResponse",
     "AIResponseFormat",
+    "OllamaProvider",
 ]

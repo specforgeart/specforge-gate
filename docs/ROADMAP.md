@@ -27,7 +27,7 @@
 ## v0.2.0 — Optional AI analysis
 
 - [x] Provider interface
-- [ ] Planned Ollama integration
+- [x] Ollama integration
 - [ ] Planned OpenAI-compatible endpoint
 - [ ] Planned contradiction analysis
 - [ ] Planned improved-spec draft
