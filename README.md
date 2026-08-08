@@ -33,7 +33,7 @@ SpecForge Gate catches these gaps early with deterministic checks instead of rel
 - **No API key:** no provider account is required for current functionality.
 - **Automation-friendly:** text, JSON, and Markdown outputs are public interfaces.
 
-Optional AI analysis is planned for later releases, but it will remain separate from the deterministic core.
+Optional AI provider transports are available, while AI-powered analysis remains planned and separate from the deterministic core.
 
 ## 15-second example
 
@@ -111,14 +111,15 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
 | AI provider contract | available | Standard-library-only adapter protocol for optional AI integrations. |
 | Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; no AI product feature invokes it yet. |
+| OpenAI-compatible adapter | available | Explicit synchronous Chat Completions adapter with optional caller-supplied Bearer auth. |
 
-The OpenAI-compatible adapter and AI-powered contradiction/drafting features remain planned work.
+AI-powered contradiction/drafting features remain planned work.
 
 ## Deterministic core vs optional AI
 
 The current product is the deterministic core: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
 
-The optional AI layer has a provider-neutral contract plus an Ollama adapter. The adapter performs network I/O only when explicitly instantiated and invoked; deterministic checks remain provider-free. The OpenAI-compatible adapter and AI-powered contradiction/drafting features are still planned. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md) and [Ollama adapter](docs/ollama.md).
+The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter is explicitly invoked; deterministic checks remain provider-free. AI-powered contradiction/drafting features are still planned. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), and [OpenAI-compatible adapter](docs/openai-compatible.md).
 
 ## Current rules
 
@@ -258,6 +259,7 @@ exclude:
 - [Docker image and Compose](docs/container.md) — hardened local container deployment and security boundary.
 - [AI provider interface](docs/ai-provider-interface.md) — provider-neutral optional-AI contracts and boundaries.
 - [Ollama adapter](docs/ollama.md) — local Ollama transport, configuration, errors, and security boundary.
+- [OpenAI-compatible adapter](docs/openai-compatible.md) — Chat Completions transport, optional Bearer authentication, errors, and security boundary.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.

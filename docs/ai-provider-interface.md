@@ -1,6 +1,6 @@
 # Optional AI provider interface
 
-SpecForge Gate has a provider-neutral contract for optional AI analysis. The contract and an Ollama adapter are available, but no AI-powered product feature invokes a provider yet.
+SpecForge Gate has a provider-neutral contract for optional AI analysis. The contract, Ollama adapter, and OpenAI-compatible adapter are available, but no AI-powered product feature invokes a provider yet.
 
 ## Boundary
 
@@ -17,7 +17,8 @@ The provider contract uses only the Python standard library. Base runtime depend
 - `AIResponse` — normalized text plus provider/model identity;
 - `AIResponseFormat` — `text` or `json`;
 - `AIProviderError` and `AIProviderErrorCode` — normalized adapter failure categories;
-- `OllamaProvider` — the first concrete adapter, using non-streaming Ollama chat requests.
+- `OllamaProvider` — concrete adapter using non-streaming Ollama chat requests;
+- `OpenAICompatibleProvider` — concrete adapter using non-streaming OpenAI-compatible Chat Completions.
 
 An adapter implements `provider_id`, `model`, and `generate(request)`. Provider-specific configuration such as base URLs, API keys, HTTP headers, retry policy, and wire payloads belongs in the adapter implementation, not in `AIRequest`.
 
@@ -25,7 +26,7 @@ An adapter implements `provider_id`, `model`, and `generate(request)`. Provider-
 
 Future improved-spec drafting naturally returns text. Future contradiction analysis needs a structured mode. Keeping these two response modes in the shared request contract avoids leaking Ollama- or OpenAI-specific payload fields into analysis code.
 
-The interface does not promise JSON-schema enforcement yet. A future provider adapter may translate `AIResponseFormat.JSON` to the provider's supported JSON mode and must normalize unsupported or malformed responses through `AIProviderError`.
+The interface does not promise JSON-schema enforcement yet. Implemented adapters translate `AIResponseFormat.JSON` to their provider-supported JSON mode and normalize unsupported or malformed responses through `AIProviderError`.
 
 ## Error contract
 
@@ -43,14 +44,13 @@ Provider adapters must map transport/provider failures into one of these public 
 
 ## Implemented adapter
 
-`OllamaProvider` maps `AIRequest` to Ollama `POST /api/chat`, disables streaming, maps `AIResponseFormat.JSON` to Ollama JSON mode, and normalizes response/error handling back into the shared contract. See [`ollama.md`](ollama.md).
+`OllamaProvider` maps `AIRequest` to Ollama `POST /api/chat`. `OpenAICompatibleProvider` maps the same contract to `<base_url>/chat/completions` with optional explicit Bearer authentication. Both disable streaming and normalize responses/errors back into the shared contract. See [`ollama.md`](ollama.md) and [`openai-compatible.md`](openai-compatible.md).
 
 ## Not implemented yet
 
 The optional AI layer still does not add:
 
-- OpenAI-compatible HTTP integration;
-- API-key loading;
+- automatic environment/config/keyring API-key loading;
 - provider discovery or routing;
 - CLI/API/UI AI controls;
 - contradiction analysis;

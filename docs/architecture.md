@@ -25,12 +25,14 @@ flowchart TD
     subgraph AI["Optional AI layer — planned and separate"]
         L["Provider interface — available"]
         R["Ollama adapter — available"]
+        S["OpenAI-compatible adapter — available"]
         M["Contradiction analysis — planned"]
         N["Improved-spec draft — planned"]
     end
 
     D -. future optional input .-> L
     L --> R
+    L --> S
     L -. planned .-> M
     L -. planned .-> N
 ```
@@ -62,7 +64,7 @@ The Docker image and one-service Compose deployment package the existing FastAPI
 
 ## Optional AI boundary
 
-The provider-neutral AI contract and `OllamaProvider` are available under `specforge_gate.ai`. The contract remains separate from the deterministic core. `OllamaProvider` performs explicit outbound HTTP only when invoked and defaults to loopback; no deterministic check imports or calls it. The OpenAI-compatible adapter and AI-powered analysis remain planned. Optional AI code must not change stable rule IDs, current deterministic output contracts, or exit-code semantics. See [`ai-provider-interface.md`](ai-provider-interface.md) and [`ollama.md`](ollama.md).
+The provider-neutral AI contract, `OllamaProvider`, and `OpenAICompatibleProvider` are available under `specforge_gate.ai`. The contract remains separate from the deterministic core. Provider adapters perform explicit outbound HTTP only when invoked; no deterministic check imports or calls them. Ollama defaults to loopback, while the OpenAI-compatible adapter requires an explicit API root and supports an optional caller-supplied Bearer key. AI-powered analysis remains planned. Optional AI code must not change stable rule IDs, current deterministic output contracts, or exit-code semantics. See [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), and [`openai-compatible.md`](openai-compatible.md).
 
 ## Related details
 

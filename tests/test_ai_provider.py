@@ -125,6 +125,7 @@ def test_ai_package_exports_exact_public_contract() -> None:
         "AIResponse",
         "AIResponseFormat",
         "OllamaProvider",
+        "OpenAICompatibleProvider",
     ]
 
 
@@ -165,4 +166,6 @@ def test_canonical_checks_smoke_import_ai_contract_from_built_wheel() -> None:
         assert "request.response_format is AIResponseFormat.TEXT" in text
         assert "from specforge_gate.ai import OllamaProvider" in text
         assert "provider.provider_id == 'ollama'" in text
+        assert "from specforge_gate.ai import OpenAICompatibleProvider" in text
+        assert "provider.provider_id == 'openai-compatible'" in text
 

@@ -28,6 +28,6 @@
 
 - [x] Provider interface
 - [x] Ollama integration
-- [ ] Planned OpenAI-compatible endpoint
+- [x] OpenAI-compatible endpoint
 - [ ] Planned contradiction analysis
 - [ ] Planned improved-spec draft
