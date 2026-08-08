@@ -1,6 +1,6 @@
 # Optional AI provider interface
 
-SpecForge Gate has a provider-neutral contract for future optional AI analysis. The contract is available, but no provider adapter or AI-powered product feature is enabled by this change.
+SpecForge Gate has a provider-neutral contract for optional AI analysis. The contract and an Ollama adapter are available, but no AI-powered product feature invokes a provider yet.
 
 ## Boundary
 
@@ -16,7 +16,8 @@ The provider contract uses only the Python standard library. Base runtime depend
 - `AIRequest` — provider-neutral system prompt, user prompt, and response mode;
 - `AIResponse` — normalized text plus provider/model identity;
 - `AIResponseFormat` — `text` or `json`;
-- `AIProviderError` and `AIProviderErrorCode` — normalized adapter failure categories.
+- `AIProviderError` and `AIProviderErrorCode` — normalized adapter failure categories;
+- `OllamaProvider` — the first concrete adapter, using non-streaming Ollama chat requests.
 
 An adapter implements `provider_id`, `model`, and `generate(request)`. Provider-specific configuration such as base URLs, API keys, HTTP headers, retry policy, and wire payloads belongs in the adapter implementation, not in `AIRequest`.
 
@@ -40,11 +41,14 @@ Provider adapters must map transport/provider failures into one of these public 
 
 `AIProviderError.retryable` is adapter-supplied metadata for future orchestration. The contract does not implement retries itself.
 
+## Implemented adapter
+
+`OllamaProvider` maps `AIRequest` to Ollama `POST /api/chat`, disables streaming, maps `AIResponseFormat.JSON` to Ollama JSON mode, and normalizes response/error handling back into the shared contract. See [`ollama.md`](ollama.md).
+
 ## Not implemented yet
 
-This interface does not add:
+The optional AI layer still does not add:
 
-- Ollama HTTP integration;
 - OpenAI-compatible HTTP integration;
 - API-key loading;
 - provider discovery or routing;

@@ -80,6 +80,7 @@ do_not_mutate = [
   "src/specforge_gate/web_ui.py",
   "src/specforge_gate/ai/__init__.py",
   "src/specforge_gate/ai/provider.py",
+  "src/specforge_gate/ai/ollama.py",
 ]
 pytest_add_cli_args_test_selection = [
   "tests/test_engine.py",

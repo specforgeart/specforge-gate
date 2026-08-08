@@ -56,6 +56,9 @@ Invoke-Step "Smoke-test REST API import" {
 Invoke-Step "Smoke-test AI provider contract import" {
     & $SmokePython -c "from specforge_gate.ai import AIRequest, AIResponseFormat; request = AIRequest('system', 'user'); assert request.response_format is AIResponseFormat.TEXT"
 }
+Invoke-Step "Smoke-test Ollama adapter import" {
+    & $SmokePython -c "from specforge_gate.ai import OllamaProvider; provider = OllamaProvider(model='smoke-model'); assert provider.provider_id == 'ollama'; assert provider.model == 'smoke-model'"
+}
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
 $BadExampleExitCode = $LASTEXITCODE
