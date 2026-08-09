@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- optional OpenAI-compatible Chat Completions adapter with explicit Bearer auth support
 - optional Ollama adapter over the provider-neutral AI contract using non-streaming `/api/chat`
 - provider-neutral standard-library AI adapter contract for future optional providers
 - Docker image and hardened one-service Compose deployment for the existing REST API and web UI

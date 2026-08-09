@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param()
 
 Set-StrictMode -Version Latest
@@ -25,7 +25,13 @@ $Python = (Resolve-Path $PythonPath).Path
 Invoke-Step "Ruff" { & $Python -m ruff check . }
 Invoke-Step "MyPy" { & $Python -m mypy src/specforge_gate }
 Invoke-Step "Pytest with coverage" {
-    & $Python -m pytest --cov=specforge_gate --cov-branch --cov-report=term-missing --cov-fail-under=85
+    $PytestBaseTemp = Join-Path $env:TEMP ("specforge-pytest-" + [guid]::NewGuid().ToString("N"))
+    try {
+        & $Python -m pytest --basetemp $PytestBaseTemp --cov=specforge_gate --cov-branch --cov-report=term-missing --cov-fail-under=85
+    }
+    finally {
+        Remove-Item $PytestBaseTemp -Recurse -Force -ErrorAction SilentlyContinue
+    }
 }
 
 Remove-Item dist, build -Recurse -Force -ErrorAction SilentlyContinue
@@ -58,6 +64,9 @@ Invoke-Step "Smoke-test AI provider contract import" {
 }
 Invoke-Step "Smoke-test Ollama adapter import" {
     & $SmokePython -c "from specforge_gate.ai import OllamaProvider; provider = OllamaProvider(model='smoke-model'); assert provider.provider_id == 'ollama'; assert provider.model == 'smoke-model'"
+}
+Invoke-Step "Smoke-test OpenAI-compatible adapter import" {
+    & $SmokePython -c "from specforge_gate.ai import OpenAICompatibleProvider; provider = OpenAICompatibleProvider(model='smoke-model', base_url='http://127.0.0.1:1234/v1'); assert provider.provider_id == 'openai-compatible'; assert provider.model == 'smoke-model'"
 }
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
