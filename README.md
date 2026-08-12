@@ -8,7 +8,7 @@
 
 **Deterministic quality gate for requirements before humans or coding agents start building.**
 
-SpecForge Gate (`specgate`) checks Markdown and text specifications for missing goals, expected results, testable acceptance criteria, scope boundaries, edge cases, vague wording, untestable criteria, and compound requirements. It runs locally and offline, requires no API key, uploads no documents, and returns explainable findings with stable rule IDs.
+SpecForge Gate (`specgate`) checks Markdown and text specifications for missing goals, expected results, testable acceptance criteria, scope boundaries, edge cases, vague wording, untestable criteria, and compound requirements. Its deterministic gate runs locally and offline, requires no API key, uploads no documents, and returns explainable findings with stable rule IDs. Optional AI review is a separate explicit action.
 
 > Working name and pre-alpha implementation. The public repository name may change before release.
 
@@ -29,7 +29,7 @@ SpecForge Gate catches these gaps early with deterministic checks instead of rel
 
 - **Repeatable:** the same input and configuration produce the same findings.
 - **Explainable:** each finding points to a stable rule ID such as `SG001` or `SG102`.
-- **Local and offline:** the current CLI reads local files and directories only.
+- **Local and offline by default:** `specgate check` reads local files/directories and performs no provider call.
 - **No API key:** no provider account is required for current functionality.
 - **Automation-friendly:** text, JSON, and Markdown outputs are public interfaces.
 
@@ -102,7 +102,7 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 
 | Interface | Status | Notes |
 |---|---|---|
-| CLI | available | `specgate check` analyzes local Markdown/text files and directories. |
+| CLI | available | `specgate check` stays deterministic; `specgate ai-review FILE` adds explicit advisory AI review. |
 | JSON output | available | Use `--format json` for machine-readable automation. |
 | Markdown output | available | Use `--format markdown` for reports and job summaries. |
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
@@ -120,7 +120,7 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 
 The current product is the deterministic core: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
 
-The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis validates model evidence against verbatim source substrings; improved-spec drafting is also available as a conservative human-reviewable Markdown draft that cannot change deterministic results. The REST API can now expose those two features through an explicit server-configured `/v1/ai/review` flow while `/v1/check` remains deterministic-only. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [REST API](docs/rest-api.md), [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), [contradiction analysis](docs/contradiction-analysis.md), and [improved-spec draft](docs/improved-spec-draft.md).
+The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis validates model evidence against verbatim source substrings; improved-spec drafting is also available as a conservative human-reviewable Markdown draft that cannot change deterministic results. The REST API and CLI expose those two features through explicit provider-configured AI review flows, while `/v1/check` and `specgate check` remain deterministic-only. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [CLI AI Review](docs/cli-ai-review.md), [REST API](docs/rest-api.md), [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), [contradiction analysis](docs/contradiction-analysis.md), and [improved-spec draft](docs/improved-spec-draft.md).
 
 ## Current rules
 
@@ -221,6 +221,10 @@ specgate check .\examples\bad\export-task.md --format markdown
 
 By default the CLI exits with code `1` when at least one error exists. Use `--fail-on warning` for a stricter gate or `--fail-on none` for report-only mode.
 
+## CLI AI Review
+
+`specgate ai-review FILE` runs the same deterministic report first, then explicitly requests contradiction analysis and a conservative improved draft from the provider configured in environment variables. It accepts one explicit file to prevent accidental bulk provider egress. Use `--format json` for the REST-compatible result shape or `--fail-on none` for advisory-only use. See [CLI AI Review](docs/cli-ai-review.md).
+
 ## Configuration and suppression
 
 Inline suppression directives:
@@ -257,6 +261,7 @@ exclude:
 - [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
 - [REST API](docs/rest-api.md) — stateless endpoint contract, optional installation, configuration, and security boundary.
 - [Web UI](docs/web-ui.md) — zero-install paste-and-check demo, filtering, Markdown copy, and browser security boundary.
+- [CLI AI Review](docs/cli-ai-review.md) — explicit one-file AI review, provider configuration, output contract, exit codes, and security boundary.
 - [Docker image and Compose](docs/container.md) — hardened local container deployment and security boundary.
 - [AI provider interface](docs/ai-provider-interface.md) — provider-neutral optional-AI contracts and boundaries.
 - [Ollama adapter](docs/ollama.md) — local Ollama transport, configuration, errors, and security boundary.

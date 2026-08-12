@@ -39,12 +39,13 @@ flowchart TD
 
 ## Available flow
 
-1. The CLI receives one or more local files or directories.
+1. `specgate check` receives one or more local files or directories.
 2. Directory inputs expand to Markdown, Markdown-like, and text files.
 3. The parser extracts sections and lines for deterministic analysis.
 4. Rules emit findings with stable IDs, severity, location, explanation, and suggested correction.
 5. The report model renders text, JSON, or Markdown output.
 6. Exit codes are controlled by `--fail-on` and remain compatibility-sensitive.
+7. `specgate ai-review` accepts one explicit file, produces the same deterministic report first, then explicitly invokes the environment-configured provider for advisory contradictions and drafting.
 
 ## GitHub Action interface
 
@@ -64,7 +65,7 @@ The Docker image and one-service Compose deployment package the existing FastAPI
 
 ## Optional AI boundary
 
-The provider-neutral AI contract, `OllamaProvider`, `OpenAICompatibleProvider`, advisory contradiction analysis, conservative improved-spec drafting, and server-side provider resolver are available under `specforge_gate.ai`. They remain separate from the deterministic core. Provider network I/O occurs only when optional AI code is explicitly invoked; no deterministic check imports or calls it. The REST `/v1/ai/review` endpoint is now one explicit product-surface orchestrator over these contracts, while `/v1/check` remains provider-free. Contradiction results are validated against verbatim source substrings; improved-spec drafts are bounded human-reviewable Markdown outputs. Neither feature can alter SG rule findings, deterministic report formats, PASS/NEEDS WORK, or exit-code semantics. See [`rest-api.md`](rest-api.md), [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), [`openai-compatible.md`](openai-compatible.md), [`contradiction-analysis.md`](contradiction-analysis.md), and [`improved-spec-draft.md`](improved-spec-draft.md).
+The provider-neutral AI contract, `OllamaProvider`, `OpenAICompatibleProvider`, advisory contradiction analysis, conservative improved-spec drafting, and server-side provider resolver are available under `specforge_gate.ai`. They remain separate from the deterministic core. Provider network I/O occurs only when optional AI code is explicitly invoked; no deterministic check imports or calls it. The REST `/v1/ai/review` endpoint and `specgate ai-review` are explicit product-surface orchestrators over these contracts, while `/v1/check` and `specgate check` remain provider-free. Contradiction results are validated against verbatim source substrings; improved-spec drafts are bounded human-reviewable Markdown outputs. Neither feature can alter SG rule findings, deterministic report formats, PASS/NEEDS WORK, or exit-code semantics. See [`cli-ai-review.md`](cli-ai-review.md), [`rest-api.md`](rest-api.md), [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), [`openai-compatible.md`](openai-compatible.md), [`contradiction-analysis.md`](contradiction-analysis.md), and [`improved-spec-draft.md`](improved-spec-draft.md).
 
 ## Related details
 
