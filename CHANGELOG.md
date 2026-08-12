@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.0 - 2026-08-12
+
 ### Added
 - end-to-end local Ollama demo helper, fixture, automated transport test, and operator guidance
 - explicit `specgate ai-review FILE` command with text, JSON, and Markdown output
@@ -29,3 +31,10 @@
 - cross-platform bootstrap and canonical quality-check scripts
 - Windows quality workflow and tag-based GitHub Release automation
 - local pre-commit quality gates and expanded AI-agent instructions
+
+### Changed
+- promoted the first complete public MVP to version `0.3.0`
+- modernized package licensing to SPDX metadata and declared Python 3.13 support
+- hardened tag releases by requiring the tagged commit to be reachable from `main`
+- added SHA-256 checksum publication for wheel and source-distribution release assets
+- froze unscheduled feature expansion behind explicit post-release user evidence

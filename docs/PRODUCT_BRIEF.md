@@ -1,32 +1,42 @@
 # Product brief
 
-## Working name
+## Product name
 
-SpecForge Gate (`specgate`). The name is provisional until public repository creation.
+SpecForge Gate (`specgate`).
 
 ## User
 
-A developer, analyst, product manager, or team lead preparing Markdown tasks and specifications for human developers or coding agents.
+A developer, analyst, product manager, or team lead preparing Markdown tasks and specifications for
+human developers or coding agents.
 
 ## Problem
 
-A task can look detailed while still lacking an observable outcome, scope boundaries, testable acceptance criteria, failure behavior, or dependencies. Humans and coding agents then implement different interpretations.
+A task can look detailed while still lacking an observable outcome, scope boundaries, testable
+acceptance criteria, failure behavior, or dependencies. Humans and coding agents then implement
+different interpretations.
 
 ## Promise
 
-Find high-risk gaps before implementation begins, without requiring an API key or sending the specification to a third party.
+The deterministic gate finds high-risk gaps locally, offline, without an API key, and without
+sending the specification to a provider. Optional AI review is a separate explicit advisory path
+that may send the selected specification to an operator-configured provider.
 
-## v0.1 scope
+## Current v0.3.0 scope
 
 - Markdown and plain text
-- deterministic rule engine
-- CLI
-- text, JSON, and Markdown reports
+- deterministic rule engine with stable SG rule IDs
+- CLI with text, JSON, and Markdown reports
+- project configuration and suppression
 - Russian and English wording rules
-- reusable GitHub Action for pull-request checks
-- stateless REST API and minimal web UI
+- reusable GitHub Action
+- stateless REST API and same-origin web UI
 - Docker Compose deployment
-- provider-neutral optional-AI contract, Ollama/OpenAI-compatible adapters, advisory contradiction analysis, improved-spec drafting, and explicit REST AI review flow
+- provider-neutral optional-AI contract
+- Ollama and OpenAI-compatible adapters
+- advisory contradiction analysis
+- conservative improved-spec drafting
+- explicit REST, Web UI, and CLI AI review flows
+- end-to-end local Ollama operator demo
 
 ## Out of scope
 
@@ -37,10 +47,22 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - RAG
 - mandatory LLM calls
 - Jira and Bitrix integrations
+- automatic draft application
+- provider fallback/routing
+
+## Release posture
+
+`v0.3.0` is the first public alpha/MVP. The deterministic interfaces remain
+compatibility-sensitive. Optional AI output remains untrusted advisory content requiring human
+review. New feature expansion is intentionally deferred until there is explicit post-release
+evidence for it.
 
 ## Public vision and demo
 
-The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current deterministic behavior and distinguish the available CLI, GitHub Action, API, AI-capable same-origin UI, Docker deployment, AI provider contract, Ollama/OpenAI-compatible adapters, advisory contradiction analysis, improved-spec drafting, REST AI review flow, CLI AI review, and the end-to-end local-provider operator demo.
+The public product entry point is [`product-vision.md`](product-vision.md). The deterministic-first
+demo narrative is [`demo.md`](demo.md), the local-provider operator flow is
+[`local-ai-demo.md`](local-ai-demo.md), and release operations are documented in
+[`release.md`](release.md).
 
 ## Status semantics
 

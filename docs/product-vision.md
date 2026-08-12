@@ -19,8 +19,8 @@ Find high-risk requirement gaps locally, offline, and without an API key. Every 
 - The core must remain free of network and provider dependencies.
 - Stable rule IDs are public API.
 - Text, JSON, and Markdown outputs are automation interfaces.
-- Planned AI features must be optional and separate from deterministic checks.
-- Available and planned interfaces must be labeled accurately; implemented API/UI/container surfaces must not be confused with planned AI work.
+- AI features must remain optional and separate from deterministic checks.
+- Available and deferred interfaces must be labeled accurately; implemented product surfaces must not be confused with unscheduled backlog ideas.
 
 ## Current capability
 
@@ -28,10 +28,10 @@ SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an opti
 
 The current deterministic rule set checks for required sections, vague wording, untestable acceptance criteria, and compound requirements. See the rule table in the [README](../README.md#current-rules).
 
-## Planned capability
+## Release status
 
-The REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, conservative improved-spec drafting, REST AI review flow, CLI AI review, and end-to-end local-provider operator demo are available around the deterministic core. The v0.3.0 AI product-flow roadmap is complete.
+`v0.3.0` is the first public alpha/MVP. The REST API, web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama/OpenAI-compatible adapters, advisory contradiction analysis, conservative improved-spec drafting, explicit REST/Web UI/CLI AI review, and the local-provider operator demo are available around the deterministic core. New product-surface work is intentionally deferred until post-release evidence justifies it.
 
 ## Relationship to the product brief
 
-This file is the public product entry point. The older [product brief](PRODUCT_BRIEF.md) remains a compact scope summary for repository history and should not contradict this public vision.
+This file is the public product entry point. [The product brief](PRODUCT_BRIEF.md) is the compact current scope summary and should not contradict this public vision.
