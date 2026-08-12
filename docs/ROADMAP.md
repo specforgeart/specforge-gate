@@ -31,3 +31,11 @@
 - [x] OpenAI-compatible endpoint
 - [x] Contradiction analysis
 - [x] Improved-spec draft
+
+## v0.3.0 — AI product flow
+
+- [x] Server-side AI provider configuration
+- [x] REST AI review endpoint combining deterministic findings, contradictions, and improved draft
+- [ ] Web UI AI review flow
+- [ ] CLI AI review command
+- [ ] End-to-end local-provider demo and operator guidance

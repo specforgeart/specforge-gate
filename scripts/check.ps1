@@ -74,6 +74,12 @@ Invoke-Step "Smoke-test contradiction-analysis import" {
 Invoke-Step "Smoke-test improved-spec draft import" {
     & $SmokePython -c "from specforge_gate.ai import draft_improved_specification; assert callable(draft_improved_specification)"
 }
+Invoke-Step "Smoke-test AI runtime configuration" {
+    & $SmokePython -c "from specforge_gate.ai.runtime import provider_from_environment; provider = provider_from_environment({'SPECFORGE_AI_PROVIDER':'ollama','SPECFORGE_AI_MODEL':'smoke-model'}); assert provider is not None; assert provider.provider_id == 'ollama'"
+}
+Invoke-Step "Smoke-test AI API routes" {
+    & $SmokePython -c "from specforge_gate.api import app; paths = {route.path for route in app.routes}; assert '/v1/ai/status' in paths; assert '/v1/ai/review' in paths"
+}
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
 $BadExampleExitCode = $LASTEXITCODE

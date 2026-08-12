@@ -1,6 +1,6 @@
 # Docker image and Compose
 
-SpecForge Gate includes a minimal container deployment for the existing REST API and web UI. It does not add another application layer: the container starts `specforge_gate.api:app`, so `GET /`, `GET /healthz`, and `POST /v1/check` keep the same behavior and contracts as the non-container API process.
+SpecForge Gate includes a minimal container deployment for the existing REST API and web UI. It does not add another application layer: the container starts `specforge_gate.api:app`, so deterministic `GET /`, `GET /healthz`, and `POST /v1/check` keep the same behavior and contracts as the non-container API process. The same image also contains the optional `/v1/ai/status` and `/v1/ai/review` routes; they remain disabled until provider environment variables are explicitly supplied at runtime.
 
 ## Start with Docker Compose
 
@@ -50,7 +50,7 @@ The Compose profile adds runtime hardening:
 
 Containerization does not add authentication, TLS termination, rate limiting, persistence, uploads, a database, or a reverse proxy. Keep loopback binding for local demos. If the service is intentionally exposed outside the host, put an appropriate authenticated TLS-terminating proxy or hosting layer in front of it.
 
-The image build requires network access to obtain the Python base image and package dependencies. At runtime the deterministic analysis path still makes no outbound provider call.
+The image build requires network access to obtain the Python base image and package dependencies. At runtime the deterministic analysis path still makes no outbound provider call. Explicit AI review can make outbound provider calls only when the operator supplies AI provider environment variables to the container.
 
 ## Verification
 

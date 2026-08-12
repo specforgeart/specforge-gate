@@ -61,4 +61,9 @@ def test_web_ui_route_stays_out_of_openapi_contract() -> None:
     schema = CLIENT.get("/openapi.json").json()
 
     assert "/" not in schema["paths"]
-    assert set(schema["paths"]) == {"/healthz", "/v1/check"}
+    assert set(schema["paths"]) == {
+        "/healthz",
+        "/v1/check",
+        "/v1/ai/status",
+        "/v1/ai/review",
+    }
