@@ -36,6 +36,8 @@ WEB_UI_HTML = r'''<!doctype html>
       --line: #d9d2c9;
       --orange: #fe7101;
       --orange-soft: #ffe2ca;
+      --green: #2f6f45;
+      --green-soft: #edf6ed;
       --error: #b3261e;
       --warning: #9a5b00;
       --info: #315c72;
@@ -57,8 +59,12 @@ WEB_UI_HTML = r'''<!doctype html>
 
     button, textarea { font: inherit; }
 
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
     .shell {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1240px, calc(100% - 32px));
       margin: 0 auto;
       padding: 28px 0 44px;
     }
@@ -87,6 +93,13 @@ WEB_UI_HTML = r'''<!doctype html>
       box-shadow: 0 0 0 5px rgb(254 113 1 / 12%);
     }
 
+    .mode-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
     .mode {
       border: 1px solid var(--graphite);
       border-radius: 999px;
@@ -99,11 +112,17 @@ WEB_UI_HTML = r'''<!doctype html>
       color: var(--paper-strong);
     }
 
+    .mode.ai {
+      border-color: var(--orange);
+      background: transparent;
+      color: var(--graphite);
+    }
+
     .hero {
       display: grid;
       gap: 10px;
       margin-bottom: 24px;
-      max-width: 780px;
+      max-width: 820px;
     }
 
     .eyebrow {
@@ -126,7 +145,7 @@ WEB_UI_HTML = r'''<!doctype html>
       color: var(--muted);
       font-size: 16px;
       line-height: 1.55;
-      max-width: 720px;
+      max-width: 760px;
     }
 
     .workspace {
@@ -163,6 +182,7 @@ WEB_UI_HTML = r'''<!doctype html>
     .tiny {
       color: var(--muted);
       font-size: 12px;
+      line-height: 1.45;
     }
 
     .editor-wrap { padding: 18px; }
@@ -262,6 +282,7 @@ WEB_UI_HTML = r'''<!doctype html>
       align-items: center;
       gap: 10px;
       padding: 0 18px 16px;
+      flex-wrap: wrap;
     }
 
     .status-chip {
@@ -273,9 +294,10 @@ WEB_UI_HTML = r'''<!doctype html>
       letter-spacing: 0.06em;
     }
 
-    .status-chip.pass {
+    .status-chip.pass,
+    .status-chip.enabled {
       border-color: #6f8b70;
-      background: #edf6ed;
+      background: var(--green-soft);
       color: #25452a;
     }
 
@@ -283,6 +305,12 @@ WEB_UI_HTML = r'''<!doctype html>
       border-color: var(--orange);
       background: var(--orange-soft);
       color: #6f3400;
+    }
+
+    .status-chip.disabled {
+      border-color: var(--line);
+      background: #f1ede8;
+      color: var(--muted);
     }
 
     .filters {
@@ -308,13 +336,15 @@ WEB_UI_HTML = r'''<!doctype html>
       color: white;
     }
 
-    .findings {
+    .findings,
+    .contradictions {
       display: grid;
       gap: 10px;
       padding: 0 18px 18px;
     }
 
-    .finding {
+    .finding,
+    .contradiction {
       border: 1px solid var(--line);
       border-left-width: 4px;
       border-radius: 12px;
@@ -325,18 +355,27 @@ WEB_UI_HTML = r'''<!doctype html>
     .finding.error { border-left-color: var(--error); }
     .finding.warning { border-left-color: var(--warning); }
     .finding.info { border-left-color: var(--info); }
+    .contradiction { border-left-color: var(--orange); }
 
-    .finding-top {
+    .finding-top,
+    .contradiction-top {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 7px;
     }
 
-    .finding-id { font-weight: 850; }
+    .finding-id,
+    .contradiction-id { font-weight: 850; }
     .finding-meta { color: var(--muted); font-size: 12px; }
     .finding-message { margin: 0; line-height: 1.45; }
-    .finding-fix { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .finding-fix,
+    .contradiction-copy {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
 
     .empty {
       padding: 30px 18px 36px;
@@ -348,29 +387,92 @@ WEB_UI_HTML = r'''<!doctype html>
     .privacy {
       display: flex;
       gap: 8px;
-      align-items: center;
+      align-items: flex-start;
       margin-top: 16px;
       color: var(--muted);
       font-size: 12px;
+      line-height: 1.45;
     }
 
     .privacy-dot {
       width: 7px;
       height: 7px;
+      flex: 0 0 7px;
+      margin-top: 5px;
       border-radius: 50%;
       background: var(--orange);
     }
 
+    .ai-panel {
+      margin-top: 18px;
+    }
+
+    .ai-status-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 18px 0;
+    }
+
+    .ai-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .ai-column {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgb(255 255 255 / 42%);
+      overflow: hidden;
+    }
+
+    .ai-column-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .ai-column-head h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .draft-output {
+      min-height: 260px;
+      max-height: 620px;
+      overflow: auto;
+      margin: 0;
+      padding: 16px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: transparent;
+      color: var(--graphite);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .ai-empty {
+      padding: 24px 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
     @media (max-width: 900px) {
-      .workspace { grid-template-columns: 1fr; }
+      .workspace,
+      .ai-grid { grid-template-columns: 1fr; }
       textarea { min-height: 390px; }
     }
 
     @media (max-width: 560px) {
-      .shell { width: min(100% - 20px, 1180px); padding-top: 18px; }
+      .shell { width: min(100% - 20px, 1240px); padding-top: 18px; }
       .topbar { align-items: flex-start; }
       .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .panel-head { align-items: flex-start; flex-direction: column; }
+      .mode-row { justify-content: flex-start; }
     }
   </style>
 </head>
@@ -378,15 +480,18 @@ WEB_UI_HTML = r'''<!doctype html>
   <main class="shell">
     <div class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true"></span>SpecForge Gate</div>
-      <div class="mode">Deterministic</div>
+      <div class="mode-row">
+        <div class="mode">Deterministic</div>
+        <div class="mode ai">Advisory AI</div>
+      </div>
     </div>
 
     <section class="hero" aria-labelledby="page-title">
       <div class="eyebrow">Requirements quality gate</div>
       <h1 id="page-title">Find the gaps before implementation starts.</h1>
       <p>
-        Paste a task or specification. SpecForge Gate runs the same deterministic rules as the
-        CLI and REST API, then returns explainable findings with stable rule IDs.
+        Run the deterministic gate first, or explicitly request an advisory AI review that adds
+        contradiction analysis and a conservative improved-spec draft without changing gate status.
       </p>
     </section>
 
@@ -395,7 +500,7 @@ WEB_UI_HTML = r'''<!doctype html>
         <div class="panel-head">
           <div>
             <h2 class="panel-title">Specification</h2>
-            <div class="tiny">Ctrl / ⌘ + Enter to analyze</div>
+            <div class="tiny">Ctrl / ⌘ + Enter runs the deterministic gate</div>
           </div>
           <button class="button" id="load-example" type="button">Load example</button>
         </div>
@@ -409,12 +514,17 @@ WEB_UI_HTML = r'''<!doctype html>
           ></textarea>
           <div class="actions">
             <button class="button accent" id="run-check" type="button">Analyze requirements</button>
+            <button
+              class="button primary" id="run-ai-review" type="button" disabled>AI Review</button>
             <button class="button" id="clear-input" type="button">Clear</button>
           </div>
           <div class="notice" id="analysis-notice" role="status" aria-live="polite">Ready.</div>
           <div class="privacy">
             <span class="privacy-dot" aria-hidden="true"></span>
-            Same-origin request only · no upload storage · no AI provider call
+            <span>
+              Analyze requirements never calls AI. AI Review sends the current text only after an
+              explicit click and only through the server-configured provider.
+            </span>
           </div>
         </div>
       </article>
@@ -422,7 +532,7 @@ WEB_UI_HTML = r'''<!doctype html>
       <article class="panel" aria-labelledby="results-title">
         <div class="panel-head">
           <div>
-            <h2 class="panel-title" id="results-title">Analysis</h2>
+            <h2 class="panel-title" id="results-title">Deterministic analysis</h2>
             <div class="tiny">Structured findings from <code>/v1/check</code></div>
           </div>
           <button class="button primary" id="copy-markdown" type="button" disabled>
@@ -458,6 +568,49 @@ WEB_UI_HTML = r'''<!doctype html>
         </div>
       </article>
     </section>
+
+    <section class="panel ai-panel" id="ai-review-section" aria-labelledby="ai-review-title">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title" id="ai-review-title">AI Review</h2>
+          <div class="tiny">Advisory only · deterministic PASS/NEEDS WORK never changes</div>
+        </div>
+        <button class="button" id="refresh-ai-status" type="button">Refresh provider</button>
+      </div>
+
+      <div class="ai-status-row">
+        <span class="status-chip disabled" id="ai-provider-status">Checking provider…</span>
+        <span class="tiny" id="ai-provider-detail">Server configuration is being inspected.</span>
+      </div>
+
+      <div class="ai-grid">
+        <section class="ai-column" aria-labelledby="contradictions-title">
+          <div class="ai-column-head">
+            <h3 id="contradictions-title">Contradictions</h3>
+          </div>
+          <div class="contradictions" id="contradictions-list">
+            <div class="ai-empty">Run AI Review to inspect direct contradictions.</div>
+          </div>
+        </section>
+
+        <section class="ai-column" aria-labelledby="improved-title">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title" id="improved-title">Improved specification draft</h3>
+              <div class="tiny">Review before use. The model is not an authority.</div>
+            </div>
+            <div class="actions">
+              <button class="button" id="copy-improved" type="button" disabled>Copy draft</button>
+              <button class="button primary" id="use-improved" type="button" disabled>
+                Use as input
+              </button>
+            </div>
+          </div>
+          <pre
+            class="draft-output" id="improved-spec-output">Run AI Review to generate a draft.</pre>
+        </section>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -465,13 +618,21 @@ WEB_UI_HTML = r'''<!doctype html>
 
     const input = document.getElementById("spec-input");
     const runButton = document.getElementById("run-check");
+    const aiReviewButton = document.getElementById("run-ai-review");
     const clearButton = document.getElementById("clear-input");
     const loadExampleButton = document.getElementById("load-example");
     const copyButton = document.getElementById("copy-markdown");
+    const copyImprovedButton = document.getElementById("copy-improved");
+    const useImprovedButton = document.getElementById("use-improved");
+    const refreshAIStatusButton = document.getElementById("refresh-ai-status");
     const notice = document.getElementById("analysis-notice");
     const findingsList = document.getElementById("findings-list");
     const statusChip = document.getElementById("report-status");
     const sourceLabel = document.getElementById("report-source");
+    const aiProviderStatus = document.getElementById("ai-provider-status");
+    const aiProviderDetail = document.getElementById("ai-provider-detail");
+    const contradictionsList = document.getElementById("contradictions-list");
+    const improvedSpecOutput = document.getElementById("improved-spec-output");
     const filters = Array.from(document.querySelectorAll("[data-filter]"));
 
     const metrics = {
@@ -498,14 +659,25 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
 
     let activeFilter = "all";
     let report = null;
+    let aiReview = null;
+    let aiEnabled = false;
+    let isBusy = false;
 
     function setNotice(message) {
       notice.textContent = message;
     }
 
-    function setBusy(isBusy) {
-      runButton.disabled = isBusy;
-      runButton.textContent = isBusy ? "Analyzing…" : "Analyze requirements";
+    function setBusy(busy, mode) {
+      isBusy = busy;
+      runButton.disabled = busy;
+      aiReviewButton.disabled = busy || !aiEnabled;
+      refreshAIStatusButton.disabled = busy;
+      runButton.textContent = busy && mode === "deterministic"
+        ? "Analyzing…"
+        : "Analyze requirements";
+      aiReviewButton.textContent = busy && mode === "ai"
+        ? "AI reviewing…"
+        : "AI Review";
     }
 
     function resetReport() {
@@ -519,6 +691,14 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
       statusChip.className = "status-chip";
       sourceLabel.textContent = "Source: web-ui";
       renderFindings();
+    }
+
+    function resetAIReview() {
+      aiReview = null;
+      copyImprovedButton.disabled = true;
+      useImprovedButton.disabled = true;
+      improvedSpecOutput.textContent = "Run AI Review to generate a draft.";
+      renderContradictions();
     }
 
     function renderSummary() {
@@ -600,6 +780,57 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
       }
     }
 
+    function contradictionCard(item, index) {
+      const card = document.createElement("article");
+      card.className = "contradiction";
+
+      const top = document.createElement("div");
+      top.className = "contradiction-top";
+
+      const label = document.createElement("span");
+      label.className = "contradiction-id";
+      label.textContent = "Contradiction " + String(index + 1);
+      top.append(label);
+
+      const statementA = document.createElement("p");
+      statementA.className = "contradiction-copy";
+      statementA.textContent = "A: “" + item.statement_a + "”";
+
+      const statementB = document.createElement("p");
+      statementB.className = "contradiction-copy";
+      statementB.textContent = "B: “" + item.statement_b + "”";
+
+      const explanation = document.createElement("p");
+      explanation.className = "finding-message";
+      explanation.textContent = item.explanation;
+
+      card.append(top, statementA, statementB, explanation);
+      return card;
+    }
+
+    function renderContradictions() {
+      contradictionsList.replaceChildren();
+      if (!aiReview) {
+        const empty = document.createElement("div");
+        empty.className = "ai-empty";
+        empty.textContent = "Run AI Review to inspect direct contradictions.";
+        contradictionsList.append(empty);
+        return;
+      }
+
+      if (aiReview.contradictions.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "ai-empty";
+        empty.textContent = "No direct contradictions were returned.";
+        contradictionsList.append(empty);
+        return;
+      }
+
+      aiReview.contradictions.forEach((item, index) => {
+        contradictionsList.append(contradictionCard(item, index));
+      });
+    }
+
     function markdownReport(value) {
       const lines = [
         "# SpecForge Gate: " + value.status,
@@ -637,8 +868,54 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
         if (detail.code === "text_too_large") {
           return "Input exceeds the configured limit of " + detail.max_chars + " characters.";
         }
+        if (detail.code === "ai_not_configured") {
+          return "AI Review is not configured on this server.";
+        }
+        if (detail.code) {
+          return "AI Review failed: " + detail.code + ".";
+        }
       }
-      return "Analysis request failed with HTTP " + status + ".";
+      return "Request failed with HTTP " + status + ".";
+    }
+
+    async function refreshAIStatus() {
+      if (isBusy) {
+        return;
+      }
+      aiProviderStatus.textContent = "Checking provider…";
+      aiProviderStatus.className = "status-chip disabled";
+      aiProviderDetail.textContent = "Server configuration is being inspected.";
+      aiEnabled = false;
+      aiReviewButton.disabled = true;
+
+      try {
+        const response = await fetch("/v1/ai/status", {method: "GET"});
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(apiError(payload, response.status));
+        }
+
+        aiEnabled = payload.enabled === true;
+        if (aiEnabled) {
+          aiProviderStatus.textContent = "AI enabled";
+          aiProviderStatus.className = "status-chip enabled";
+          aiProviderDetail.textContent = (
+            "Provider: " + payload.provider + " \u00b7 Model: " + payload.model
+          );
+        } else {
+          aiProviderStatus.textContent = "AI disabled";
+          aiProviderStatus.className = "status-chip disabled";
+          aiProviderDetail.textContent = "Configure a server-side provider to enable AI Review.";
+        }
+      } catch (error) {
+        aiProviderStatus.textContent = "AI unavailable";
+        aiProviderStatus.className = "status-chip disabled";
+        aiProviderDetail.textContent = error instanceof Error
+          ? error.message
+          : "Could not read AI provider status.";
+      } finally {
+        aiReviewButton.disabled = !aiEnabled || isBusy;
+      }
     }
 
     async function runAnalysis() {
@@ -649,7 +926,7 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
         return;
       }
 
-      setBusy(true);
+      setBusy(true, "deterministic");
       setNotice("Running deterministic checks…");
       try {
         const response = await fetch("/v1/check", {
@@ -669,11 +946,64 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
       } catch (error) {
         setNotice(error instanceof Error ? error.message : "Analysis failed.");
       } finally {
-        setBusy(false);
+        setBusy(false, "deterministic");
+      }
+    }
+
+    async function runAIReview() {
+      const text = input.value;
+      if (!text.trim()) {
+        setNotice("Paste a specification before requesting AI Review.");
+        input.focus();
+        return;
+      }
+      if (!aiEnabled) {
+        setNotice("AI Review is not configured on this server.");
+        return;
+      }
+
+      setBusy(true, "ai");
+      setNotice("Running deterministic checks and advisory AI review…");
+      try {
+        const response = await fetch("/v1/ai/review", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({text, source: "web-ui"}),
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(apiError(payload, response.status));
+        }
+
+        report = payload.deterministic;
+        aiReview = payload;
+        copyButton.disabled = false;
+        copyImprovedButton.disabled = false;
+        useImprovedButton.disabled = false;
+        renderSummary();
+        renderFindings();
+        renderContradictions();
+        improvedSpecOutput.textContent = aiReview.improved_spec;
+        aiProviderStatus.textContent = "AI enabled";
+        aiProviderStatus.className = "status-chip enabled";
+        aiProviderDetail.textContent = (
+          "Provider: " + aiReview.provider + " \u00b7 Model: " + aiReview.model
+        );
+        setNotice(
+          "AI review complete: "
+          + String(aiReview.contradictions.length)
+          + " contradiction(s), draft ready for review.",
+        );
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "AI Review failed.");
+      } finally {
+        setBusy(false, "ai");
       }
     }
 
     runButton.addEventListener("click", runAnalysis);
+    aiReviewButton.addEventListener("click", runAIReview);
+    refreshAIStatusButton.addEventListener("click", refreshAIStatus);
 
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
@@ -683,15 +1013,17 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
     });
 
     input.addEventListener("input", () => {
-      if (report) {
+      if (report || aiReview) {
         resetReport();
-        setNotice("Input changed. Run the gate again for current results.");
+        resetAIReview();
+        setNotice("Input changed. Previous results were cleared.");
       }
     });
 
     clearButton.addEventListener("click", () => {
       input.value = "";
       resetReport();
+      resetAIReview();
       input.focus();
       setNotice("Input cleared.");
     });
@@ -699,8 +1031,9 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
     loadExampleButton.addEventListener("click", () => {
       input.value = example;
       resetReport();
+      resetAIReview();
       input.focus();
-      setNotice("Example loaded. Run the gate to inspect it.");
+      setNotice("Example loaded. Analyze it or request AI Review.");
     });
 
     for (const filterButton of filters) {
@@ -724,6 +1057,32 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
         setNotice("Clipboard access was denied by the browser.");
       }
     });
+
+    copyImprovedButton.addEventListener("click", async () => {
+      if (!aiReview) {
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(aiReview.improved_spec);
+        setNotice("Improved specification draft copied to clipboard.");
+      } catch (_error) {
+        setNotice("Clipboard access was denied by the browser.");
+      }
+    });
+
+    useImprovedButton.addEventListener("click", () => {
+      if (!aiReview) {
+        return;
+      }
+      const draft = aiReview.improved_spec;
+      input.value = draft;
+      resetReport();
+      resetAIReview();
+      input.focus();
+      setNotice("Improved draft loaded as input. Review it, then run the gate again.");
+    });
+
+    refreshAIStatus();
   </script>
 </body>
 </html>

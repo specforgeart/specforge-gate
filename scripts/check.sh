@@ -36,6 +36,7 @@ fi
 .venv-smoke/bin/python -c "from specforge_gate.ai import draft_improved_specification; assert callable(draft_improved_specification)"
 .venv-smoke/bin/python -c "from specforge_gate.ai.runtime import provider_from_environment; provider = provider_from_environment({'SPECFORGE_AI_PROVIDER':'ollama','SPECFORGE_AI_MODEL':'smoke-model'}); assert provider is not None; assert provider.provider_id == 'ollama'"
 .venv-smoke/bin/python -c "from specforge_gate.api import app; paths = {route.path for route in app.routes}; assert '/v1/ai/status' in paths; assert '/v1/ai/review' in paths"
+.venv-smoke/bin/python -c "from specforge_gate.web_ui import WEB_UI_HTML; assert 'id=\"run-ai-review\"' in WEB_UI_HTML; assert 'fetch(\"/v1/ai/status\"' in WEB_UI_HTML; assert 'fetch(\"/v1/ai/review\"' in WEB_UI_HTML"
 
 set +e
 .venv-smoke/bin/specgate check examples/bad/export-task.md --format json >/dev/null 2>&1
