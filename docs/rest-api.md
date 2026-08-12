@@ -13,7 +13,7 @@ python -m uvicorn specforge_gate.api:app --host 127.0.0.1 --port 8000
 
 Use `0.0.0.0` only when you intentionally want the process reachable from other hosts. Authentication, TLS termination, rate limiting, and reverse-proxy policy are deployment concerns and are not implemented by the pre-release API server.
 
-The same process serves the minimal browser UI at `GET /`. The current browser UI still uses only the deterministic `/v1/check` endpoint; AI UI controls remain a separate roadmap item.
+The same process serves the browser UI at `GET /`. The UI keeps deterministic `/v1/check` separate and enables explicit `/v1/ai/review` only when a server-side provider is configured.
 
 ## Endpoints
 
@@ -143,6 +143,8 @@ python -m uvicorn specforge_gate.api:app --host 127.0.0.1 --port 8000
 
 OpenAI-compatible deployments additionally set an explicit `SPECFORGE_AI_BASE_URL`; `SPECFORGE_AI_API_KEY` is supplied only when that endpoint requires Bearer authentication. The API never returns the key in status or review responses.
 
+For a complete local Ollama operator walkthrough, see [End-to-end local AI demo](local-ai-demo.md).
+
 ## Inline deterministic configuration
 
 Both analysis endpoints accept deterministic `version`, `language`, and per-rule `enabled` / `severity` overrides. Filesystem-oriented `.specgate.yml` fields such as `exclude` are intentionally rejected because the API analyzes inline text only.
@@ -163,7 +165,7 @@ The API layer:
 - performs provider network I/O only for explicit `/v1/ai/review` calls;
 - keeps deterministic result semantics independent from advisory AI success or failure.
 
-The browser UI adds no external asset requests and currently posts analysis only to same-origin `/v1/check`. Its response sets no-store, no-referrer, nosniff, and a restrictive Content Security Policy; returned finding data is inserted through DOM text nodes rather than `innerHTML`.
+The browser UI adds no external asset requests. Deterministic analysis posts only to same-origin `/v1/check`; explicit AI Review posts to same-origin `/v1/ai/review` after provider status is read from `/v1/ai/status`. Its response sets no-store, no-referrer, nosniff, and a restrictive Content Security Policy; returned strings are inserted through DOM text nodes rather than `innerHTML`.
 
 Production deployment should place authentication, TLS, request-rate controls, and external exposure policy in an appropriate reverse proxy or hosting layer. Treat all improved-spec drafts as untrusted model output requiring human review.
 

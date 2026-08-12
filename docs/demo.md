@@ -1,33 +1,31 @@
 # Demo narrative
 
-SpecForge Gate is a deterministic quality gate for Markdown tasks and software requirements. The public demo is intentionally CLI-first for v0.1.0: users run the local `specgate` command against an example task, inspect explainable rule IDs, and compare the result with an improved specification.
+SpecForge Gate has two intentionally separate public demo paths:
+
+1. a fast deterministic demo that requires no AI provider;
+2. an optional end-to-end local AI demo using an explicitly configured Ollama instance.
+
+The deterministic path remains the default product story because stable rule IDs and repeatable
+findings are the quality gate. AI adds advisory contradiction analysis and conservative drafting
+without changing deterministic results.
 
 ## Audience
 
-The demo is for developers, analysts, product managers, team leads, and maintainers who prepare implementation tasks for human developers or coding agents.
+The demo is for developers, analysts, product managers, team leads, and maintainers who prepare
+implementation tasks for human developers or coding agents.
 
-## Storyline
+## Deterministic storyline
 
 1. Start with a short task that looks actionable but lacks measurable delivery detail.
-2. Run `specgate check examples/bad/export-task.md` to show that deterministic rules find missing goals, expected results, acceptance criteria, scope boundaries, and failure handling.
-3. Point to stable rule IDs such as `SG001`, `SG002`, and `SG003` as the public explanation layer.
-4. Compare the bad example with `examples/improved/export-task.md` to show what a better task contains.
-5. Re-run the check on the improved example to demonstrate the pass path.
-6. Optionally show `--format json` or `--format markdown` for automation-friendly output.
+2. Run `specgate check examples/bad/export-task.md`.
+3. Point to stable rule IDs such as `SG001`, `SG002`, and `SG003`.
+4. Compare with `examples/improved/export-task.md`.
+5. Re-run the check to demonstrate the improved path.
+6. Optionally show `--format json` or `--format markdown`.
 
-## Regression corpus
+## Deterministic demo commands
 
-The two public demo files remain intentionally simple. Broader behavior is protected by the 40-case manifest-driven corpus under [`examples/corpus`](../examples/corpus), which covers English and Russian bad, improved, and boundary specifications. The corpus is regression evidence, not a replacement for the short before/after demo.
-
-Developers can run it with:
-
-```bash
-python -m pytest tests/test_example_corpus.py
-```
-
-## Demo commands
-
-Linux and macOS:
+Linux/macOS:
 
 ```bash
 python -m venv .venv
@@ -35,82 +33,69 @@ source .venv/bin/activate
 python -m pip install -e .
 specgate check examples/bad/export-task.md
 specgate check examples/improved/export-task.md
-specgate check examples/bad/export-task.md --format json
-specgate check examples/bad/export-task.md --format markdown
 ```
 
 Windows PowerShell:
 
 ```powershell
-py -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-py -m pip install -e .
+python -m pip install -e .
 specgate check .\examples\bad\export-task.md
 specgate check .\examples\improved\export-task.md
-specgate check .\examples\bad\export-task.md --format json
-specgate check .\examples\bad\export-task.md --format markdown
 ```
 
-## Before and after script
+## Optional local AI storyline
 
-Before:
+The complete local-provider demo is documented in
+[End-to-end local AI demo](local-ai-demo.md). It uses the intentionally contradictory
+`examples/ai/local-provider-demo.md` fixture.
 
-```text
-Make a convenient and fast export of the result.
+With Ollama running and `qwen3:8b` installed:
+
+```bash
+python scripts/demo_local_ai.py --model qwen3:8b
 ```
 
-Explain that the task is risky because it has no explicit goal, expected result, testable acceptance criteria, out-of-scope boundaries, or failure behavior.
+The helper first runs the deterministic gate and then explicitly invokes `specgate ai-review`.
+That separation is part of the product contract: AI is never automatic.
 
-After:
+The same configured provider can then be demonstrated through the REST endpoint and same-origin Web
+UI. The browser's **Analyze requirements** action remains deterministic while **AI Review** is a
+separate explicit action.
 
-```markdown
-# Goal
+## Regression evidence
 
-Allow an operator to export filtered order results to a CSV file.
-
-# Expected result
-
-The user receives a UTF-8 CSV file containing only orders that match the active filters.
-
-# Acceptance criteria
-
-- Given filtered order results, when the user selects Export CSV, then the downloaded file contains the same filtered rows.
-- Given no matching orders, when the user selects Export CSV, then the system downloads a CSV file with headers and no data rows.
-- Given an export failure, when the user retries, then the system shows a clear error message and does not create a partial file.
-
-# Out of scope
-
-- XLSX export
-- scheduled exports
-- emailing export files
-
-# Errors and edge cases
-
-- empty result sets
-- export generation failure
-- non-ASCII customer names
-```
+`examples/corpus/` contains the deterministic 40-case manifest-driven regression corpus. The local
+AI demo additionally has an automated loopback HTTP integration test that exercises the real
+CLI/runtime/Ollama transport path without requiring a downloaded model in CI.
 
 ## What the demo must not imply
 
-The public demo must distinguish implemented interfaces from planned ones. The GitHub Action, stateless REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama and OpenAI-compatible adapters, advisory contradiction analysis, and conservative improved-spec drafting library feature are available. The deterministic CLI demo must not imply that optional AI is automatically invoked or affects PASS/NEEDS WORK.
-
-The demo must also avoid fake badges, screenshots, GIFs, hosted endpoints, synthetic testimonials, or claims about integrations that are not implemented in this repository.
+- AI findings are not deterministic SG rules.
+- AI does not alter PASS/NEEDS WORK or stable rule IDs.
+- A local model's wording is not a stable snapshot.
+- The repository does not provide accounts, persistence, billing, RAG, Jira/Bitrix integration,
+  automatic draft application, or provider routing/fallback.
+- Do not use fake badges, screenshots, hosted endpoints, or synthetic testimonials.
 
 ## Current boundaries
 
-- The deterministic core has no network or provider dependency.
-- The CLI accepts local Markdown or text files and directories.
-- Text, JSON, and Markdown report formats are public automation interfaces.
-- Exit codes are controlled by `--fail-on` and are compatibility-sensitive.
-- Rule IDs are stable public API and must remain explainable in public material.
+- `specgate check` has no network or provider dependency.
+- `specgate ai-review` accepts one explicit local file.
+- AI provider configuration comes from process environment.
+- Ollama defaults to loopback.
+- Text, JSON, and Markdown outputs remain public interfaces.
+- AI output is untrusted advisory content requiring human review.
 
 ## Related documentation
 
-- [README](../README.md) for installation and CLI usage.
-- [Product vision](product-vision.md) for public product positioning.
-- [Product brief](PRODUCT_BRIEF.md) for the internal scope summary.
-- [Architecture](architecture.md) for the public architecture overview.
-- [Roadmap](ROADMAP.md) for planned interfaces and future analysis work.
-- [Configuration](configuration.md) for `.specgate.yml` behavior.
-- [Inline rule suppression](suppression.md) for documented suppression directives.
+- [README](../README.md)
+- [End-to-end local AI demo](local-ai-demo.md)
+- [CLI AI review](cli-ai-review.md)
+- [Web UI](web-ui.md)
+- [REST API](rest-api.md)
+- [Ollama adapter](ollama.md)
+- [Product vision](product-vision.md)
+- [Architecture](architecture.md)
+- [Roadmap](ROADMAP.md)
