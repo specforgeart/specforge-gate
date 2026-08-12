@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- aligned contradiction-analysis and improved-spec-draft documentation with the shipped v0.3.0 CLI, REST, and Web UI AI review surfaces
+
 ## 0.3.0 - 2026-08-12
 
 ### Added

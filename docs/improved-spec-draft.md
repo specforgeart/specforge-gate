@@ -51,4 +51,4 @@ result = draft_improved_specification(
 print(result.text)
 ```
 
-No CLI, REST API, web UI, or GitHub Action route invokes this function automatically. Product-surface AI controls remain separate future work.
+In v0.3.0 the function is consumed only inside explicit AI review flows: `specgate ai-review FILE`, `POST /v1/ai/review`, and the Web UI **AI Review** action. It is never invoked by deterministic `specgate check`, `POST /v1/check`, or the reusable GitHub Action, and no product surface applies the draft automatically.
