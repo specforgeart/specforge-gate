@@ -32,6 +32,7 @@ fi
 .venv-smoke/bin/python -c "from specforge_gate.ai import AIRequest, AIResponseFormat; request = AIRequest('system', 'user'); assert request.response_format is AIResponseFormat.TEXT"
 .venv-smoke/bin/python -c "from specforge_gate.ai import OllamaProvider; provider = OllamaProvider(model='smoke-model'); assert provider.provider_id == 'ollama'; assert provider.model == 'smoke-model'"
 .venv-smoke/bin/python -c "from specforge_gate.ai import OpenAICompatibleProvider; provider = OpenAICompatibleProvider(model='smoke-model', base_url='http://127.0.0.1:1234/v1'); assert provider.provider_id == 'openai-compatible'; assert provider.model == 'smoke-model'"
+.venv-smoke/bin/python -c "from specforge_gate.ai import analyze_contradictions; assert callable(analyze_contradictions)"
 
 set +e
 .venv-smoke/bin/specgate check examples/bad/export-task.md --format json >/dev/null 2>&1

@@ -124,8 +124,13 @@ def test_ai_package_exports_exact_public_contract() -> None:
         "AIRequest",
         "AIResponse",
         "AIResponseFormat",
+        "Contradiction",
+        "ContradictionAnalysis",
+        "ContradictionAnalysisError",
+        "ContradictionAnalysisErrorCode",
         "OllamaProvider",
         "OpenAICompatibleProvider",
+        "analyze_contradictions",
     ]
 
 
@@ -168,4 +173,5 @@ def test_canonical_checks_smoke_import_ai_contract_from_built_wheel() -> None:
         assert "provider.provider_id == 'ollama'" in text
         assert "from specforge_gate.ai import OpenAICompatibleProvider" in text
         assert "provider.provider_id == 'openai-compatible'" in text
+        assert "from specforge_gate.ai import analyze_contradictions" in text
 

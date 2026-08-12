@@ -26,14 +26,14 @@ flowchart TD
         L["Provider interface — available"]
         R["Ollama adapter — available"]
         S["OpenAI-compatible adapter — available"]
-        M["Contradiction analysis — planned"]
+        M["Contradiction analysis — available"]
         N["Improved-spec draft — planned"]
     end
 
     D -. future optional input .-> L
     L --> R
     L --> S
-    L -. planned .-> M
+    L --> M
     L -. planned .-> N
 ```
 
@@ -64,7 +64,7 @@ The Docker image and one-service Compose deployment package the existing FastAPI
 
 ## Optional AI boundary
 
-The provider-neutral AI contract, `OllamaProvider`, and `OpenAICompatibleProvider` are available under `specforge_gate.ai`. The contract remains separate from the deterministic core. Provider adapters perform explicit outbound HTTP only when invoked; no deterministic check imports or calls them. Ollama defaults to loopback, while the OpenAI-compatible adapter requires an explicit API root and supports an optional caller-supplied Bearer key. AI-powered analysis remains planned. Optional AI code must not change stable rule IDs, current deterministic output contracts, or exit-code semantics. See [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), and [`openai-compatible.md`](openai-compatible.md).
+The provider-neutral AI contract, `OllamaProvider`, `OpenAICompatibleProvider`, and advisory contradiction analysis are available under `specforge_gate.ai`. They remain separate from the deterministic core. Provider network I/O occurs only when optional AI code is explicitly invoked; no deterministic check imports or calls it. Contradiction results are validated against verbatim source substrings and never alter SG rule findings, deterministic report formats, PASS/NEEDS WORK, or exit-code semantics. Improved-spec drafting remains planned. See [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), [`openai-compatible.md`](openai-compatible.md), and [`contradiction-analysis.md`](contradiction-analysis.md).
 
 ## Related details
 

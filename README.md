@@ -112,14 +112,15 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | AI provider contract | available | Standard-library-only adapter protocol for optional AI integrations. |
 | Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; no AI product feature invokes it yet. |
 | OpenAI-compatible adapter | available | Explicit synchronous Chat Completions adapter with optional caller-supplied Bearer auth. |
+| Contradiction analysis | available | Advisory provider-neutral analysis with strict JSON and verbatim-source evidence validation. |
 
-AI-powered contradiction/drafting features remain planned work.
+Improved-spec drafting remains planned work.
 
 ## Deterministic core vs optional AI
 
 The current product is the deterministic core: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
 
-The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter is explicitly invoked; deterministic checks remain provider-free. AI-powered contradiction/drafting features are still planned. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), and [OpenAI-compatible adapter](docs/openai-compatible.md).
+The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis is available and validates model evidence against verbatim source substrings; improved-spec drafting remains planned. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), and [contradiction analysis](docs/contradiction-analysis.md).
 
 ## Current rules
 
@@ -260,6 +261,7 @@ exclude:
 - [AI provider interface](docs/ai-provider-interface.md) — provider-neutral optional-AI contracts and boundaries.
 - [Ollama adapter](docs/ollama.md) — local Ollama transport, configuration, errors, and security boundary.
 - [OpenAI-compatible adapter](docs/openai-compatible.md) — Chat Completions transport, optional Bearer authentication, errors, and security boundary.
+- [Contradiction analysis](docs/contradiction-analysis.md) — advisory AI contradiction contract, source-evidence validation, and deterministic boundary.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.

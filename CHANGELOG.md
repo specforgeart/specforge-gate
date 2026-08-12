@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- provider-neutral advisory contradiction analysis with verbatim-source evidence validation
 - optional OpenAI-compatible Chat Completions adapter with explicit Bearer auth support
 - optional Ollama adapter over the provider-neutral AI contract using non-streaming `/api/chat`
 - provider-neutral standard-library AI adapter contract for future optional providers
