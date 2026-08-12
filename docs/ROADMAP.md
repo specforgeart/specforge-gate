@@ -39,3 +39,9 @@
 - [x] Web UI AI review flow
 - [x] CLI AI review command
 - [x] End-to-end local-provider demo and operator guidance
+
+## Release posture
+
+`v0.3.0` is the first public alpha/MVP release line. After publication, new product-surface work is
+not started automatically. Deferred ideas remain in `BACKLOG.md` until an explicit Issue is backed
+by user evidence, a concrete integration need, or a measured quality/reliability problem.

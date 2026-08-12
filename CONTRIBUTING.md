@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for helping improve SpecForge Gate. The project is pre-release, but rule IDs, output formats, and exit-code behavior are treated as compatibility-sensitive because users may automate against them.
+Thank you for helping improve SpecForge Gate. The project is an early public alpha, and rule IDs, output formats, and exit-code behavior are compatibility-sensitive because users may automate against them.
 
 ## Workflow
 

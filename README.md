@@ -10,7 +10,7 @@
 
 SpecForge Gate (`specgate`) checks Markdown and text specifications for missing goals, expected results, testable acceptance criteria, scope boundaries, edge cases, vague wording, untestable criteria, and compound requirements. Its deterministic gate runs locally and offline, requires no API key, uploads no documents, and returns explainable findings with stable rule IDs. Optional AI review is a separate explicit action.
 
-> Working name and pre-alpha implementation. The public repository name may change before release.
+> Public alpha/MVP line: `v0.3.0`. Deterministic interfaces are compatibility-sensitive; optional AI remains advisory.
 
 ## Who it is for
 
@@ -30,10 +30,10 @@ SpecForge Gate catches these gaps early with deterministic checks instead of rel
 - **Repeatable:** the same input and configuration produce the same findings.
 - **Explainable:** each finding points to a stable rule ID such as `SG001` or `SG102`.
 - **Local and offline by default:** `specgate check` reads local files/directories and performs no provider call.
-- **No API key:** no provider account is required for current functionality.
+- **No API key for deterministic use:** optional external AI providers may require operator-supplied credentials.
 - **Automation-friendly:** text, JSON, and Markdown outputs are public interfaces.
 
-Optional AI provider transports, advisory contradiction analysis, and conservative improved-spec drafting are available as an explicit library layer separate from the deterministic core.
+Optional AI remains a separate explicit advisory layer exposed through the CLI, REST API, and Web UI; deterministic checks stay provider-free.
 
 ## 15-second example
 
@@ -98,7 +98,11 @@ The user receives a UTF-8 CSV file containing only orders that match the active 
 
 See the repository examples in [`examples/bad`](examples/bad) and [`examples/improved`](examples/improved).
 
-## Current and planned interfaces
+## Release status
+
+`v0.3.0` is the first public alpha/MVP. The release is distributed through GitHub Release assets (wheel, source distribution, and SHA-256 checksums); this release process does not publish to PyPI. See [Release process](docs/release.md).
+
+## Current interfaces
 
 | Interface | Status | Notes |
 |---|---|---|
@@ -118,7 +122,7 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 
 ## Deterministic core vs optional AI
 
-The current product is the deterministic core: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
+The deterministic core remains the authoritative quality gate: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
 
 The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis validates model evidence against verbatim source substrings; improved-spec drafting is also available as a conservative human-reviewable Markdown draft that cannot change deterministic results. The REST API and CLI expose those two features through explicit provider-configured AI review flows, while `/v1/check` and `specgate check` remain deterministic-only. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [CLI AI Review](docs/cli-ai-review.md), [REST API](docs/rest-api.md), [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), [contradiction analysis](docs/contradiction-analysis.md), and [improved-spec draft](docs/improved-spec-draft.md).
 
@@ -168,7 +172,7 @@ jobs:
           fail-on: error
 ```
 
-The pre-release example uses `@main`; pin a reviewed commit SHA or an action-containing release tag for stable automation. Empty `paths` selects added, modified, and renamed `.md` or `.markdown` files from the pull-request diff. Explicit paths, `fail-on`, and an explicit configuration path are also supported. See [GitHub Action](docs/github-action.md) and the [complete workflow example](.github/examples/specforge-gate.yml).
+The development example uses `@main`; after `v0.3.0` is published, use the release tag or pin a reviewed commit SHA for stable automation. Empty `paths` selects added, modified, and renamed `.md` or `.markdown` files from the pull-request diff. Explicit paths, `fail-on`, and an explicit configuration path are also supported. See [GitHub Action](docs/github-action.md) and the [complete workflow example](.github/examples/specforge-gate.yml).
 
 ## REST API
 
@@ -265,6 +269,7 @@ exclude:
 
 ## Documentation
 
+- [Release process](docs/release.md) — version invariants, tag workflow, assets, and failure handling.
 - [Product vision](docs/product-vision.md) — public product concept, audience, principles, and boundaries.
 - [Demo narrative](docs/demo.md) — deterministic-first public demo and optional AI storyline.
 - [End-to-end local AI demo](docs/local-ai-demo.md) — Ollama setup, CLI/API/Web UI operator flow, troubleshooting, and privacy boundary.
@@ -285,7 +290,7 @@ exclude:
 - [Inline rule suppression](docs/suppression.md) — suppression directive syntax and validation behavior.
 - [Roadmap](docs/ROADMAP.md) — deterministic-first roadmap and planned work.
 - [Contributing](CONTRIBUTING.md) — issue-first contribution workflow and compatibility rules.
-- [Security](SECURITY.md) — responsible vulnerability reporting for the pre-release project.
+- [Security](SECURITY.md) — responsible vulnerability reporting for the public alpha.
 - [Support](SUPPORT.md) — where to ask questions, report bugs, and request features.
 
 ## Development
@@ -310,12 +315,7 @@ Pull requests are verified on GitHub-hosted Linux and Windows runners. The Linux
 
 ## Releases
 
-1. Update `project.version` in `pyproject.toml`.
-2. Merge the release-ready change into `main`.
-3. Create and push the matching tag, for example `v0.1.0a1`.
-4. The release workflow validates the tag, runs the canonical checks, builds wheel and source distributions, and creates the GitHub Release.
-
-Automatic PyPI publication is intentionally deferred.
+`v0.3.0` is the first public alpha/MVP. Release publication is tag-driven: the tag must match `project.version` and point to a commit reachable from `main`. The Release workflow reruns canonical Linux checks, builds the wheel and source distribution, creates `SHA256SUMS`, and publishes the GitHub Release assets. PyPI publication is intentionally not part of this release. See [Release process](docs/release.md).
 
 ## License
 

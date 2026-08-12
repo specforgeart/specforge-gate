@@ -1,6 +1,6 @@
 # Security policy
 
-SpecForge Gate is a pre-release project. Security reports are welcome, but there is no promised service-level agreement or guaranteed response time.
+SpecForge Gate is an early-stage public alpha project. Security reports are welcome, but there is no promised service-level agreement or guaranteed response time.
 
 ## Supported state
 

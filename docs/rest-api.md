@@ -25,7 +25,7 @@ Returns process-level service/version metadata:
 {
   "status": "ok",
   "service": "specforge-gate",
-  "version": "0.1.0a1"
+  "version": "0.3.0"
 }
 ```
 
