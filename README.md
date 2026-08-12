@@ -33,7 +33,7 @@ SpecForge Gate catches these gaps early with deterministic checks instead of rel
 - **No API key:** no provider account is required for current functionality.
 - **Automation-friendly:** text, JSON, and Markdown outputs are public interfaces.
 
-Optional AI provider transports are available, while AI-powered analysis remains planned and separate from the deterministic core.
+Optional AI provider transports, advisory contradiction analysis, and conservative improved-spec drafting are available as an explicit library layer separate from the deterministic core.
 
 ## 15-second example
 
@@ -113,14 +113,13 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; no AI product feature invokes it yet. |
 | OpenAI-compatible adapter | available | Explicit synchronous Chat Completions adapter with optional caller-supplied Bearer auth. |
 | Contradiction analysis | available | Advisory provider-neutral analysis with strict JSON and verbatim-source evidence validation. |
-
-Improved-spec drafting remains planned work.
+| Improved-spec draft | available | Advisory conservative Markdown drafting with explicit uncertainty/contradiction handling. |
 
 ## Deterministic core vs optional AI
 
 The current product is the deterministic core: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
 
-The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis is available and validates model evidence against verbatim source substrings; improved-spec drafting remains planned. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), and [contradiction analysis](docs/contradiction-analysis.md).
+The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis validates model evidence against verbatim source substrings; improved-spec drafting is also available as a conservative human-reviewable Markdown draft that cannot change deterministic results. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), [contradiction analysis](docs/contradiction-analysis.md), and [improved-spec draft](docs/improved-spec-draft.md).
 
 ## Current rules
 
@@ -262,6 +261,7 @@ exclude:
 - [Ollama adapter](docs/ollama.md) — local Ollama transport, configuration, errors, and security boundary.
 - [OpenAI-compatible adapter](docs/openai-compatible.md) — Chat Completions transport, optional Bearer authentication, errors, and security boundary.
 - [Contradiction analysis](docs/contradiction-analysis.md) — advisory AI contradiction contract, source-evidence validation, and deterministic boundary.
+- [Improved-spec draft](docs/improved-spec-draft.md) — conservative advisory Markdown drafting, uncertainty handling, and provider boundary.
 - [Quality gates](docs/quality-gates.md) — required merge checks, branch coverage, CI aggregation, and supply-chain controls.
 - [Deep quality testing](docs/mutation-testing.md) — Hypothesis invariants, mutation-testing workflow, scope, and baseline process.
 - [Configuration](docs/configuration.md) — `.specgate.yml` discovery, schema, severity overrides, and excludes.

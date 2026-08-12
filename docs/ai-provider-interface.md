@@ -1,6 +1,6 @@
 # Optional AI provider interface
 
-SpecForge Gate has a provider-neutral contract for optional AI analysis. The contract, Ollama adapter, OpenAI-compatible adapter, and advisory contradiction-analysis feature are available. No deterministic product path invokes a provider.
+SpecForge Gate has a provider-neutral contract for optional AI analysis. The contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, and conservative improved-spec drafting feature are available. No deterministic product path invokes a provider.
 
 ## Boundary
 
@@ -20,6 +20,7 @@ The provider contract uses only the Python standard library. Base runtime depend
 - `OllamaProvider` — concrete adapter using non-streaming Ollama chat requests;
 - `OpenAICompatibleProvider` — concrete adapter using non-streaming OpenAI-compatible Chat Completions;
 - `analyze_contradictions` and its immutable result/error types — provider-neutral advisory contradiction analysis.
+- `draft_improved_specification` and its immutable result/error types — conservative advisory Markdown drafting.
 
 An adapter implements `provider_id`, `model`, and `generate(request)`. Provider-specific configuration such as base URLs, API keys, HTTP headers, retry policy, and wire payloads belongs in the adapter implementation, not in `AIRequest`.
 
@@ -54,8 +55,7 @@ The optional AI layer still does not add:
 - automatic environment/config/keyring API-key loading;
 - provider discovery or routing;
 - CLI/API/UI AI controls;
-- improved-spec drafting;
 - retry/backoff orchestration;
 - persistence or request logging.
 
-Those remain separate roadmap items so optional AI behavior cannot silently become part of the deterministic core. See [`contradiction-analysis.md`](contradiction-analysis.md) for the implemented advisory feature boundary.
+Those remain separate future product-surface items so optional AI behavior cannot silently become part of the deterministic core. See [`contradiction-analysis.md`](contradiction-analysis.md) and [`improved-spec-draft.md`](improved-spec-draft.md) for the implemented advisory feature boundaries.

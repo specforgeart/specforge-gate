@@ -22,19 +22,19 @@ flowchart TD
     D --> K["Web UI — available"]
     J --> Q["Docker / Compose — available"]
 
-    subgraph AI["Optional AI layer — planned and separate"]
+    subgraph AI["Optional AI layer — available and separate"]
         L["Provider interface — available"]
         R["Ollama adapter — available"]
         S["OpenAI-compatible adapter — available"]
         M["Contradiction analysis — available"]
-        N["Improved-spec draft — planned"]
+        N["Improved-spec draft — available"]
     end
 
     D -. future optional input .-> L
     L --> R
     L --> S
     L --> M
-    L -. planned .-> N
+    L --> N
 ```
 
 ## Available flow
@@ -64,7 +64,7 @@ The Docker image and one-service Compose deployment package the existing FastAPI
 
 ## Optional AI boundary
 
-The provider-neutral AI contract, `OllamaProvider`, `OpenAICompatibleProvider`, and advisory contradiction analysis are available under `specforge_gate.ai`. They remain separate from the deterministic core. Provider network I/O occurs only when optional AI code is explicitly invoked; no deterministic check imports or calls it. Contradiction results are validated against verbatim source substrings and never alter SG rule findings, deterministic report formats, PASS/NEEDS WORK, or exit-code semantics. Improved-spec drafting remains planned. See [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), [`openai-compatible.md`](openai-compatible.md), and [`contradiction-analysis.md`](contradiction-analysis.md).
+The provider-neutral AI contract, `OllamaProvider`, `OpenAICompatibleProvider`, advisory contradiction analysis, and conservative improved-spec drafting are available under `specforge_gate.ai`. They remain separate from the deterministic core. Provider network I/O occurs only when optional AI code is explicitly invoked; no deterministic check imports or calls it. Contradiction results are validated against verbatim source substrings; improved-spec drafts are bounded human-reviewable Markdown outputs. Neither feature can alter SG rule findings, deterministic report formats, PASS/NEEDS WORK, or exit-code semantics. See [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), [`openai-compatible.md`](openai-compatible.md), [`contradiction-analysis.md`](contradiction-analysis.md), and [`improved-spec-draft.md`](improved-spec-draft.md).
 
 ## Related details
 
