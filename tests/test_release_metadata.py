@@ -70,6 +70,8 @@ def test_public_release_docs_do_not_expose_stale_pre_alpha_metadata() -> None:
     assert "pre-alpha implementation" not in combined
     assert "provisional until public repository creation" not in combined
     assert "AI UI controls remain a separate roadmap item" not in combined
+    assert "it is not invoked by the CLI, REST API, web UI" not in combined
+    assert "Product-surface AI controls remain separate future work" not in combined
 
     release_doc = (ROOT / "docs/release.md").read_text(encoding="utf-8")
     assert "specforge_gate-0.3.0-py3-none-any.whl" in release_doc

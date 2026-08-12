@@ -11,7 +11,7 @@ The feature is **advisory**:
 - it does not create or modify `SGxxx` rule findings;
 - it does not change `PASS` / `NEEDS WORK`;
 - it does not change CLI exit codes or deterministic JSON/Markdown report contracts;
-- it is not invoked by the CLI, REST API, web UI, GitHub Action, or deterministic engine;
+- product surfaces invoke it only through explicit AI review actions; the GitHub Action and deterministic engine do not invoke it;
 - provider failures remain provider failures and are not converted into deterministic findings.
 
 ## Result contract
@@ -85,10 +85,14 @@ for contradiction in result.contradictions:
 
 The provider call occurs only when `analyze_contradictions()` is invoked.
 
-## Still planned
+## Product surfaces
 
-- improved-spec drafting;
-- CLI/API/web-UI controls for optional AI features;
-- provider selection/configuration UX;
-- orchestration, retries, fallback, and backoff;
-- persistence or telemetry.
+In v0.3.0 contradiction analysis is consumed only by explicit AI review orchestration:
+
+- `specgate ai-review FILE`;
+- `POST /v1/ai/review`;
+- the same-origin Web UI **AI Review** action.
+
+`specgate check`, `POST /v1/check`, the reusable GitHub Action, and the deterministic engine remain
+provider-free. Provider routing/fallback, persistence, telemetry, and automatic draft application
+remain out of scope.
