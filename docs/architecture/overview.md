@@ -4,6 +4,6 @@
 Input → Document parser → Rule engine → Report model → CLI / GitHub Action / REST API / Web UI
 ```
 
-The core has no network dependency. The CLI, GitHub Action, REST API, and same-origin web UI all preserve the same `analyze_text()` boundary. The optional `specforge_gate.ai` layer contains the provider-neutral contract plus an explicit Ollama adapter; both remain outside the deterministic core, and provider network I/O occurs only when an adapter is invoked. Rules return structured findings with stable IDs, severity, location, explanation, and suggested correction.
+The core has no network dependency. The CLI, GitHub Action, REST API, and same-origin web UI all preserve the same `analyze_text()` boundary. The optional `specforge_gate.ai` layer contains the provider-neutral contract, Ollama and OpenAI-compatible adapters, and advisory contradiction analysis. Optional AI remains outside the deterministic core, and provider network I/O occurs only when explicitly invoked. Rules return structured findings with stable IDs, severity, location, explanation, and suggested correction; advisory AI results do not modify those findings.
 
 See [`../architecture.md`](../architecture.md) for the public architecture entry point with the GitHub-compatible Mermaid diagram and interface boundaries.

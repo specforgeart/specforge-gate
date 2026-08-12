@@ -29,5 +29,5 @@
 - [x] Provider interface
 - [x] Ollama integration
 - [x] OpenAI-compatible endpoint
-- [ ] Planned contradiction analysis
+- [x] Contradiction analysis
 - [ ] Planned improved-spec draft

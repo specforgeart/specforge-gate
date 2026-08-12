@@ -68,6 +68,9 @@ Invoke-Step "Smoke-test Ollama adapter import" {
 Invoke-Step "Smoke-test OpenAI-compatible adapter import" {
     & $SmokePython -c "from specforge_gate.ai import OpenAICompatibleProvider; provider = OpenAICompatibleProvider(model='smoke-model', base_url='http://127.0.0.1:1234/v1'); assert provider.provider_id == 'openai-compatible'; assert provider.model == 'smoke-model'"
 }
+Invoke-Step "Smoke-test contradiction-analysis import" {
+    & $SmokePython -c "from specforge_gate.ai import analyze_contradictions; assert callable(analyze_contradictions)"
+}
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
 $BadExampleExitCode = $LASTEXITCODE
