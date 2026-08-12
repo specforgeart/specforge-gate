@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import io
 import json
+import sys
 from pathlib import Path
 
 from specforge_gate.ai import AIRequest, AIResponse, AIResponseFormat
@@ -105,6 +107,53 @@ def test_ai_review_json_matches_rest_product_shape(
         AIResponseFormat.JSON,
         AIResponseFormat.TEXT,
     ]
+
+
+def test_ai_review_json_survives_cp1251_stdout(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    path = tmp_path / "task.md"
+    path.write_text(_specification(), encoding="utf-8")
+    provider = _provider()
+    provider.responses[1] = "# Goal\n\nExport orders for M\u00fcnchen \U0001f600 users.\n"
+    monkeypatch.setattr(
+        "specforge_gate.ai.runtime.provider_from_environment",
+        lambda: provider,
+    )
+
+    raw = io.BytesIO()
+    stdout = io.TextIOWrapper(raw, encoding="cp1251", newline="\n")
+    monkeypatch.setattr(sys, "stdout", stdout)
+
+    assert main(["ai-review", str(path), "--format", "json", "--fail-on", "none"]) == 0
+
+    stdout.flush()
+    decoded = raw.getvalue().decode("cp1251")
+    assert "\\u00fc" in decoded
+    assert "\\ud83d\\ude00" in decoded
+    payload = json.loads(decoded)
+    assert payload["improved_spec"] == "# Goal\n\nExport orders for M\u00fcnchen \U0001f600 users."
+
+
+def test_check_json_survives_cp1251_stdout(
+    tmp_path: Path,
+    monkeypatch: object,
+) -> None:
+    path = tmp_path / "m\u00f6d-task.md"
+    path.write_text("# Task\n\nDo it fast.\n", encoding="utf-8")
+
+    raw = io.BytesIO()
+    stdout = io.TextIOWrapper(raw, encoding="cp1251", newline="\n")
+    monkeypatch.setattr(sys, "stdout", stdout)
+
+    assert main(["check", str(path), "--format", "json", "--fail-on", "none"]) == 0
+
+    stdout.flush()
+    decoded = raw.getvalue().decode("cp1251")
+    assert "\\u00f6" in decoded
+    payload = json.loads(decoded)
+    assert payload["source"] == str(path)
 
 
 def test_ai_review_requires_explicit_environment_provider(

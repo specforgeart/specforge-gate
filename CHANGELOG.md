@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+## 0.3.1 - 2026-08-12
+
 ### Fixed
+- made CLI stdout encoding-safe on Windows console encodings such as `cp1251`, preserving valid JSON by escaping only characters the active stream cannot encode
+- added regression coverage for Unicode AI output and Unicode source paths under a simulated `cp1251` stdout
 - aligned contradiction-analysis and improved-spec-draft documentation with the shipped v0.3.0 CLI, REST, and Web UI AI review surfaces
 
 ## 0.3.0 - 2026-08-12

@@ -6,7 +6,7 @@ from pathlib import Path
 from specforge_gate import __version__
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "0.3.0"
+EXPECTED_VERSION = "0.3.1"
 
 
 def _project() -> dict[str, object]:
@@ -33,14 +33,14 @@ def test_release_version_and_packaging_metadata_are_consistent() -> None:
     assert "setuptools>=77.0.3" in build_requires
 
 
-def test_changelog_records_v030_and_keeps_unreleased_section() -> None:
+def test_changelog_records_current_release_and_keeps_unreleased_section() -> None:
     text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
 
     unreleased = text.index("## Unreleased")
-    release = text.index("## 0.3.0 - 2026-08-12")
+    release = text.index("## 0.3.1 - 2026-08-12")
 
     assert unreleased < release
-    assert "promoted the first complete public MVP to version `0.3.0`" in text
+    assert "Windows console encodings" in text
 
 
 def test_release_workflow_enforces_tag_main_checks_and_checksums() -> None:
@@ -74,6 +74,6 @@ def test_public_release_docs_do_not_expose_stale_pre_alpha_metadata() -> None:
     assert "Product-surface AI controls remain separate future work" not in combined
 
     release_doc = (ROOT / "docs/release.md").read_text(encoding="utf-8")
-    assert "specforge_gate-0.3.0-py3-none-any.whl" in release_doc
-    assert "specforge_gate-0.3.0.tar.gz" in release_doc
+    assert "specforge_gate-0.3.1-py3-none-any.whl" in release_doc
+    assert "specforge_gate-0.3.1.tar.gz" in release_doc
     assert "SHA256SUMS" in release_doc

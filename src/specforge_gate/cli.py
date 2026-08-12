@@ -62,6 +62,38 @@ def _should_fail(fail_on: str, errors: int, warnings: int) -> bool:
     return errors > 0
 
 
+def _json_unicode_escape(char: str) -> str:
+    codepoint = ord(char)
+    if codepoint <= 0xFFFF:
+        return f"\\u{codepoint:04x}"
+    value = codepoint - 0x10000
+    high = 0xD800 + (value >> 10)
+    low = 0xDC00 + (value & 0x3FF)
+    return f"\\u{high:04x}\\u{low:04x}"
+
+
+def _encoding_safe_output(text: str, encoding: str | None) -> str:
+    if not encoding:
+        return text
+    try:
+        text.encode(encoding)
+    except (LookupError, UnicodeEncodeError):
+        parts: list[str] = []
+        for char in text:
+            try:
+                char.encode(encoding)
+            except (LookupError, UnicodeEncodeError):
+                parts.append(_json_unicode_escape(char))
+            else:
+                parts.append(char)
+        return "".join(parts)
+    return text
+
+
+def _print_stdout(text: str) -> None:
+    print(_encoding_safe_output(text, sys.stdout.encoding))
+
+
 def _expand_paths(paths: list[Path]) -> list[tuple[Path, bool]]:
     expanded: list[tuple[Path, bool]] = []
     for path in paths:
@@ -205,7 +237,7 @@ def _run_ai_review(args: argparse.Namespace) -> int:
         ],
         "improved_spec": draft.text,
     }
-    print(_render_ai_review(args.format, payload))
+    _print_stdout(_render_ai_review(args.format, payload))
 
     errors = report.count(Severity.ERROR)
     warnings = report.count(Severity.WARNING)
@@ -331,7 +363,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"specgate: {path}:{exc.line}: {exc}", file=sys.stderr)
             return 2
 
-    print(_render_output(args.format, reports, force_multi=force_multi))
+    _print_stdout(_render_output(args.format, reports, force_multi=force_multi))
     errors = sum(report.count(Severity.ERROR) for report in reports)
     warnings = sum(report.count(Severity.WARNING) for report in reports)
     return int(_should_fail(args.fail_on, errors, warnings))
