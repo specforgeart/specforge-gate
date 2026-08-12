@@ -16,9 +16,12 @@ def test_root_serves_self_contained_zero_install_ui() -> None:
     assert "SpecForge Gate — Requirements check" in response.text
     assert 'id="spec-input"' in response.text
     assert 'id="run-check"' in response.text
+    assert 'id="run-ai-review"' in response.text
     assert 'id="copy-markdown"' in response.text
     assert 'id="finding-filters"' in response.text
-    assert 'fetch("/v1/check"' in response.text
+    assert 'id="ai-review-section"' in response.text
+    assert 'id="contradictions-list"' in response.text
+    assert 'id="improved-spec-output"' in response.text
 
 
 def test_web_ui_is_same_origin_and_has_no_external_runtime_assets() -> None:
@@ -30,6 +33,8 @@ def test_web_ui_is_same_origin_and_has_no_external_runtime_assets() -> None:
     assert "<link " not in lowered
     assert ".innerhtml" not in lowered
     assert 'fetch("/v1/check"' in lowered
+    assert 'fetch("/v1/ai/status"' in lowered
+    assert 'fetch("/v1/ai/review"' in lowered
     assert "document.createelement" in lowered
     assert ".textcontent" in lowered
 
@@ -45,6 +50,33 @@ def test_web_ui_has_security_and_no_store_headers() -> None:
     assert "connect-src 'self'" in csp
     assert "object-src 'none'" in csp
     assert "frame-ancestors 'none'" in csp
+
+
+def test_web_ui_exposes_deterministic_and_explicit_ai_actions_separately() -> None:
+    assert 'id="run-check"' in WEB_UI_HTML
+    assert 'id="run-ai-review" type="button" disabled' in WEB_UI_HTML
+    assert "async function runAnalysis()" in WEB_UI_HTML
+    assert "async function runAIReview()" in WEB_UI_HTML
+    assert 'fetch("/v1/check"' in WEB_UI_HTML
+    assert 'fetch("/v1/ai/review"' in WEB_UI_HTML
+    assert "runButton.addEventListener(\"click\", runAnalysis)" in WEB_UI_HTML
+    assert "aiReviewButton.addEventListener(\"click\", runAIReview)" in WEB_UI_HTML
+    assert "Analyze requirements never calls AI" in WEB_UI_HTML
+
+
+def test_web_ui_exposes_ai_status_contradictions_and_reviewable_draft() -> None:
+    assert 'id="ai-provider-status"' in WEB_UI_HTML
+    assert 'id="ai-provider-detail"' in WEB_UI_HTML
+    assert 'id="refresh-ai-status"' in WEB_UI_HTML
+    assert 'fetch("/v1/ai/status"' in WEB_UI_HTML
+    assert 'id="contradictions-list"' in WEB_UI_HTML
+    assert 'id="copy-improved"' in WEB_UI_HTML
+    assert 'id="use-improved"' in WEB_UI_HTML
+    assert "improvedSpecOutput.textContent = aiReview.improved_spec" in WEB_UI_HTML
+    assert "navigator.clipboard.writeText(aiReview.improved_spec)" in WEB_UI_HTML
+    assert "input.value = draft" in WEB_UI_HTML
+    assert "resetReport();" in WEB_UI_HTML
+    assert "resetAIReview();" in WEB_UI_HTML
 
 
 def test_web_ui_exposes_all_finding_filters_and_markdown_copy() -> None:

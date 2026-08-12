@@ -24,13 +24,13 @@ Find high-risk requirement gaps locally, offline, and without an API key. Every 
 
 ## Current capability
 
-SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an optional stateless REST API, a minimal same-origin web UI, a Docker/Compose deployment for that same API/UI process, an optional-AI provider contract with Ollama and OpenAI-compatible adapters, provider-neutral advisory contradiction analysis, and conservative improved-spec drafting. The REST API now has an explicit server-configured AI review path that combines the deterministic report, contradictions, and improved draft without changing deterministic semantics. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary. The browser UI remains deterministic-only for now.
+SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an optional stateless REST API, a minimal same-origin web UI, a Docker/Compose deployment for that same API/UI process, an optional-AI provider contract with Ollama and OpenAI-compatible adapters, provider-neutral advisory contradiction analysis, and conservative improved-spec drafting. The REST API now has an explicit server-configured AI review path that combines the deterministic report, contradictions, and improved draft without changing deterministic semantics. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary. The browser UI now keeps deterministic analysis separate while also exposing an explicit server-configured AI Review flow for contradiction analysis and conservative drafting.
 
 The current deterministic rule set checks for required sections, vague wording, untestable acceptance criteria, and compound requirements. See the rule table in the [README](../README.md#current-rules).
 
 ## Planned capability
 
-The REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, conservative improved-spec drafting, and REST AI review flow are available around the deterministic core. Browser and CLI AI controls remain planned.
+The REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, conservative improved-spec drafting, and REST AI review flow are available around the deterministic core. CLI AI controls and end-to-end local-provider operator guidance remain planned.
 
 ## Relationship to the product brief
 

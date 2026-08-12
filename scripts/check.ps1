@@ -80,6 +80,21 @@ Invoke-Step "Smoke-test AI runtime configuration" {
 Invoke-Step "Smoke-test AI API routes" {
     & $SmokePython -c "from specforge_gate.api import app; paths = {route.path for route in app.routes}; assert '/v1/ai/status' in paths; assert '/v1/ai/review' in paths"
 }
+Invoke-Step "Smoke-test Web UI AI controls" {
+    $WebUiSmokePath = Join-Path $env:TEMP "specforge-web-ui-wheel-smoke.py"
+    $WebUiSmoke = @'
+from specforge_gate.web_ui import WEB_UI_HTML
+assert 'id="run-ai-review"' in WEB_UI_HTML
+assert 'fetch("/v1/ai/status"' in WEB_UI_HTML
+assert 'fetch("/v1/ai/review"' in WEB_UI_HTML
+'@
+    [System.IO.File]::WriteAllText(
+        $WebUiSmokePath,
+        $WebUiSmoke,
+        [System.Text.UTF8Encoding]::new($false)
+    )
+    & $SmokePython $WebUiSmokePath
+}
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
 $BadExampleExitCode = $LASTEXITCODE

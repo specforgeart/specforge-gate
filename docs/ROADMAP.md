@@ -36,6 +36,6 @@
 
 - [x] Server-side AI provider configuration
 - [x] REST AI review endpoint combining deterministic findings, contradictions, and improved draft
-- [ ] Web UI AI review flow
+- [x] Web UI AI review flow
 - [ ] CLI AI review command
 - [ ] End-to-end local-provider demo and operator guidance

@@ -108,10 +108,10 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
 | REST API | available | Deterministic `POST /v1/check` plus explicit server-configured advisory `POST /v1/ai/review`. |
 | AI review API | available | Combines the deterministic report, validated contradictions, and conservative improved draft. |
-| Web UI | available | Same-origin deterministic paste-and-check UI; AI controls are planned next. |
+| Web UI | available | Same-origin deterministic checks plus explicit AI Review with provider status, contradictions, and improved draft. |
 | Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
 | AI provider contract | available | Standard-library-only adapter protocol for optional AI integrations. |
-| Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; no AI product feature invokes it yet. |
+| Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; selectable by the server-configured AI review flow. |
 | OpenAI-compatible adapter | available | Explicit synchronous Chat Completions adapter with optional caller-supplied Bearer auth. |
 | Contradiction analysis | available | Advisory provider-neutral analysis with strict JSON and verbatim-source evidence validation. |
 | Improved-spec draft | available | Advisory conservative Markdown drafting with explicit uncertainty/contradiction handling. |
@@ -183,7 +183,7 @@ Analyze inline text deterministically with `POST /v1/check`. Valid documents ret
 
 ## Web UI
 
-The same optional API process now serves a zero-install browser demo at `http://127.0.0.1:8000/`. Paste Markdown or plain text, run the deterministic gate, filter findings by severity, and copy the report as Markdown. The page is self-contained, loads no CDN assets, and sends analysis requests only to the same-origin `/v1/check` endpoint. See [Web UI](docs/web-ui.md).
+The same optional API process serves a zero-install browser UI at `http://127.0.0.1:8000/`. Deterministic **Analyze requirements** remains a separate same-origin `/v1/check` action. When a server-side provider is configured, the page also exposes an explicit **AI Review** action backed by `/v1/ai/status` and `/v1/ai/review`, showing contradictions and a reviewable improved-spec draft with copy/use controls. The page loads no CDN assets and never accepts provider credentials in browser fields. See [Web UI](docs/web-ui.md).
 
 ## Docker Compose
 

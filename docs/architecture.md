@@ -56,7 +56,7 @@ The optional REST API is an available stateless interface layer. Its `POST /v1/c
 
 ## Web UI interface
 
-The minimal web UI is an available same-origin interface served by the optional FastAPI process at `/`. It is a self-contained HTML/CSS/JavaScript page with no frontend build toolchain or external runtime assets. The browser sends pasted text only to the existing `/v1/check` endpoint, renders returned fields through DOM text nodes, supports severity filtering, and can copy the current deterministic report as Markdown. It adds no dependency or behavior to the deterministic core.
+The web UI is an available same-origin interface served by the optional FastAPI process at `/`. It is a self-contained HTML/CSS/JavaScript page with no frontend build toolchain or external runtime assets. Deterministic **Analyze requirements** calls only `/v1/check`. The page separately reads non-secret provider availability from `/v1/ai/status` and enables explicit **AI Review** through `/v1/ai/review`; contradictions and the conservative draft are rendered with DOM text nodes, and draft application requires a separate user action. This adds no dependency or behavior to the deterministic core.
 
 ## Container interface
 
