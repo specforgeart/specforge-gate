@@ -106,8 +106,9 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | JSON output | available | Use `--format json` for machine-readable automation. |
 | Markdown output | available | Use `--format markdown` for reports and job summaries. |
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
-| REST API | available | Optional stateless `POST /v1/check` interface over the deterministic core. |
-| Web UI | available | Same-origin paste-and-check UI served by the optional API at `/`. |
+| REST API | available | Deterministic `POST /v1/check` plus explicit server-configured advisory `POST /v1/ai/review`. |
+| AI review API | available | Combines the deterministic report, validated contradictions, and conservative improved draft. |
+| Web UI | available | Same-origin deterministic paste-and-check UI; AI controls are planned next. |
 | Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
 | AI provider contract | available | Standard-library-only adapter protocol for optional AI integrations. |
 | Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; no AI product feature invokes it yet. |
@@ -119,7 +120,7 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 
 The current product is the deterministic core: parser, rule engine, findings model, CLI, and text/JSON/Markdown reporters. It has no network dependency and no provider dependency.
 
-The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis validates model evidence against verbatim source substrings; improved-spec drafting is also available as a conservative human-reviewable Markdown draft that cannot change deterministic results. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), [contradiction analysis](docs/contradiction-analysis.md), and [improved-spec draft](docs/improved-spec-draft.md).
+The optional AI layer has a provider-neutral contract plus Ollama and OpenAI-compatible adapters. Provider network I/O occurs only when an adapter or advisory feature is explicitly invoked; deterministic checks remain provider-free. Advisory contradiction analysis validates model evidence against verbatim source substrings; improved-spec drafting is also available as a conservative human-reviewable Markdown draft that cannot change deterministic results. The REST API can now expose those two features through an explicit server-configured `/v1/ai/review` flow while `/v1/check` remains deterministic-only. AI features must not change stable rule IDs, exit-code semantics, or deterministic report formats. See [REST API](docs/rest-api.md), [AI provider interface](docs/ai-provider-interface.md), [Ollama adapter](docs/ollama.md), [OpenAI-compatible adapter](docs/openai-compatible.md), [contradiction analysis](docs/contradiction-analysis.md), and [improved-spec draft](docs/improved-spec-draft.md).
 
 ## Current rules
 
@@ -178,7 +179,7 @@ python -m pip install -e ".[api]"
 python -m uvicorn specforge_gate.api:app --host 127.0.0.1 --port 8000
 ```
 
-Analyze inline text with `POST /v1/check`. Valid documents return HTTP `200` whether the deterministic report is `PASS` or `NEEDS WORK`; invalid request/configuration or suppression syntax returns HTTP `422`, and text above the configured limit returns HTTP `413`. The API accepts no request-selected file path or URL and performs no outbound provider call. See [REST API](docs/rest-api.md).
+Analyze inline text deterministically with `POST /v1/check`. Valid documents return HTTP `200` whether the deterministic report is `PASS` or `NEEDS WORK`; invalid request/configuration or suppression syntax returns HTTP `422`, and text above the configured limit returns HTTP `413`. The deterministic endpoint accepts no request-selected file path or URL and performs no outbound provider call. When server-side AI environment variables are configured, `GET /v1/ai/status` reports provider availability and `POST /v1/ai/review` explicitly runs deterministic analysis, contradiction analysis, and conservative improved-spec drafting in one response. See [REST API](docs/rest-api.md).
 
 ## Web UI
 

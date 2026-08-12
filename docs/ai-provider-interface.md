@@ -1,6 +1,6 @@
 # Optional AI provider interface
 
-SpecForge Gate has a provider-neutral contract for optional AI analysis. The contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, and conservative improved-spec drafting feature are available. No deterministic product path invokes a provider.
+SpecForge Gate has a provider-neutral contract for optional AI analysis. The contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, conservative improved-spec drafting, and server-side runtime provider configuration are available. No deterministic product path invokes a provider.
 
 ## Boundary
 
@@ -48,14 +48,18 @@ Provider adapters must map transport/provider failures into one of these public 
 
 `OllamaProvider` maps `AIRequest` to Ollama `POST /api/chat`. `OpenAICompatibleProvider` maps the same contract to `<base_url>/chat/completions` with optional explicit Bearer authentication. Both disable streaming and normalize responses/errors back into the shared contract. See [`ollama.md`](ollama.md) and [`openai-compatible.md`](openai-compatible.md).
 
+## Server-side runtime configuration
+
+The API process can explicitly build one provider from `SPECFORGE_AI_PROVIDER`, `SPECFORGE_AI_MODEL`, `SPECFORGE_AI_BASE_URL`, optional `SPECFORGE_AI_API_KEY`, and optional `SPECFORGE_AI_TIMEOUT_SECONDS`. Leaving the provider variable unset disables AI product endpoints without affecting deterministic analysis. Provider construction itself performs no network request, and credentials are not part of request/response schemas. See [`rest-api.md`](rest-api.md).
+
 ## Not implemented yet
 
 The optional AI layer still does not add:
 
-- automatic environment/config/keyring API-key loading;
-- provider discovery or routing;
-- CLI/API/UI AI controls;
-- retry/backoff orchestration;
+- provider discovery, routing, fallback, or retries;
+- CLI AI controls;
+- browser UI AI controls;
+- keyring/file-based credential management;
 - persistence or request logging.
 
 Those remain separate future product-surface items so optional AI behavior cannot silently become part of the deterministic core. See [`contradiction-analysis.md`](contradiction-analysis.md) and [`improved-spec-draft.md`](improved-spec-draft.md) for the implemented advisory feature boundaries.

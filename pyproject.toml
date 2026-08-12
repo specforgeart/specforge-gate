@@ -84,6 +84,7 @@ do_not_mutate = [
   "src/specforge_gate/ai/openai_compatible.py",
   "src/specforge_gate/ai/contradictions.py",
   "src/specforge_gate/ai/improved_draft.py",
+  "src/specforge_gate/ai/runtime.py",
 ]
 pytest_add_cli_args_test_selection = [
   "tests/test_engine.py",

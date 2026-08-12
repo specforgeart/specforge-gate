@@ -52,7 +52,7 @@ The reusable composite action is an available interface layer. It provisions Pyt
 
 ## REST API interface
 
-The optional REST API is an available stateless interface layer. It accepts inline text at `POST /v1/check`, maps validated inline rule configuration into the existing `ProjectConfig`, calls the same `analyze_text()` core, and returns the existing structured report contract. It never accepts request-selected filesystem paths or URLs. FastAPI/Uvicorn remain optional interface dependencies and are not dependencies of the deterministic core.
+The optional REST API is an available stateless interface layer. Its `POST /v1/check` path accepts inline text, maps validated inline rule configuration into the existing `ProjectConfig`, calls the same `analyze_text()` core, and returns the existing structured report contract without provider I/O. Server-side AI configuration can additionally enable explicit `GET /v1/ai/status` and `POST /v1/ai/review` endpoints. The review endpoint runs deterministic analysis first, then advisory contradiction analysis and conservative drafting through one configured provider. It never accepts request-selected filesystem paths, URLs, provider URLs, or credentials from the request body. FastAPI/Uvicorn remain optional interface dependencies and are not dependencies of the deterministic core.
 
 ## Web UI interface
 
@@ -64,7 +64,7 @@ The Docker image and one-service Compose deployment package the existing FastAPI
 
 ## Optional AI boundary
 
-The provider-neutral AI contract, `OllamaProvider`, `OpenAICompatibleProvider`, advisory contradiction analysis, and conservative improved-spec drafting are available under `specforge_gate.ai`. They remain separate from the deterministic core. Provider network I/O occurs only when optional AI code is explicitly invoked; no deterministic check imports or calls it. Contradiction results are validated against verbatim source substrings; improved-spec drafts are bounded human-reviewable Markdown outputs. Neither feature can alter SG rule findings, deterministic report formats, PASS/NEEDS WORK, or exit-code semantics. See [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), [`openai-compatible.md`](openai-compatible.md), [`contradiction-analysis.md`](contradiction-analysis.md), and [`improved-spec-draft.md`](improved-spec-draft.md).
+The provider-neutral AI contract, `OllamaProvider`, `OpenAICompatibleProvider`, advisory contradiction analysis, conservative improved-spec drafting, and server-side provider resolver are available under `specforge_gate.ai`. They remain separate from the deterministic core. Provider network I/O occurs only when optional AI code is explicitly invoked; no deterministic check imports or calls it. The REST `/v1/ai/review` endpoint is now one explicit product-surface orchestrator over these contracts, while `/v1/check` remains provider-free. Contradiction results are validated against verbatim source substrings; improved-spec drafts are bounded human-reviewable Markdown outputs. Neither feature can alter SG rule findings, deterministic report formats, PASS/NEEDS WORK, or exit-code semantics. See [`rest-api.md`](rest-api.md), [`ai-provider-interface.md`](ai-provider-interface.md), [`ollama.md`](ollama.md), [`openai-compatible.md`](openai-compatible.md), [`contradiction-analysis.md`](contradiction-analysis.md), and [`improved-spec-draft.md`](improved-spec-draft.md).
 
 ## Related details
 

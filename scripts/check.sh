@@ -34,6 +34,8 @@ fi
 .venv-smoke/bin/python -c "from specforge_gate.ai import OpenAICompatibleProvider; provider = OpenAICompatibleProvider(model='smoke-model', base_url='http://127.0.0.1:1234/v1'); assert provider.provider_id == 'openai-compatible'; assert provider.model == 'smoke-model'"
 .venv-smoke/bin/python -c "from specforge_gate.ai import analyze_contradictions; assert callable(analyze_contradictions)"
 .venv-smoke/bin/python -c "from specforge_gate.ai import draft_improved_specification; assert callable(draft_improved_specification)"
+.venv-smoke/bin/python -c "from specforge_gate.ai.runtime import provider_from_environment; provider = provider_from_environment({'SPECFORGE_AI_PROVIDER':'ollama','SPECFORGE_AI_MODEL':'smoke-model'}); assert provider is not None; assert provider.provider_id == 'ollama'"
+.venv-smoke/bin/python -c "from specforge_gate.api import app; paths = {route.path for route in app.routes}; assert '/v1/ai/status' in paths; assert '/v1/ai/review' in paths"
 
 set +e
 .venv-smoke/bin/specgate check examples/bad/export-task.md --format json >/dev/null 2>&1
