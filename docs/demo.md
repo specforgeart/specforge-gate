@@ -93,7 +93,7 @@ The user receives a UTF-8 CSV file containing only orders that match the active 
 
 ## What the demo must not imply
 
-The public demo must distinguish implemented interfaces from planned ones. The GitHub Action, stateless REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama and OpenAI-compatible adapters, and advisory contradiction analysis are available. Improved-spec drafting remains planned roadmap work, and the deterministic CLI demo must not imply that optional AI affects PASS/NEEDS WORK.
+The public demo must distinguish implemented interfaces from planned ones. The GitHub Action, stateless REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama and OpenAI-compatible adapters, advisory contradiction analysis, and conservative improved-spec drafting library feature are available. The deterministic CLI demo must not imply that optional AI is automatically invoked or affects PASS/NEEDS WORK.
 
 The demo must also avoid fake badges, screenshots, GIFs, hosted endpoints, synthetic testimonials, or claims about integrations that are not implemented in this repository.
 

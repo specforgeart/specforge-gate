@@ -7,6 +7,12 @@ from .contradictions import (
     ContradictionAnalysisErrorCode,
     analyze_contradictions,
 )
+from .improved_draft import (
+    ImprovedSpecDraft,
+    ImprovedSpecDraftError,
+    ImprovedSpecDraftErrorCode,
+    draft_improved_specification,
+)
 from .ollama import OllamaProvider
 from .openai_compatible import OpenAICompatibleProvider
 from .provider import (
@@ -29,7 +35,11 @@ __all__ = [
     "ContradictionAnalysis",
     "ContradictionAnalysisError",
     "ContradictionAnalysisErrorCode",
+    "ImprovedSpecDraft",
+    "ImprovedSpecDraftError",
+    "ImprovedSpecDraftErrorCode",
     "OllamaProvider",
     "OpenAICompatibleProvider",
     "analyze_contradictions",
+    "draft_improved_specification",
 ]

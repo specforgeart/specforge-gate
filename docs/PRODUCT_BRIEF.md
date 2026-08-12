@@ -26,7 +26,7 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 - reusable GitHub Action for pull-request checks
 - stateless REST API and minimal web UI
 - Docker Compose deployment
-- provider-neutral optional-AI contract, Ollama/OpenAI-compatible adapters, and advisory contradiction analysis
+- provider-neutral optional-AI contract, Ollama/OpenAI-compatible adapters, advisory contradiction analysis, and improved-spec drafting
 
 ## Out of scope
 
@@ -40,7 +40,7 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 
 ## Public vision and demo
 
-The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current deterministic behavior and distinguish the available CLI, GitHub Action, API, UI, Docker deployment, AI provider contract, Ollama/OpenAI-compatible adapters, and advisory contradiction analysis from improved-spec drafting and product-surface AI controls that remain planned.
+The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current deterministic behavior and distinguish the available CLI, GitHub Action, API, UI, Docker deployment, AI provider contract, Ollama/OpenAI-compatible adapters, advisory contradiction analysis, and improved-spec drafting from product-surface AI controls that remain planned.
 
 ## Status semantics
 

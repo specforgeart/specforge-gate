@@ -24,13 +24,13 @@ Find high-risk requirement gaps locally, offline, and without an API key. Every 
 
 ## Current capability
 
-SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an optional stateless REST API, a minimal same-origin web UI, a Docker/Compose deployment for that same API/UI process, an optional-AI provider contract with Ollama and OpenAI-compatible adapters, and provider-neutral advisory contradiction analysis. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary. The browser UI provides a zero-install paste-and-check flow over the same REST endpoint; optional AI is not wired into those deterministic interfaces yet.
+SpecForge Gate currently provides a local CLI, a reusable GitHub Action, an optional stateless REST API, a minimal same-origin web UI, a Docker/Compose deployment for that same API/UI process, an optional-AI provider contract with Ollama and OpenAI-compatible adapters, provider-neutral advisory contradiction analysis, and conservative improved-spec drafting. The CLI analyzes Markdown and text files or directories. The Action checks pull-request Markdown changes or explicit paths and writes a Markdown job summary. The browser UI provides a zero-install paste-and-check flow over the same REST endpoint; optional AI is not wired into those deterministic interfaces yet.
 
 The current deterministic rule set checks for required sections, vague wording, untestable acceptance criteria, and compound requirements. See the rule table in the [README](../README.md#current-rules).
 
 ## Planned capability
 
-The REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama adapter, OpenAI-compatible adapter, and advisory contradiction analysis are available around the deterministic core. Improved-spec drafting and product-surface AI controls remain planned.
+The REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, and conservative improved-spec drafting are available around the deterministic core. Product-surface AI controls remain planned.
 
 ## Relationship to the product brief
 

@@ -30,4 +30,4 @@
 - [x] Ollama integration
 - [x] OpenAI-compatible endpoint
 - [x] Contradiction analysis
-- [ ] Planned improved-spec draft
+- [x] Improved-spec draft

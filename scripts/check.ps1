@@ -71,6 +71,9 @@ Invoke-Step "Smoke-test OpenAI-compatible adapter import" {
 Invoke-Step "Smoke-test contradiction-analysis import" {
     & $SmokePython -c "from specforge_gate.ai import analyze_contradictions; assert callable(analyze_contradictions)"
 }
+Invoke-Step "Smoke-test improved-spec draft import" {
+    & $SmokePython -c "from specforge_gate.ai import draft_improved_specification; assert callable(draft_improved_specification)"
+}
 
 & $Specgate check ".\examples\bad\export-task.md" --format json *> $null
 $BadExampleExitCode = $LASTEXITCODE
