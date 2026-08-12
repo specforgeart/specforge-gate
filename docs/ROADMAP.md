@@ -38,4 +38,4 @@
 - [x] REST AI review endpoint combining deterministic findings, contradictions, and improved draft
 - [x] Web UI AI review flow
 - [x] CLI AI review command
-- [ ] End-to-end local-provider demo and operator guidance
+- [x] End-to-end local-provider demo and operator guidance

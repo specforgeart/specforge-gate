@@ -40,7 +40,7 @@ Find high-risk gaps before implementation begins, without requiring an API key o
 
 ## Public vision and demo
 
-The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current deterministic behavior and distinguish the available CLI, GitHub Action, API, AI-capable same-origin UI, Docker deployment, AI provider contract, Ollama/OpenAI-compatible adapters, advisory contradiction analysis, improved-spec drafting, REST AI review flow, and CLI AI review from end-to-end operator guidance that remains planned.
+The public product entry point is [`product-vision.md`](product-vision.md). The public demo narrative is [`demo.md`](demo.md). Both documents describe the current deterministic behavior and distinguish the available CLI, GitHub Action, API, AI-capable same-origin UI, Docker deployment, AI provider contract, Ollama/OpenAI-compatible adapters, advisory contradiction analysis, improved-spec drafting, REST AI review flow, CLI AI review, and the end-to-end local-provider operator demo.
 
 ## Status semantics
 

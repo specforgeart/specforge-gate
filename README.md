@@ -111,7 +111,7 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | Web UI | available | Same-origin deterministic checks plus explicit AI Review with provider status, contradictions, and improved draft. |
 | Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
 | AI provider contract | available | Standard-library-only adapter protocol for optional AI integrations. |
-| Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; selectable by the server-configured AI review flow. |
+| Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; selectable by CLI/API/Web UI AI review. |
 | OpenAI-compatible adapter | available | Explicit synchronous Chat Completions adapter with optional caller-supplied Bearer auth. |
 | Contradiction analysis | available | Advisory provider-neutral analysis with strict JSON and verbatim-source evidence validation. |
 | Improved-spec draft | available | Advisory conservative Markdown drafting with explicit uncertainty/contradiction handling. |
@@ -210,9 +210,9 @@ specgate check examples/bad/export-task.md --format markdown
 ## Quick start: Windows PowerShell
 
 ```powershell
-py -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-py -m pip install -e .
+python -m pip install -e .
 specgate check .\examples\bad\export-task.md
 specgate check .\examples\improved\export-task.md
 specgate check .\examples\bad\export-task.md --format json
@@ -224,6 +224,16 @@ By default the CLI exits with code `1` when at least one error exists. Use `--fa
 ## CLI AI Review
 
 `specgate ai-review FILE` runs the same deterministic report first, then explicitly requests contradiction analysis and a conservative improved draft from the provider configured in environment variables. It accepts one explicit file to prevent accidental bulk provider egress. Use `--format json` for the REST-compatible result shape or `--fail-on none` for advisory-only use. See [CLI AI Review](docs/cli-ai-review.md).
+
+## Local Ollama demo
+
+With Ollama running and `qwen3:8b` installed, run:
+
+```bash
+python scripts/demo_local_ai.py --model qwen3:8b
+```
+
+The helper checks the local model list, runs the deterministic gate, and then invokes the explicit advisory AI review against `examples/ai/local-provider-demo.md`. See [End-to-end local AI demo](docs/local-ai-demo.md).
 
 ## Configuration and suppression
 
@@ -256,7 +266,8 @@ exclude:
 ## Documentation
 
 - [Product vision](docs/product-vision.md) — public product concept, audience, principles, and boundaries.
-- [Demo narrative](docs/demo.md) — CLI-first public demo script and demo guardrails.
+- [Demo narrative](docs/demo.md) — deterministic-first public demo and optional AI storyline.
+- [End-to-end local AI demo](docs/local-ai-demo.md) — Ollama setup, CLI/API/Web UI operator flow, troubleshooting, and privacy boundary.
 - [Architecture](docs/architecture.md) — public architecture overview and interface boundaries.
 - [GitHub Action](docs/github-action.md) — pull-request selection, inputs, outputs, job summaries, and security boundary.
 - [REST API](docs/rest-api.md) — stateless endpoint contract, optional installation, configuration, and security boundary.

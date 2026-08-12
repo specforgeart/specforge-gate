@@ -101,3 +101,8 @@ JSON output uses normal JSON escaping.
 AI output is advisory and untrusted. Contradiction evidence is validated against the source, and the
 improved draft still requires human review. Neither AI result changes SG rule IDs, deterministic
 findings, PASS/NEEDS WORK semantics, or the behavior of `specgate check`.
+
+## End-to-end local demo
+
+For a reproducible Ollama workflow covering deterministic CLI, explicit AI review, REST API, and
+Web UI, see [End-to-end local AI demo](local-ai-demo.md).

@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- end-to-end local Ollama demo helper, fixture, automated transport test, and operator guidance
 - explicit `specgate ai-review FILE` command with text, JSON, and Markdown output
 - explicit same-origin Web UI AI Review with provider status, contradiction rendering, and copy/use improved-draft controls
 - explicit REST AI review flow with server-side provider configuration and deterministic/contradiction/draft orchestration

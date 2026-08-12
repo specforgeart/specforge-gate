@@ -30,7 +30,7 @@ The current deterministic rule set checks for required sections, vague wording, 
 
 ## Planned capability
 
-The REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, conservative improved-spec drafting, REST AI review flow, and CLI AI review are available around the deterministic core. End-to-end local-provider operator guidance remains planned.
+The REST API, minimal web UI, Docker/Compose deployment, provider-neutral AI contract, Ollama adapter, OpenAI-compatible adapter, advisory contradiction analysis, conservative improved-spec drafting, REST AI review flow, CLI AI review, and end-to-end local-provider operator demo are available around the deterministic core. The v0.3.0 AI product-flow roadmap is complete.
 
 ## Relationship to the product brief
 
