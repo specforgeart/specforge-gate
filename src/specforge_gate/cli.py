@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Any
 
 from specforge_gate.config import ConfigError, load_project_config
 from specforge_gate.engine import analyze_text
@@ -31,6 +32,24 @@ def build_parser() -> argparse.ArgumentParser:
         choices=("none", "warning", "error"),
         default="error",
         help="Return exit code 1 when findings at this level are present.",
+    )
+
+    ai_review = subparsers.add_parser(
+        "ai-review",
+        help="Run deterministic checks plus explicit advisory AI review for one file.",
+    )
+    ai_review.add_argument("path", type=Path)
+    ai_review.add_argument("--format", choices=tuple(_RENDERERS), default="text")
+    ai_review.add_argument(
+        "--config",
+        type=Path,
+        help="Path to a .specgate.yml project configuration file.",
+    )
+    ai_review.add_argument(
+        "--fail-on",
+        choices=("none", "warning", "error"),
+        default="error",
+        help="Return exit code 1 when deterministic findings at this level are present.",
     )
     return parser
 
@@ -114,8 +133,179 @@ def _render_json_reports(reports: list[AnalysisReport]) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
 
+def _run_ai_review(args: argparse.Namespace) -> int:
+    from specforge_gate.ai import (
+        AIProviderError,
+        ContradictionAnalysisError,
+        ImprovedSpecDraftError,
+        analyze_contradictions,
+        draft_improved_specification,
+    )
+    from specforge_gate.ai.runtime import provider_from_environment
+
+    try:
+        config = load_project_config(args.config)
+    except ConfigError as exc:
+        print(f"specgate: {exc}", file=sys.stderr)
+        return 2
+
+    try:
+        text = args.path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        print(f"specgate: cannot read {args.path}: {exc}", file=sys.stderr)
+        return 2
+
+    try:
+        report = analyze_text(text, source=str(args.path), config=config)
+    except SuppressionError as exc:
+        print(f"specgate: {args.path}:{exc.line}: {exc}", file=sys.stderr)
+        return 2
+
+    try:
+        provider = provider_from_environment()
+        if provider is None:
+            print(
+                "specgate: AI provider is not configured. "
+                "Set SPECFORGE_AI_PROVIDER and SPECFORGE_AI_MODEL.",
+                file=sys.stderr,
+            )
+            return 2
+
+        contradictions = analyze_contradictions(text, provider)
+        draft = draft_improved_specification(
+            text,
+            provider,
+            contradictions=contradictions.contradictions,
+        )
+    except AIProviderError as exc:
+        print(
+            f"specgate: AI provider {exc.provider} [{exc.code.value}]: {exc}",
+            file=sys.stderr,
+        )
+        return 2
+    except (ContradictionAnalysisError, ImprovedSpecDraftError) as exc:
+        print(f"specgate: AI review [{exc.code.value}]: {exc}", file=sys.stderr)
+        return 2
+
+    if contradictions.provider != provider.provider_id or draft.provider != provider.provider_id:
+        print("specgate: AI review provider identity mismatch.", file=sys.stderr)
+        return 2
+
+    payload: dict[str, Any] = {
+        "deterministic": report.to_dict(),
+        "provider": provider.provider_id,
+        "model": provider.model,
+        "contradictions": [
+            {
+                "statement_a": item.statement_a,
+                "statement_b": item.statement_b,
+                "explanation": item.explanation,
+            }
+            for item in contradictions.contradictions
+        ],
+        "improved_spec": draft.text,
+    }
+    print(_render_ai_review(args.format, payload))
+
+    errors = report.count(Severity.ERROR)
+    warnings = report.count(Severity.WARNING)
+    return int(_should_fail(args.fail_on, errors, warnings))
+
+
+def _render_ai_review(format_name: str, payload: dict[str, Any]) -> str:
+    if format_name == "json":
+        import json
+
+        return json.dumps(payload, ensure_ascii=False, indent=2)
+    if format_name == "markdown":
+        return _render_ai_review_markdown(payload)
+    return _render_ai_review_text(payload)
+
+
+def _safe_display_text(value: object) -> str:
+    text = str(value)
+    return "".join(
+        char
+        if char == "\n" or char == "\t" or (ord(char) >= 32 and ord(char) != 127)
+        else f"\\u{ord(char):04x}"
+        for char in text
+    )
+
+
+def _render_ai_review_text(payload: dict[str, Any]) -> str:
+    report = payload["deterministic"]
+    summary = report["summary"]
+    contradictions = payload["contradictions"]
+    lines = [
+        "AI REVIEW",
+        "",
+        f"Provider: {_safe_display_text(payload['provider'])}",
+        f"Model: {_safe_display_text(payload['model'])}",
+        f"Deterministic: {_safe_display_text(report['status'])}",
+        (
+            "Findings: "
+            f"{summary['errors']} errors, "
+            f"{summary['warnings']} warnings, "
+            f"{summary['info']} info"
+        ),
+        f"Contradictions: {len(contradictions)}",
+    ]
+    for index, item in enumerate(contradictions, start=1):
+        lines.extend(
+            [
+                "",
+                f"[{index}] {_safe_display_text(item['statement_a'])}",
+                f"vs. {_safe_display_text(item['statement_b'])}",
+                _safe_display_text(item["explanation"]),
+            ]
+        )
+    lines.extend(
+        ["", "IMPROVED SPECIFICATION", "", _safe_display_text(payload["improved_spec"])]
+    )
+    return "\n".join(lines)
+
+
+def _render_ai_review_markdown(payload: dict[str, Any]) -> str:
+    report = payload["deterministic"]
+    contradictions = payload["contradictions"]
+    lines = [
+        "# SpecForge Gate AI Review",
+        "",
+        f"- Provider: `{_safe_display_text(payload['provider'])}`",
+        f"- Model: `{_safe_display_text(payload['model'])}`",
+        "",
+        "## Deterministic report",
+        "",
+        f"Status: **{_safe_display_text(report['status'])}**",
+        "",
+        "## Contradictions",
+        "",
+    ]
+    if not contradictions:
+        lines.append("No direct contradictions reported.")
+    else:
+        for index, item in enumerate(contradictions, start=1):
+            lines.extend(
+                [
+                    f"### Contradiction {index}",
+                    "",
+                    f"- Statement A: {_safe_display_text(item['statement_a'])}",
+                    f"- Statement B: {_safe_display_text(item['statement_b'])}",
+                    f"- Explanation: {_safe_display_text(item['explanation'])}",
+                    "",
+                ]
+            )
+
+    lines.extend(
+        ["## Improved specification", "", _safe_display_text(payload["improved_spec"])]
+    )
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "ai-review":
+        return _run_ai_review(args)
     if args.command != "check":
         return 2
 
