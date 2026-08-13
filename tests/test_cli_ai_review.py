@@ -87,6 +87,7 @@ def test_ai_review_json_matches_rest_product_shape(
     payload = json.loads(capsys.readouterr().out)
     assert set(payload) == {
         "deterministic",
+        "draft_deterministic",
         "provider",
         "model",
         "contradictions",
@@ -95,6 +96,7 @@ def test_ai_review_json_matches_rest_product_shape(
     assert payload["provider"] == "fake"
     assert payload["model"] == "fake-model"
     assert payload["deterministic"]["source"] == str(path)
+    assert payload["draft_deterministic"]["source"] == f"{path}#improved-draft"
     assert payload["contradictions"] == [
         {
             "statement_a": "Export must finish in 2 seconds.",
@@ -214,6 +216,8 @@ def test_ai_review_text_and_markdown_are_human_reviewable(
     assert "AI REVIEW" in text_output
     assert "Provider: fake" in text_output
     assert "Contradictions: 1" in text_output
+    assert "Draft gate:" in text_output
+    assert "Draft findings:" in text_output
     assert "IMPROVED SPECIFICATION" in text_output
 
     markdown_provider = _provider()
@@ -236,6 +240,7 @@ def test_ai_review_text_and_markdown_are_human_reviewable(
     )
     markdown_output = capsys.readouterr().out
     assert "# SpecForge Gate AI Review" in markdown_output
+    assert "## Draft deterministic report" in markdown_output
     assert "## Contradictions" in markdown_output
     assert "## Improved specification" in markdown_output
 

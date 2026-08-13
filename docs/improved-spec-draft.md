@@ -4,9 +4,9 @@ SpecForge Gate provides an optional provider-neutral `draft_improved_specificati
 
 ## Contract
 
-The feature accepts the source specification, one explicit `AIProvider`, and optional validated `Contradiction` context. It asks the provider for text output and returns an immutable `ImprovedSpecDraft(text, provider, model)`.
+The feature accepts the source specification, one explicit `AIProvider`, optional validated `Contradiction` context, and optional deterministic `Finding` context. It asks the provider for text output and returns an immutable `ImprovedSpecDraft(text, provider, model)`.
 
-The prompt is conservative: it asks the model to improve structure, clarity, testability, acceptance criteria, scope boundaries, and edge cases without inventing unsupported business facts. Missing facts and unresolved contradictions must be surfaced as explicit open questions/TODOs instead of being silently guessed.
+The prompt is conservative and gate-aware: it asks the model to improve structure, clarity, testability, acceptance criteria, scope boundaries, and edge cases without inventing unsupported business facts. Deterministic findings are supplied as authoritative quality feedback. Missing required sections must be restored; when their facts are unknown, the section remains with an explicit TODO/open question instead of being silently omitted. Missing facts and unresolved contradictions remain explicit rather than being guessed.
 
 ## Prompt-injection boundary
 
@@ -26,11 +26,13 @@ Callers may pass contradiction results from `analyze_contradictions()`. The draf
 
 This prevents manually constructed or stale contradiction evidence from being silently injected as trusted context.
 
-## Output validation
+## Output validation and deterministic recheck
 
 The provider output must be non-empty direct Markdown, contain at least one Markdown heading, fit within the configured size bound, contain no NUL byte, and not wrap the entire draft in a Markdown code fence. Provider transport errors are propagated through the existing `AIProviderError` contract.
 
-These checks validate shape, not semantic truth. The draft still requires human review.
+Product AI review flows immediately run the generated draft through the same deterministic core and configuration used for the source. REST and CLI therefore expose both the original deterministic report and `draft_deterministic`. The Web UI shows the original-to-draft finding count and draft gate status before the operator chooses whether to use the draft.
+
+These checks still do not establish semantic truth. The draft remains advisory and requires human review.
 
 ## Security and privacy
 

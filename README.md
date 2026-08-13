@@ -100,7 +100,7 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 
 ## Release status
 
-`v0.3.0` is the first public alpha/MVP. The release is distributed through GitHub Release assets (wheel, source distribution, and SHA-256 checksums); this release process does not publish to PyPI. See [Release process](docs/release.md).
+`v0.3.0` is the first public alpha/MVP baseline; `v0.3.2` is the current patch release. Releases are distributed through GitHub Release assets (wheel, source distribution, and SHA-256 checksums); this release process does not publish to PyPI. See [Release process](docs/release.md).
 
 ## Current interfaces
 
@@ -111,14 +111,14 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | Markdown output | available | Use `--format markdown` for reports and job summaries. |
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
 | REST API | available | Deterministic `POST /v1/check` plus explicit server-configured advisory `POST /v1/ai/review`. |
-| AI review API | available | Combines the deterministic report, validated contradictions, and conservative improved draft. |
+| AI review API | available | Combines the original deterministic report, validated contradictions, gate-aware improved draft, and automatic deterministic draft recheck. |
 | Web UI | available | Same-origin deterministic checks plus explicit AI Review with provider status, contradictions, and improved draft. |
 | Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
 | AI provider contract | available | Standard-library-only adapter protocol for optional AI integrations. |
 | Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; selectable by CLI/API/Web UI AI review. |
 | OpenAI-compatible adapter | available | Explicit synchronous Chat Completions adapter with optional caller-supplied Bearer auth. |
 | Contradiction analysis | available | Advisory provider-neutral analysis with strict JSON and verbatim-source evidence validation. |
-| Improved-spec draft | available | Advisory conservative Markdown drafting with explicit uncertainty/contradiction handling. |
+| Improved-spec draft | available | Advisory gate-aware Markdown drafting that consumes deterministic findings, preserves unresolved uncertainty, and is rechecked by the deterministic core. |
 
 ## Deterministic core vs optional AI
 
@@ -183,7 +183,7 @@ python -m pip install -e ".[api]"
 python -m uvicorn specforge_gate.api:app --host 127.0.0.1 --port 8000
 ```
 
-Analyze inline text deterministically with `POST /v1/check`. Valid documents return HTTP `200` whether the deterministic report is `PASS` or `NEEDS WORK`; invalid request/configuration or suppression syntax returns HTTP `422`, and text above the configured limit returns HTTP `413`. The deterministic endpoint accepts no request-selected file path or URL and performs no outbound provider call. When server-side AI environment variables are configured, `GET /v1/ai/status` reports provider availability and `POST /v1/ai/review` explicitly runs deterministic analysis, contradiction analysis, and conservative improved-spec drafting in one response. See [REST API](docs/rest-api.md).
+Analyze inline text deterministically with `POST /v1/check`. Valid documents return HTTP `200` whether the deterministic report is `PASS` or `NEEDS WORK`; invalid request/configuration or suppression syntax returns HTTP `422`, and text above the configured limit returns HTTP `413`. The deterministic endpoint accepts no request-selected file path or URL and performs no outbound provider call. When server-side AI environment variables are configured, `GET /v1/ai/status` reports provider availability and `POST /v1/ai/review` explicitly runs deterministic analysis, contradiction analysis, gate-aware improved-spec drafting, and a deterministic recheck of the generated draft in one response. See [REST API](docs/rest-api.md).
 
 ## Web UI
 

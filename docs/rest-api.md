@@ -84,8 +84,9 @@ Runs one explicit advisory review pipeline over inline text:
 
 1. run the unchanged deterministic analysis;
 2. invoke advisory contradiction analysis;
-3. pass validated contradiction context into conservative improved-spec drafting;
-4. return all three results in one response.
+3. pass validated contradiction context plus deterministic findings into gate-aware improved-spec drafting;
+4. run the generated draft through the same deterministic core and inline configuration;
+5. return the original report, draft report, contradictions, and draft in one response.
 
 The request shape is the same inline `text`, `source`, and deterministic inline `config` shape used by `/v1/check`. AI review text is capped at 200,000 characters because both AI features enforce that bound.
 
@@ -101,6 +102,17 @@ Example response shape:
       "warnings": 2,
       "info": 0,
       "total": 3
+    },
+    "findings": []
+  },
+  "draft_deterministic": {
+    "source": "ticket-123.md#improved-draft",
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "total": 0
     },
     "findings": []
   },

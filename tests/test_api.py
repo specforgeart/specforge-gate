@@ -312,9 +312,59 @@ def test_ai_review_runs_deterministic_contradictions_and_draft_in_order() -> Non
         }
     ]
     assert payload["improved_spec"].startswith("# Goal")
+    assert payload["draft_deterministic"] == analyze_text(
+        payload["improved_spec"],
+        source="ai-example.md#improved-draft",
+    ).to_dict()
     assert len(provider.requests) == 2
     assert provider.requests[0].response_format.value == "json"
     assert provider.requests[1].response_format.value == "text"
+
+
+def test_ai_review_passes_gate_findings_to_draft_and_rechecks_generated_text() -> None:
+    source = """# Goal
+Ship export.
+
+# Acceptance criteria
+- Export should work fast and correctly.
+
+# Out of scope
+- PDF export.
+
+# Errors and edge cases
+- Empty result sets.
+"""
+    provider = SequenceProvider(
+        [
+            _response('{"contradictions":[]}'),
+            _response(VALID_TEXT),
+        ]
+    )
+    client = TestClient(create_app(ai_provider=provider))
+
+    response = client.post(
+        "/v1/ai/review",
+        json={"text": source, "source": "gate-aware.md"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    original_ids = {
+        item["rule_id"] for item in payload["deterministic"]["findings"]
+    }
+    assert "SG002" in original_ids
+
+    draft_context = json.loads(provider.requests[1].user_prompt)
+    finding_ids = {
+        item["rule_id"] for item in draft_context["deterministic_findings"]
+    }
+    assert "SG002" in finding_ids
+
+    assert payload["draft_deterministic"] == analyze_text(
+        VALID_TEXT,
+        source="gate-aware.md#improved-draft",
+    ).to_dict()
+    assert payload["draft_deterministic"]["status"] == "PASS"
 
 
 def test_ai_review_is_explicit_and_does_not_change_regular_check_path() -> None:
