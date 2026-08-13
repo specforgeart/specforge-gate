@@ -208,6 +208,7 @@ def _run_ai_review(args: argparse.Namespace) -> int:
             text,
             provider,
             contradictions=contradictions.contradictions,
+            findings=tuple(report.findings),
         )
     except AIProviderError as exc:
         print(
@@ -219,12 +220,26 @@ def _run_ai_review(args: argparse.Namespace) -> int:
         print(f"specgate: AI review [{exc.code.value}]: {exc}", file=sys.stderr)
         return 2
 
+    try:
+        draft_report = analyze_text(
+            draft.text,
+            source=f"{args.path}#improved-draft",
+            config=config,
+        )
+    except SuppressionError as exc:
+        print(
+            f"specgate: AI draft deterministic recheck failed at line {exc.line}: {exc}",
+            file=sys.stderr,
+        )
+        return 2
+
     if contradictions.provider != provider.provider_id or draft.provider != provider.provider_id:
         print("specgate: AI review provider identity mismatch.", file=sys.stderr)
         return 2
 
     payload: dict[str, Any] = {
         "deterministic": report.to_dict(),
+        "draft_deterministic": draft_report.to_dict(),
         "provider": provider.provider_id,
         "model": provider.model,
         "contradictions": [
@@ -266,7 +281,9 @@ def _safe_display_text(value: object) -> str:
 
 def _render_ai_review_text(payload: dict[str, Any]) -> str:
     report = payload["deterministic"]
+    draft_report = payload["draft_deterministic"]
     summary = report["summary"]
+    draft_summary = draft_report["summary"]
     contradictions = payload["contradictions"]
     lines = [
         "AI REVIEW",
@@ -281,6 +298,13 @@ def _render_ai_review_text(payload: dict[str, Any]) -> str:
             f"{summary['info']} info"
         ),
         f"Contradictions: {len(contradictions)}",
+        f"Draft gate: {_safe_display_text(draft_report['status'])}",
+        (
+            "Draft findings: "
+            f"{draft_summary['errors']} errors, "
+            f"{draft_summary['warnings']} warnings, "
+            f"{draft_summary['info']} info"
+        ),
     ]
     for index, item in enumerate(contradictions, start=1):
         lines.extend(
@@ -299,6 +323,7 @@ def _render_ai_review_text(payload: dict[str, Any]) -> str:
 
 def _render_ai_review_markdown(payload: dict[str, Any]) -> str:
     report = payload["deterministic"]
+    draft_report = payload["draft_deterministic"]
     contradictions = payload["contradictions"]
     lines = [
         "# SpecForge Gate AI Review",
@@ -309,6 +334,17 @@ def _render_ai_review_markdown(payload: dict[str, Any]) -> str:
         "## Deterministic report",
         "",
         f"Status: **{_safe_display_text(report['status'])}**",
+        "",
+        "## Draft deterministic report",
+        "",
+        f"Status: **{_safe_display_text(draft_report['status'])}**",
+        "",
+        (
+            "Findings: "
+            f"{draft_report['summary']['errors']} errors, "
+            f"{draft_report['summary']['warnings']} warnings, "
+            f"{draft_report['summary']['info']} info"
+        ),
         "",
         "## Contradictions",
         "",

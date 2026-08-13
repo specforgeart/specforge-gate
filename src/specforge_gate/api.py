@@ -24,7 +24,7 @@ from specforge_gate.ai import (
 from specforge_gate.ai.runtime import provider_from_environment
 from specforge_gate.config import ProjectConfig, RuleConfig
 from specforge_gate.engine import analyze_text
-from specforge_gate.models import Severity, Status
+from specforge_gate.models import AnalysisReport, Severity, Status
 from specforge_gate.rules import builtin_rules
 from specforge_gate.suppression import SuppressionError
 from specforge_gate.web_ui import WEB_UI_HEADERS, WEB_UI_HTML
@@ -125,6 +125,7 @@ class ContradictionResponse(BaseModel):
 
 class AIReviewResponse(BaseModel):
     deterministic: AnalysisResponse
+    draft_deterministic: AnalysisResponse
     provider: str
     model: str
     contradictions: list[ContradictionResponse]
@@ -207,10 +208,13 @@ def create_app(
         tags=["ai"],
     )
     def review_requirements_with_ai(request: AnalyzeRequest) -> AIReviewResponse:
-        deterministic = _deterministic_analysis(
-            request,
+        original_report = _analysis_report(
+            request.text,
+            request.source,
+            request.config,
             max_chars=min(max_text_chars, AI_MAX_TEXT_CHARS),
         )
+        deterministic = AnalysisResponse.model_validate(original_report.to_dict())
         provider = resolve_ai_provider()
         if provider is None:
             raise HTTPException(
@@ -223,6 +227,7 @@ def create_app(
                 request.text,
                 provider,
                 contradictions=contradiction_analysis.contradictions,
+                findings=tuple(original_report.findings),
             )
         except AIProviderError as exc:
             raise _provider_http_error(exc) from exc
@@ -230,6 +235,14 @@ def create_app(
             raise _contradiction_http_error(exc) from exc
         except ImprovedSpecDraftError as exc:
             raise _draft_http_error(exc) from exc
+
+        draft_report = _analysis_report(
+            draft.text,
+            f"{request.source}#improved-draft",
+            request.config,
+            max_chars=max_text_chars,
+        )
+        draft_deterministic = AnalysisResponse.model_validate(draft_report.to_dict())
 
         if (
             contradiction_analysis.provider != provider.provider_id
@@ -242,6 +255,7 @@ def create_app(
 
         return AIReviewResponse(
             deterministic=deterministic,
+            draft_deterministic=draft_deterministic,
             provider=provider.provider_id,
             model=provider.model,
             contradictions=[
@@ -254,15 +268,21 @@ def create_app(
     return app
 
 
-def _deterministic_analysis(request: AnalyzeRequest, *, max_chars: int) -> AnalysisResponse:
-    if len(request.text) > max_chars:
+def _analysis_report(
+    text: str,
+    source: str,
+    config_value: ApiProjectConfig | None,
+    *,
+    max_chars: int,
+) -> AnalysisReport:
+    if len(text) > max_chars:
         raise HTTPException(
             status_code=413,
             detail={"code": "text_too_large", "max_chars": max_chars},
         )
-    config = request.config.to_domain() if request.config is not None else ProjectConfig()
+    config = config_value.to_domain() if config_value is not None else ProjectConfig()
     try:
-        report = analyze_text(request.text, source=request.source, config=config)
+        return analyze_text(text, source=source, config=config)
     except SuppressionError as exc:
         raise HTTPException(
             status_code=422,
@@ -272,6 +292,15 @@ def _deterministic_analysis(request: AnalyzeRequest, *, max_chars: int) -> Analy
                 "line": exc.line,
             },
         ) from exc
+
+
+def _deterministic_analysis(request: AnalyzeRequest, *, max_chars: int) -> AnalysisResponse:
+    report = _analysis_report(
+        request.text,
+        request.source,
+        request.config,
+        max_chars=max_chars,
+    )
     return AnalysisResponse.model_validate(report.to_dict())
 
 

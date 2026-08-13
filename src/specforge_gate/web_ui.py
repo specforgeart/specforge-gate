@@ -606,6 +606,12 @@ WEB_UI_HTML = r'''<!doctype html>
               </button>
             </div>
           </div>
+          <div class="ai-status-row">
+            <span class="status-chip disabled" id="draft-gate-status">Draft not checked</span>
+            <span class="tiny" id="draft-gate-detail">
+              The generated draft is rechecked automatically by the deterministic gate.
+            </span>
+          </div>
           <pre
             class="draft-output" id="improved-spec-output">Run AI Review to generate a draft.</pre>
         </section>
@@ -633,6 +639,8 @@ WEB_UI_HTML = r'''<!doctype html>
     const aiProviderDetail = document.getElementById("ai-provider-detail");
     const contradictionsList = document.getElementById("contradictions-list");
     const improvedSpecOutput = document.getElementById("improved-spec-output");
+    const draftGateStatus = document.getElementById("draft-gate-status");
+    const draftGateDetail = document.getElementById("draft-gate-detail");
     const filters = Array.from(document.querySelectorAll("[data-filter]"));
 
     const metrics = {
@@ -698,6 +706,11 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
       copyImprovedButton.disabled = true;
       useImprovedButton.disabled = true;
       improvedSpecOutput.textContent = "Run AI Review to generate a draft.";
+      draftGateStatus.textContent = "Draft not checked";
+      draftGateStatus.className = "status-chip disabled";
+      draftGateDetail.textContent = (
+        "The generated draft is rechecked automatically by the deterministic gate."
+      );
       renderContradictions();
     }
 
@@ -984,6 +997,17 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
         renderFindings();
         renderContradictions();
         improvedSpecOutput.textContent = aiReview.improved_spec;
+        const draftReport = aiReview.draft_deterministic;
+        draftGateStatus.textContent = "Draft: " + draftReport.status;
+        draftGateStatus.className = (
+          "status-chip " + (draftReport.status === "PASS" ? "pass" : "needs-work")
+        );
+        draftGateDetail.textContent = (
+          "Original findings: "
+          + String(report.summary.total)
+          + " -> Draft findings: "
+          + String(draftReport.summary.total)
+        );
         aiProviderStatus.textContent = "AI enabled";
         aiProviderStatus.className = "status-chip enabled";
         aiProviderDetail.textContent = (
@@ -992,7 +1016,11 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
         setNotice(
           "AI review complete: "
           + String(aiReview.contradictions.length)
-          + " contradiction(s), draft ready for review.",
+          + " contradiction(s), draft gate "
+          + aiReview.draft_deterministic.status
+          + " with "
+          + String(aiReview.draft_deterministic.summary.total)
+          + " finding(s).",
         );
       } catch (error) {
         setNotice(error instanceof Error ? error.message : "AI Review failed.");

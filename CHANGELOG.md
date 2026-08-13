@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.3.2 - 2026-08-13
+
+### Fixed
+- made improved-spec drafting gate-aware by supplying deterministic SG findings as structured provider context
+- restored missing required sections conservatively through explicit TODO/open-question guidance instead of silently dropping them
+- automatically rechecked generated drafts with the same deterministic core/configuration and exposed original-to-draft quality in REST, CLI, and Web UI
+
 ## 0.3.1 - 2026-08-12
 
 ### Fixed

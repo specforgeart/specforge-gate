@@ -17,6 +17,7 @@ from specforge_gate.ai import (
     ImprovedSpecDraftErrorCode,
     draft_improved_specification,
 )
+from specforge_gate.models import Finding, Severity
 
 
 class FakeProvider:
@@ -73,7 +74,11 @@ def test_draft_uses_text_mode_and_json_wraps_untrusted_source() -> None:
     assert request.response_format is AIResponseFormat.TEXT
     assert "untrusted data" in request.system_prompt
     payload = json.loads(request.user_prompt)
-    assert payload == {"specification": specification, "contradiction_context": []}
+    assert payload == {
+        "specification": specification,
+        "contradiction_context": [],
+        "deterministic_findings": [],
+    }
 
 
 def test_draft_serializes_validated_contradiction_context() -> None:
@@ -100,6 +105,52 @@ def test_draft_serializes_validated_contradiction_context() -> None:
         }
     ]
     assert "do not silently choose" in provider.requests[0].system_prompt
+
+
+def test_draft_serializes_deterministic_findings_as_authoritative_gate_feedback() -> None:
+    provider = FakeProvider()
+    finding = Finding(
+        rule_id="SG002",
+        severity=Severity.ERROR,
+        message="Missing or empty section: Expected result.",
+        suggestion=(
+            "Describe the concrete artifact, behavior, or state that must exist after delivery."
+        ),
+    )
+
+    draft_improved_specification(
+        "# Goal\nShip export.",
+        provider,
+        findings=(finding,),
+    )
+
+    payload = json.loads(provider.requests[0].user_prompt)
+    assert payload["deterministic_findings"] == [
+        {
+            "rule_id": "SG002",
+            "severity": "error",
+            "message": finding.message,
+            "suggestion": finding.suggestion,
+            "line": None,
+            "excerpt": None,
+        }
+    ]
+    prompt = provider.requests[0].system_prompt
+    assert "authoritative gate feedback" in prompt
+    assert "include that section in the draft" in prompt
+    assert "flagged vague" in prompt
+    assert "invented specificity" in prompt
+
+
+def test_draft_rejects_non_tuple_deterministic_findings() -> None:
+    with pytest.raises(ImprovedSpecDraftError) as exc_info:
+        draft_improved_specification(
+            "# Goal\nShip export.",
+            FakeProvider(),
+            findings=[],  # type: ignore[arg-type]
+        )
+
+    assert exc_info.value.code is ImprovedSpecDraftErrorCode.INVALID_INPUT
 
 
 @pytest.mark.parametrize("value", ["", "   ", None, 123])
@@ -239,5 +290,5 @@ def test_prompt_requires_conservative_open_questions_behavior() -> None:
 
     prompt = provider.requests[0].system_prompt
     assert "do not invent business facts" in prompt
-    assert "open\n  questions/TODO" in prompt
+    assert "questions/TODO" in prompt
     assert "return Markdown only" in prompt
