@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.3.3 - 2026-08-13
+
+### Fixed
+- added a deterministic AI-draft fidelity guard that blocks high-confidence invented numeric literals, unsupported contradiction-resolution claims, unsupported strong requirements, and new out-of-scope constraints
+- exposed `draft_fidelity` through REST and CLI while preserving deterministic-only exit semantics
+- disabled Web UI `Use as input` for `UNSAFE` drafts while keeping copy/review available
+- added regression coverage from the real qwen3:8b acceptance failure that invented 10,000/30,000 row thresholds and falsely declared the 2s/30s contradiction resolved
+
 ## 0.3.2 - 2026-08-13
 
 ### Fixed

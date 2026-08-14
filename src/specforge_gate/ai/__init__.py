@@ -7,6 +7,12 @@ from .contradictions import (
     ContradictionAnalysisErrorCode,
     analyze_contradictions,
 )
+from .fidelity import (
+    DraftFidelityFinding,
+    DraftFidelityReport,
+    DraftFidelityStatus,
+    analyze_draft_fidelity,
+)
 from .improved_draft import (
     ImprovedSpecDraft,
     ImprovedSpecDraftError,
@@ -35,11 +41,15 @@ __all__ = [
     "ContradictionAnalysis",
     "ContradictionAnalysisError",
     "ContradictionAnalysisErrorCode",
+    "DraftFidelityFinding",
+    "DraftFidelityReport",
+    "DraftFidelityStatus",
     "ImprovedSpecDraft",
     "ImprovedSpecDraftError",
     "ImprovedSpecDraftErrorCode",
     "OllamaProvider",
     "OpenAICompatibleProvider",
     "analyze_contradictions",
+    "analyze_draft_fidelity",
     "draft_improved_specification",
 ]

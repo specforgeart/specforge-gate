@@ -312,6 +312,11 @@ def test_ai_review_runs_deterministic_contradictions_and_draft_in_order() -> Non
         }
     ]
     assert payload["improved_spec"].startswith("# Goal")
+    assert payload["draft_fidelity"] == {
+        "status": "PASS",
+        "summary": {"total": 0},
+        "findings": [],
+    }
     assert payload["draft_deterministic"] == analyze_text(
         payload["improved_spec"],
         source="ai-example.md#improved-draft",
@@ -365,6 +370,55 @@ Ship export.
         source="gate-aware.md#improved-draft",
     ).to_dict()
     assert payload["draft_deterministic"]["status"] == "PASS"
+
+
+def test_ai_review_marks_hallucinated_numeric_resolution_draft_unsafe() -> None:
+    source = """# Goal
+Export orders.
+
+# Expected result
+A CSV file is downloaded.
+
+# Acceptance criteria
+- Export must finish in 2 seconds.
+- Export may take up to 30 seconds.
+
+# Out of scope
+- PDF export.
+
+# Errors and edge cases
+- Export-generation failure.
+"""
+    contradiction_payload = json.dumps(
+        {
+            "contradictions": [
+                {
+                    "statement_a": "Export must finish in 2 seconds.",
+                    "statement_b": "Export may take up to 30 seconds.",
+                    "explanation": "The time limits conflict.",
+                }
+            ]
+        }
+    )
+    provider = SequenceProvider(
+        [
+            _response(contradiction_payload),
+            _response(
+                "# Goal\nExport orders.\n\n# Acceptance criteria\n"
+                "- Export must finish in 2 seconds for <=10,000 rows.\n\n"
+                "# Notes\n- Contradiction resolved for small datasets."
+            ),
+        ]
+    )
+    client = TestClient(create_app(ai_provider=provider))
+
+    response = client.post("/v1/ai/review", json={"text": source})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["draft_fidelity"]["status"] == "UNSAFE"
+    codes = {item["code"] for item in payload["draft_fidelity"]["findings"]}
+    assert {"AIF001", "AIF002"} <= codes
 
 
 def test_ai_review_is_explicit_and_does_not_change_regular_check_path() -> None:

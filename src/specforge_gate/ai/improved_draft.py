@@ -41,6 +41,8 @@ explicitly.
 Safety and fidelity rules:
 - do not invent business facts, numeric targets, technologies, integrations, actors, dates, limits,
   or scope that are not supported by the source;
+- every numeric literal in the draft must already exist in the source; never invent thresholds,
+  ranges, dataset sizes, dates, percentages, or other numeric boundaries;
 - do not silently choose between conflicting source statements;
 - for unresolved ambiguity, missing facts, supplied contradiction_context, or deterministic findings
   that need stakeholder input, add explicit open questions/TODO items instead of guessing;

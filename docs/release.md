@@ -7,11 +7,11 @@ SpecForge Gate uses Git tags plus `.github/workflows/release.yml` for GitHub Rel
 The current public patch release is:
 
 ```text
-v0.3.2
+v0.3.3
 ```
 
 `v0.3.0` remains the first public alpha/MVP baseline. The Python package version and runtime
-`specforge_gate.__version__` are both `0.3.2`.
+`specforge_gate.__version__` are both `0.3.3`.
 
 ## Release invariants
 
@@ -33,14 +33,14 @@ The tag workflow then independently:
 6. writes SHA-256 checksums;
 7. creates the GitHub Release and uploads all `dist/*` assets.
 
-## Publish v0.3.2
+## Publish v0.3.3
 
 After the patch PR is merged and `main` is verified:
 
 ```bash
 git fetch origin main --tags
-git tag -a v0.3.2 <verified-main-sha> -m "SpecForge Gate v0.3.2"
-git push origin v0.3.2
+git tag -a v0.3.3 <verified-main-sha> -m "SpecForge Gate v0.3.3"
+git push origin v0.3.3
 ```
 
 Do not move or recreate a published release tag.
@@ -50,13 +50,13 @@ Do not move or recreate a published release tag.
 The release is expected to contain:
 
 ```text
-specforge_gate-0.3.2-py3-none-any.whl
-specforge_gate-0.3.2.tar.gz
+specforge_gate-0.3.3-py3-none-any.whl
+specforge_gate-0.3.3.tar.gz
 SHA256SUMS
 ```
 
 This release process does not publish to PyPI. GitHub Release assets are the distribution channel
-for `v0.3.2`.
+for `v0.3.3`.
 
 ## Failure handling
 

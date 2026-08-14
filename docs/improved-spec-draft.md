@@ -54,3 +54,16 @@ print(result.text)
 ```
 
 In v0.3.0 the function is consumed only inside explicit AI review flows: `specgate ai-review FILE`, `POST /v1/ai/review`, and the Web UI **AI Review** action. It is never invoked by deterministic `specgate check`, `POST /v1/check`, or the reusable GitHub Action, and no product surface applies the draft automatically.
+
+## Draft fidelity guard (v0.3.3)
+
+After provider output validation and deterministic draft recheck, explicit AI review flows also run a provider-free fidelity guard over the source and generated draft. The guard is intentionally conservative and targets high-confidence unsafe changes that were observed during real local-Ollama acceptance:
+
+- `AIF001`: a numeric literal appears in the draft but not in the source;
+- `AIF002`: the draft claims an unresolved contradiction/conflict is resolved;
+- `AIF003`: a strong requirement or prohibition lacks sufficient source evidence;
+- `AIF004`: the draft introduces a new out-of-scope constraint.
+
+A fidelity result is either `PASS` or `UNSAFE`. `UNSAFE` is advisory safety metadata and does not change deterministic SG findings or CLI exit-code semantics. REST and CLI still return the draft for inspection; the Web UI allows copying it but disables **Use as input** until the fidelity report is `PASS`.
+
+The guard does not prove semantic equivalence and intentionally does not attempt to auto-repair unsafe text. Human review remains required.

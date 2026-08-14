@@ -184,3 +184,26 @@ Production deployment should place authentication, TLS, request-rate controls, a
 ## Container deployment
 
 The same API/UI process can be run with the repository Docker image and `compose.yaml`. See [Docker image and Compose](container.md). Containerization does not add persistence/authentication; provider environment variables are an explicit deployment choice when AI review is enabled.
+
+## Draft fidelity in AI review (v0.3.3)
+
+`POST /v1/ai/review` now returns `draft_fidelity` next to `draft_deterministic`:
+
+```json
+{
+  "draft_fidelity": {
+    "status": "UNSAFE",
+    "summary": {"total": 2},
+    "findings": [
+      {
+        "code": "AIF001",
+        "message": "Draft introduces a numeric literal that is absent from the source.",
+        "suggestion": "Remove the new number or replace the unsupported detail with an explicit TODO.",
+        "evidence": "10,000"
+      }
+    ]
+  }
+}
+```
+
+The fidelity guard is local and provider-free. It does not alter `deterministic`, `draft_deterministic`, SG rule IDs, or the deterministic `/v1/check` endpoint.

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "specforge-gate"
-version = "0.3.2"
+version = "0.3.3"
 description = "Deterministic quality gate for software requirements and AI coding tasks"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -84,6 +84,7 @@ do_not_mutate = [
   "src/specforge_gate/ai/ollama.py",
   "src/specforge_gate/ai/openai_compatible.py",
   "src/specforge_gate/ai/contradictions.py",
+  "src/specforge_gate/ai/fidelity.py",
   "src/specforge_gate/ai/improved_draft.py",
   "src/specforge_gate/ai/runtime.py",
 ]
