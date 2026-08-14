@@ -52,7 +52,6 @@ class DraftFidelityReport:
         }
 
 
-_ORDERED_LIST_PREFIX_RE = re.compile(r"(?m)^\s*\d+[.)]\s+")
 _NUMBER_RE = re.compile(r"(?<![\w])\d(?:[\d,_ ]*\d)?(?:\.\d+)?")
 _RESOLUTION_PATTERNS = (
     re.compile(
@@ -82,8 +81,6 @@ _TODO_RE = re.compile(
     r"(?i)\b(?:todo|open\s+question|clarify|needs?\s+clarification|"
     r"уточн\w*|вопрос\w*|требует\s+уточнения)\b"
 )
-_MARKDOWN_PREFIX_RE = re.compile(r"^\s*(?:#{1,6}\s+|[-*+]\s+|\d+[.)]\s+)")
-_HEADING_RE = re.compile(r"^\s*#{1,6}\s+(.+?)\s*$")
 _WORD_RE = re.compile(r"[^\W_]+", re.UNICODE)
 
 _OUT_OF_SCOPE_HEADINGS = {
@@ -205,12 +202,13 @@ def _new_numeric_findings(source: str, draft: str) -> list[DraftFidelityFinding]
 
 
 def _numeric_literals(text: str) -> list[tuple[str, str]]:
-    without_list_numbers = _ORDERED_LIST_PREFIX_RE.sub("", text)
     result: list[tuple[str, str]] = []
-    for match in _NUMBER_RE.finditer(without_list_numbers):
-        raw = match.group(0).strip()
-        normalized = raw.replace(",", "").replace("_", "").replace(" ", "")
-        result.append((normalized, raw))
+    for raw_line in text.splitlines():
+        line = _strip_ordered_list_prefix(raw_line)
+        for match in _NUMBER_RE.finditer(line):
+            raw = match.group(0).strip()
+            normalized = raw.replace(",", "").replace("_", "").replace(" ", "")
+            result.append((normalized, raw))
     return result
 
 
@@ -342,9 +340,9 @@ def _section_items(text: str, headings: set[str]) -> list[str]:
     active = False
     items: list[str] = []
     for raw_line in text.splitlines():
-        heading = _HEADING_RE.match(raw_line)
-        if heading:
-            title = " ".join(heading.group(1).casefold().split())
+        heading = _heading_title(raw_line)
+        if heading is not None:
+            title = " ".join(heading.casefold().split())
             active = title in headings
             continue
         if not active:
@@ -355,8 +353,52 @@ def _section_items(text: str, headings: set[str]) -> list[str]:
     return items
 
 
+def _heading_title(line: str) -> str | None:
+    value = line.lstrip()
+    marker_len = 0
+    while marker_len < len(value) and marker_len < 6 and value[marker_len] == "#":
+        marker_len += 1
+
+    if marker_len == 0 or marker_len >= len(value):
+        return None
+    if not value[marker_len].isspace():
+        return None
+
+    title = value[marker_len:].strip()
+    return title or None
+
+
+def _strip_ordered_list_prefix(line: str) -> str:
+    value = line.lstrip()
+    index = 0
+    while index < len(value) and value[index].isdigit():
+        index += 1
+
+    if index == 0 or index + 1 >= len(value):
+        return value
+    if value[index] not in ".)" or not value[index + 1].isspace():
+        return value
+
+    return value[index + 1 :].lstrip()
+
+
+def _strip_markdown_prefix(line: str) -> str:
+    value = line.lstrip()
+    if not value:
+        return ""
+
+    heading = _heading_title(value)
+    if heading is not None:
+        return heading
+
+    if len(value) >= 2 and value[0] in "-*+" and value[1].isspace():
+        return value[1:].lstrip()
+
+    return _strip_ordered_list_prefix(value)
+
+
 def _clean_line(line: str) -> str:
-    cleaned = _MARKDOWN_PREFIX_RE.sub("", line).strip()
+    cleaned = _strip_markdown_prefix(line).strip()
     return cleaned.replace("**", "").replace("__", "").strip()
 
 

@@ -130,6 +130,29 @@ Export CSV.
     assert report.status is DraftFidelityStatus.PASS
 
 
+
+def test_markdown_prefix_parsing_handles_large_leading_whitespace() -> None:
+    padding = " " * 20_000
+    source = """# Goal
+Export CSV.
+
+# Out of scope
+- XLSX export.
+"""
+    draft = (
+        "# Goal\n"
+        "Export CSV.\n\n"
+        "# Out of scope\n"
+        f"{padding}- XLSX export.\n\n"
+        "# Notes\n"
+        f"{padding}1. TODO: clarify owner.\n"
+    )
+
+    report = analyze_draft_fidelity(source, draft)
+
+    assert report.status is DraftFidelityStatus.PASS
+
+
 @pytest.mark.parametrize("value", ["", "   ", None, 123])
 def test_invalid_source_or_draft_is_rejected(value: object) -> None:
     valid = """# Goal
