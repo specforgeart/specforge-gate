@@ -16,9 +16,11 @@ from specforge_gate.ai import (
     Contradiction,
     ContradictionAnalysisError,
     ContradictionAnalysisErrorCode,
+    DraftFidelityStatus,
     ImprovedSpecDraftError,
     ImprovedSpecDraftErrorCode,
     analyze_contradictions,
+    analyze_draft_fidelity,
     draft_improved_specification,
 )
 from specforge_gate.ai.runtime import provider_from_environment
@@ -123,9 +125,27 @@ class ContradictionResponse(BaseModel):
     explanation: str
 
 
+class DraftFidelityFindingResponse(BaseModel):
+    code: str
+    message: str
+    suggestion: str
+    evidence: str
+
+
+class DraftFidelitySummaryResponse(BaseModel):
+    total: int
+
+
+class DraftFidelityResponse(BaseModel):
+    status: DraftFidelityStatus
+    summary: DraftFidelitySummaryResponse
+    findings: list[DraftFidelityFindingResponse]
+
+
 class AIReviewResponse(BaseModel):
     deterministic: AnalysisResponse
     draft_deterministic: AnalysisResponse
+    draft_fidelity: DraftFidelityResponse
     provider: str
     model: str
     contradictions: list[ContradictionResponse]
@@ -243,6 +263,13 @@ def create_app(
             max_chars=max_text_chars,
         )
         draft_deterministic = AnalysisResponse.model_validate(draft_report.to_dict())
+        draft_fidelity = DraftFidelityResponse.model_validate(
+            analyze_draft_fidelity(
+                request.text,
+                draft.text,
+                contradictions=contradiction_analysis.contradictions,
+            ).to_dict()
+        )
 
         if (
             contradiction_analysis.provider != provider.provider_id
@@ -256,6 +283,7 @@ def create_app(
         return AIReviewResponse(
             deterministic=deterministic,
             draft_deterministic=draft_deterministic,
+            draft_fidelity=draft_fidelity,
             provider=provider.provider_id,
             model=provider.model,
             contradictions=[

@@ -128,12 +128,16 @@ def test_ai_package_exports_exact_public_contract() -> None:
         "ContradictionAnalysis",
         "ContradictionAnalysisError",
         "ContradictionAnalysisErrorCode",
+        "DraftFidelityFinding",
+        "DraftFidelityReport",
+        "DraftFidelityStatus",
         "ImprovedSpecDraft",
         "ImprovedSpecDraftError",
         "ImprovedSpecDraftErrorCode",
         "OllamaProvider",
         "OpenAICompatibleProvider",
         "analyze_contradictions",
+        "analyze_draft_fidelity",
         "draft_improved_specification",
     ]
 

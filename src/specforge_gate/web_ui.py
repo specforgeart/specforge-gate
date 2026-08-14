@@ -612,6 +612,17 @@ WEB_UI_HTML = r'''<!doctype html>
               The generated draft is rechecked automatically by the deterministic gate.
             </span>
           </div>
+          <div class="ai-status-row">
+            <span class="status-chip disabled" id="draft-fidelity-status">
+              Fidelity not checked
+            </span>
+            <span class="tiny" id="draft-fidelity-detail">
+              Unsafe drafts can be copied for review but cannot be loaded as input.
+            </span>
+          </div>
+          <div class="findings" id="draft-fidelity-findings">
+            <div class="ai-empty">Run AI Review to check draft fidelity.</div>
+          </div>
           <pre
             class="draft-output" id="improved-spec-output">Run AI Review to generate a draft.</pre>
         </section>
@@ -641,6 +652,9 @@ WEB_UI_HTML = r'''<!doctype html>
     const improvedSpecOutput = document.getElementById("improved-spec-output");
     const draftGateStatus = document.getElementById("draft-gate-status");
     const draftGateDetail = document.getElementById("draft-gate-detail");
+    const draftFidelityStatus = document.getElementById("draft-fidelity-status");
+    const draftFidelityDetail = document.getElementById("draft-fidelity-detail");
+    const draftFidelityFindings = document.getElementById("draft-fidelity-findings");
     const filters = Array.from(document.querySelectorAll("[data-filter]"));
 
     const metrics = {
@@ -711,6 +725,12 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
       draftGateDetail.textContent = (
         "The generated draft is rechecked automatically by the deterministic gate."
       );
+      draftFidelityStatus.textContent = "Fidelity not checked";
+      draftFidelityStatus.className = "status-chip disabled";
+      draftFidelityDetail.textContent = (
+        "Unsafe drafts can be copied for review but cannot be loaded as input."
+      );
+      renderDraftFidelity();
       renderContradictions();
     }
 
@@ -842,6 +862,58 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
       aiReview.contradictions.forEach((item, index) => {
         contradictionsList.append(contradictionCard(item, index));
       });
+    }
+
+    function renderDraftFidelity() {
+      draftFidelityFindings.replaceChildren();
+      if (!aiReview) {
+        const empty = document.createElement("div");
+        empty.className = "ai-empty";
+        empty.textContent = "Run AI Review to check draft fidelity.";
+        draftFidelityFindings.append(empty);
+        return;
+      }
+
+      const fidelity = aiReview.draft_fidelity;
+      if (fidelity.findings.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "ai-empty";
+        empty.textContent = "No high-confidence fidelity violations detected.";
+        draftFidelityFindings.append(empty);
+        return;
+      }
+
+      for (const item of fidelity.findings) {
+        const card = document.createElement("article");
+        card.className = "finding error";
+
+        const top = document.createElement("div");
+        top.className = "finding-top";
+
+        const code = document.createElement("span");
+        code.className = "finding-id";
+        code.textContent = item.code;
+
+        const meta = document.createElement("span");
+        meta.className = "finding-meta";
+        meta.textContent = "FIDELITY";
+
+        const message = document.createElement("p");
+        message.className = "finding-message";
+        message.textContent = item.message;
+
+        const evidence = document.createElement("p");
+        evidence.className = "finding-fix";
+        evidence.textContent = "Evidence: " + item.evidence;
+
+        const fix = document.createElement("p");
+        fix.className = "finding-fix";
+        fix.textContent = "Suggested fix: " + item.suggestion;
+
+        top.append(code, meta);
+        card.append(top, message, evidence, fix);
+        draftFidelityFindings.append(card);
+      }
     }
 
     function markdownReport(value) {
@@ -992,10 +1064,11 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
         aiReview = payload;
         copyButton.disabled = false;
         copyImprovedButton.disabled = false;
-        useImprovedButton.disabled = false;
+        useImprovedButton.disabled = payload.draft_fidelity.status !== "PASS";
         renderSummary();
         renderFindings();
         renderContradictions();
+        renderDraftFidelity();
         improvedSpecOutput.textContent = aiReview.improved_spec;
         const draftReport = aiReview.draft_deterministic;
         draftGateStatus.textContent = "Draft: " + draftReport.status;
@@ -1008,6 +1081,14 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
           + " -> Draft findings: "
           + String(draftReport.summary.total)
         );
+        const fidelity = aiReview.draft_fidelity;
+        draftFidelityStatus.textContent = "Fidelity: " + fidelity.status;
+        draftFidelityStatus.className = (
+          "status-chip " + (fidelity.status === "PASS" ? "pass" : "needs-work")
+        );
+        draftFidelityDetail.textContent = fidelity.status === "PASS"
+          ? "Draft may be loaded as input after human review."
+          : "Unsafe draft blocked from Use as input; inspect the fidelity findings below.";
         aiProviderStatus.textContent = "AI enabled";
         aiProviderStatus.className = "status-chip enabled";
         aiProviderDetail.textContent = (
@@ -1020,6 +1101,10 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
           + aiReview.draft_deterministic.status
           + " with "
           + String(aiReview.draft_deterministic.summary.total)
+          + " finding(s); fidelity "
+          + aiReview.draft_fidelity.status
+          + " with "
+          + String(aiReview.draft_fidelity.summary.total)
           + " finding(s).",
         );
       } catch (error) {
@@ -1100,6 +1185,10 @@ A UTF-8 CSV file contains the same rows shown by the active filters.
 
     useImprovedButton.addEventListener("click", () => {
       if (!aiReview) {
+        return;
+      }
+      if (aiReview.draft_fidelity.status !== "PASS") {
+        setNotice("Unsafe AI draft cannot be loaded as input. Review fidelity findings first.");
         return;
       }
       const draft = aiReview.improved_spec;

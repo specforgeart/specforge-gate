@@ -171,6 +171,7 @@ def _run_ai_review(args: argparse.Namespace) -> int:
         ContradictionAnalysisError,
         ImprovedSpecDraftError,
         analyze_contradictions,
+        analyze_draft_fidelity,
         draft_improved_specification,
     )
     from specforge_gate.ai.runtime import provider_from_environment
@@ -233,6 +234,12 @@ def _run_ai_review(args: argparse.Namespace) -> int:
         )
         return 2
 
+    fidelity = analyze_draft_fidelity(
+        text,
+        draft.text,
+        contradictions=contradictions.contradictions,
+    )
+
     if contradictions.provider != provider.provider_id or draft.provider != provider.provider_id:
         print("specgate: AI review provider identity mismatch.", file=sys.stderr)
         return 2
@@ -240,6 +247,7 @@ def _run_ai_review(args: argparse.Namespace) -> int:
     payload: dict[str, Any] = {
         "deterministic": report.to_dict(),
         "draft_deterministic": draft_report.to_dict(),
+        "draft_fidelity": fidelity.to_dict(),
         "provider": provider.provider_id,
         "model": provider.model,
         "contradictions": [
@@ -284,6 +292,7 @@ def _render_ai_review_text(payload: dict[str, Any]) -> str:
     draft_report = payload["draft_deterministic"]
     summary = report["summary"]
     draft_summary = draft_report["summary"]
+    fidelity = payload["draft_fidelity"]
     contradictions = payload["contradictions"]
     lines = [
         "AI REVIEW",
@@ -305,7 +314,21 @@ def _render_ai_review_text(payload: dict[str, Any]) -> str:
             f"{draft_summary['warnings']} warnings, "
             f"{draft_summary['info']} info"
         ),
+        (
+            "Draft fidelity: "
+            f"{_safe_display_text(fidelity['status'])} "
+            f"({fidelity['summary']['total']} finding(s))"
+        ),
     ]
+    for item in fidelity["findings"]:
+        lines.extend(
+            [
+                "",
+                f"[{_safe_display_text(item['code'])}] {_safe_display_text(item['message'])}",
+                f"Evidence: {_safe_display_text(item['evidence'])}",
+                f"Suggested fix: {_safe_display_text(item['suggestion'])}",
+            ]
+        )
     for index, item in enumerate(contradictions, start=1):
         lines.extend(
             [
@@ -324,6 +347,7 @@ def _render_ai_review_text(payload: dict[str, Any]) -> str:
 def _render_ai_review_markdown(payload: dict[str, Any]) -> str:
     report = payload["deterministic"]
     draft_report = payload["draft_deterministic"]
+    fidelity = payload["draft_fidelity"]
     contradictions = payload["contradictions"]
     lines = [
         "# SpecForge Gate AI Review",
@@ -346,9 +370,33 @@ def _render_ai_review_markdown(payload: dict[str, Any]) -> str:
             f"{draft_report['summary']['info']} info"
         ),
         "",
-        "## Contradictions",
+        "## Draft fidelity",
+        "",
+        f"Status: **{_safe_display_text(fidelity['status'])}**",
         "",
     ]
+    if fidelity["findings"]:
+        for item in fidelity["findings"]:
+            lines.extend(
+                [
+                    f"### `{_safe_display_text(item['code'])}`",
+                    "",
+                    _safe_display_text(item["message"]),
+                    "",
+                    f"Evidence: {_safe_display_text(item['evidence'])}",
+                    "",
+                    f"Suggested fix: {_safe_display_text(item['suggestion'])}",
+                    "",
+                ]
+            )
+    else:
+        lines.extend(["No high-confidence fidelity violations detected.", ""])
+    lines.extend(
+        [
+        "## Contradictions",
+        "",
+        ]
+    )
     if not contradictions:
         lines.append("No direct contradictions reported.")
     else:

@@ -24,6 +24,9 @@ def test_root_serves_self_contained_zero_install_ui() -> None:
     assert 'id="improved-spec-output"' in response.text
     assert 'id="draft-gate-status"' in response.text
     assert 'id="draft-gate-detail"' in response.text
+    assert 'id="draft-fidelity-status"' in response.text
+    assert 'id="draft-fidelity-detail"' in response.text
+    assert 'id="draft-fidelity-findings"' in response.text
 
 
 def test_web_ui_is_same_origin_and_has_no_external_runtime_assets() -> None:
@@ -78,6 +81,9 @@ def test_web_ui_exposes_ai_status_contradictions_and_reviewable_draft() -> None:
     assert "aiReview.draft_deterministic" in WEB_UI_HTML
     assert "Original findings:" in WEB_UI_HTML
     assert "Draft findings:" in WEB_UI_HTML
+    assert "aiReview.draft_fidelity" in WEB_UI_HTML
+    assert 'payload.draft_fidelity.status !== "PASS"' in WEB_UI_HTML
+    assert "Unsafe AI draft cannot be loaded as input" in WEB_UI_HTML
     assert "navigator.clipboard.writeText(aiReview.improved_spec)" in WEB_UI_HTML
     assert "input.value = draft" in WEB_UI_HTML
     assert "resetReport();" in WEB_UI_HTML

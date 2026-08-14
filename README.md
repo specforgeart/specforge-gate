@@ -100,7 +100,7 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 
 ## Release status
 
-`v0.3.0` is the first public alpha/MVP baseline; `v0.3.2` is the current patch release. Releases are distributed through GitHub Release assets (wheel, source distribution, and SHA-256 checksums); this release process does not publish to PyPI. See [Release process](docs/release.md).
+`v0.3.0` is the first public alpha/MVP baseline; `v0.3.3` is the current patch release. Releases are distributed through GitHub Release assets (wheel, source distribution, and SHA-256 checksums); this release process does not publish to PyPI. See [Release process](docs/release.md).
 
 ## Current interfaces
 
@@ -111,14 +111,14 @@ See the repository examples in [`examples/bad`](examples/bad) and [`examples/imp
 | Markdown output | available | Use `--format markdown` for reports and job summaries. |
 | GitHub Action | available | Composite action checks changed Markdown files and writes a job summary. |
 | REST API | available | Deterministic `POST /v1/check` plus explicit server-configured advisory `POST /v1/ai/review`. |
-| AI review API | available | Combines the original deterministic report, validated contradictions, gate-aware improved draft, and automatic deterministic draft recheck. |
+| AI review API | available | Adds deterministic draft recheck plus a fidelity guard that marks unsupported AI-generated requirement changes unsafe. |
 | Web UI | available | Same-origin deterministic checks plus explicit AI Review with provider status, contradictions, and improved draft. |
 | Docker Compose | available | Hardened one-service local deployment for the existing API and UI. |
 | AI provider contract | available | Standard-library-only adapter protocol for optional AI integrations. |
 | Ollama adapter | available | Explicit synchronous adapter for Ollama `/api/chat`; selectable by CLI/API/Web UI AI review. |
 | OpenAI-compatible adapter | available | Explicit synchronous Chat Completions adapter with optional caller-supplied Bearer auth. |
 | Contradiction analysis | available | Advisory provider-neutral analysis with strict JSON and verbatim-source evidence validation. |
-| Improved-spec draft | available | Advisory gate-aware Markdown drafting that consumes deterministic findings, preserves unresolved uncertainty, and is rechecked by the deterministic core. |
+| Improved-spec draft | available | Advisory gate-aware Markdown drafting with deterministic recheck and post-generation fidelity blocking before `Use as input`. |
 
 ## Deterministic core vs optional AI
 
